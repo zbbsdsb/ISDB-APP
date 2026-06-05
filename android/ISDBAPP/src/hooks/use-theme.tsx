@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react';
-import { useThemeStore, getColors, type Colors } from '../constants/theme';
+import { useThemeStore } from '../store/theme-store';
+import { getColors, type Colors } from '../constants/theme-colors';
 
 interface ThemeContextValue {
   isDark: boolean;

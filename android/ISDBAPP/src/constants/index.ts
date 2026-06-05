@@ -1,5 +1,2 @@
-// Oasis.ISDB - ISDB Mobile App for Android
-
-export const APP_NAME = 'Oasis.ISDB';
-export const PACKAGE_NAME = 'oasis.isdb';
-export const DEEP_LINK_SCHEME = 'isdbapp';
+export { APP_NAME, DEEP_LINK_SCHEME } from './app';
+export { lightColors, darkColors, getColors, type Colors } from './theme-colors';
