@@ -12,19 +12,19 @@ ISDB-APP extends the ISDB web experience (built with Next.js + Supabase) to nati
 ISDB-APP/
 ├── shared/          # Cross-platform shared code (types, lib, constants)
 ├── ios/             # React Native iOS application
-├── android/         # React Native Android application
+├── android/         # React Native Android application (oasis.isdb)
 ├── desktop/         # Electron desktop application
 └── docs/            # Platform-specific documentation
 ```
 
 ## Technology Stack
 
-| Platform | Technology | Status |
-|----------|------------|--------|
-| Web | Next.js 15.5.2 | Primary (see Insane-Dream-Builder) |
-| iOS | React Native | Planned |
-| Android | React Native | Planned |
-| Desktop | Electron | Planned |
+| Platform | Technology | Package Name | Status |
+|----------|------------|--------------|--------|
+| Web | Next.js 15.5.2 | - | Primary (see Insane-Dream-Builder) |
+| iOS | React Native | - | Planned |
+| **Android** | **React Native** | **`oasis.isdb`** | **Development Plan Ready** |
+| Desktop | Electron | - | Planned |
 
 ## Shared Code
 
@@ -55,7 +55,7 @@ npm run build
 ### Platform Status
 
 - [ ] iOS - Not initialized
-- [ ] Android - Not initialized
+- [x] Android - **Development plan ready** (see `.trae/documents/android-development-plan.md`)
 - [ ] Desktop - Not initialized
 
 ## Backend
@@ -72,3 +72,4 @@ See [Insane-Dream-Builder](https://github.com/your-org/Insane-Dream-Builder) for
 
 - [Platform Setup Guide](docs/PLATFORM_SETUP.md)
 - [Shared Code Guide](docs/SHARED_CODE_GUIDE.md)
+- [Android Development Plan](.trae/documents/android-development-plan.md)
