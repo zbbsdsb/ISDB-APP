@@ -1,0 +1,20 @@
+export interface Profile {
+  id: string;
+  username: string;
+  display_name?: string;
+  avatar_url?: string;
+  bio?: string;
+  age?: number;
+  github_username?: string;
+  discord_id?: string;
+  discord_username?: string;
+  reddit_username?: string;
+  skills: string[];
+  interests: string[];
+  country?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ProfileInsert = Omit<Profile, "created_at" | "updated_at">;
+export type ProfileUpdate = Partial<ProfileInsert>;
