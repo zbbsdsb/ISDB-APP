@@ -1,0 +1,30 @@
+import React, { createContext, useContext, useMemo } from 'react';
+import { useThemeStore, getColors, type Colors } from '../constants/theme';
+
+interface ThemeContextValue {
+  isDark: boolean;
+  colors: Colors;
+}
+
+const ThemeContext = createContext<ThemeContextValue>({
+  isDark: true,
+  colors: getColors(true),
+});
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const { isDark } = useThemeStore();
+
+  const value = useMemo(
+    () => ({
+      isDark,
+      colors: getColors(isDark),
+    }),
+    [isDark]
+  );
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+}
+
+export function useTheme() {
+  return useContext(ThemeContext);
+}

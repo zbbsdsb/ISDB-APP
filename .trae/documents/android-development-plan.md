@@ -18,7 +18,9 @@ This app mirrors the functionality of the web application at `Insane-Dream-Build
 
 ## Feature Roadmap
 
-### Phase 1: Foundation (Core Infrastructure)
+### Phase 1: Foundation (Core Infrastructure) ✅ Spec Documented
+
+**Status**: [Detailed Phase 1 Spec & Tasks](../../../.trae/specs/android-phase-1-foundation/)
 
 | Feature | Priority | Description |
 |---------|----------|-------------|
@@ -214,7 +216,7 @@ Root Navigator (Stack)
 ### Auth Flow
 
 1. User taps "Sign In with GitHub/Discord"
-2. App opens OAuth URL with redirect to `isdbapp://auth/callback?code=xxx`
+2. App opens OAuth URL with redirect to `isdbapp://auth/callback?code=xxx
 3. App captures code, exchanges for session
 4. Profile checked: if incomplete → redirect to Onboarding
 5. If complete → redirect to Home
