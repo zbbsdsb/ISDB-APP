@@ -1,23 +1,33 @@
 // Re-export types from shared package
-export type { Profile, ProfileInsert, ProfileUpdate } from '@isdb/shared';
-export type { Project, ProjectFormData, ProjectInsert, ProjectUpdate, ProjectStatus, ContactMethod } from '@isdb/shared';
-export type { SwipeCard, SwipeAction, SwipeResult } from '@isdb/shared';
-export type { Match, MatchInsert, MatchUpdate, MatchStatus } from '@isdb/shared';
-export type { Tag, TagInsert } from '@isdb/shared';
+export type {
+  Profile,
+  ProfileInsert,
+  ProfileUpdate,
+  Project,
+  ProjectFormData,
+  ProjectInsert,
+  ProjectUpdate,
+  ProjectStatus,
+  ContactMethod,
+  SwipeCard,
+  SwipeAction,
+  SwipeResult,
+  Match,
+  MatchInsert,
+  MatchUpdate,
+  MatchStatus,
+  Tag,
+  TagInsert,
+} from '@isdb/shared';
 
-// App-specific types
-export interface User {
+// React Native specific types
+export type User = {
   id: string;
   email?: string;
+  username?: string;
   user_metadata?: {
     avatar_url?: string;
     user_name?: string;
     provider?: string;
   };
-}
-
-export interface AuthState {
-  user: User | null;
-  loading: boolean;
-  initialized: boolean;
-}
+};

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { APP_SCHEME } from '@isdb/shared';
 import { supabase } from '../services/supabase';
 import { useAuthStore } from '../store/auth-store';
 import type { User } from '../types';
@@ -42,7 +43,7 @@ export function useAuth() {
       const { data, error: signInError } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-          redirectTo: 'isdbapp://auth/callback',
+          redirectTo: `${APP_SCHEME}://auth/callback`,
         },
       });
       
@@ -63,7 +64,7 @@ export function useAuth() {
       const { data, error: signInError } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
-          redirectTo: 'isdbapp://auth/callback',
+          redirectTo: `${APP_SCHEME}://auth/callback`,
         },
       });
       

@@ -1,6 +1,6 @@
-import 'react-native-gesture-handler';
 import { createClient } from '@supabase/supabase-js';
 import * as Keychain from 'react-native-keychain';
+import type { SupabaseConfig } from '@isdb/shared';
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config/supabase';
 
 class SecureStorage {
@@ -12,7 +12,7 @@ class SecureStorage {
       }
       return null;
     } catch {
-      return null;
+        return null;
     }
   }
 
@@ -33,7 +33,12 @@ class SecureStorage {
   }
 }
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+const config: SupabaseConfig = {
+  url: SUPABASE_URL,
+  anonKey: SUPABASE_ANON_KEY,
+};
+
+export const supabase = createClient(config.url, config.anonKey, {
   auth: {
     storage: new SecureStorage(),
     autoRefreshToken: true,
