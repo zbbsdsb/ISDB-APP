@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer, LinkingOptions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, View, StyleSheet } from 'react-native';
-import { useTheme } from '../hooks/use-theme';
+import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useTheme, ThemeProvider } from '../hooks/use-theme';
+import { useAuth } from '../hooks/use-auth';
 import { DEEP_LINK_SCHEME } from '../constants';
 import {
   LandingScreen,
@@ -13,17 +16,20 @@ import {
   MatchesScreen,
   ProfileScreen,
   LoginScreen,
+  AuthCallbackScreen,
 } from '../app';
 
 // Type definitions
 export type RootStackParamList = {
   Landing: undefined;
   Auth: undefined;
+  AuthCallback: undefined;
   Main: undefined;
 };
 
 export type AuthStackParamList = {
   Login: undefined;
+  AuthCallback: undefined;
 };
 
 export type MainTabParamList = {
@@ -46,6 +52,7 @@ const linking: LinkingOptions<RootStackParamList> = {
       Auth: {
         screens: {
           Login: 'auth/login',
+          AuthCallback: 'auth/callback',
         },
       },
       Main: {
@@ -88,6 +95,7 @@ function AuthNavigator() {
       }}
     >
       <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="AuthCallback" component={AuthCallbackScreen} />
     </AuthStack.Navigator>
   );
 }
@@ -119,23 +127,41 @@ function MainNavigator() {
   );
 }
 
-interface LandingScreenNavigationProps {
-  onLogin: () => void;
-}
+function RootNavigator() {
+  const { user, loading, initialized } = useAuth();
+  const { colors, isDark } = useTheme();
 
-function LandingScreenWrapper({ navigation }: any) {
-  const handleLogin = () => {
-    navigation.navigate('Auth');
-  };
-  return <LandingScreen onLogin={handleLogin} />;
+  // Show loading screen while initializing
+  if (!initialized) {
+    return (
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  // Determine initial route based on auth status
+  const initialRouteName: keyof RootStackParamList = user ? 'Main' : 'Landing';
+
+  return (
+    <RootStack.Navigator
+      initialRouteName={initialRouteName}
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.background },
+        animation: 'fade_from_bottom',
+      }}
+    >
+      <RootStack.Screen name="Landing" component={LandingScreen} />
+      <RootStack.Screen name="Auth" component={AuthNavigator} />
+      <RootStack.Screen name="AuthCallback" component={AuthCallbackScreen} />
+      <RootStack.Screen name="Main" component={MainNavigator} />
+    </RootStack.Navigator>
+  );
 }
 
 export function Navigation() {
   const { colors, isDark } = useTheme();
-
-  // For now, show landing screen
-  // In full implementation, this would check auth state
-  const initialRouteName: keyof RootStackParamList = 'Landing';
 
   return (
     <NavigationContainer
@@ -170,23 +196,18 @@ export function Navigation() {
         },
       }}
     >
-      <RootStack.Navigator
-        initialRouteName={initialRouteName}
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: colors.background },
-        }}
-      >
-        <RootStack.Screen name="Landing" component={LandingScreenWrapper} />
-        <RootStack.Screen name="Auth" component={AuthNavigator} />
-        <RootStack.Screen name="Main" component={MainNavigator} />
-      </RootStack.Navigator>
+      <RootNavigator />
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
   tabIcon: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },

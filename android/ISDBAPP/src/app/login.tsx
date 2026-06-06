@@ -1,28 +1,36 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../hooks/use-theme';
+import { useAuth } from '../hooks/use-auth';
 import { Button } from '../components/ui';
 
 export function LoginScreen() {
   const { colors } = useTheme();
+  const { signInWithGitHub, signInWithDiscord, loading } = useAuth();
+  const navigation = useNavigation();
 
-  const handleGitHubLogin = () => {
-    // OAuth flow would be triggered here
-    console.log('GitHub login');
+  const handleGitHubLogin = async () => {
+    try {
+      await signInWithGitHub();
+    } catch (error: any) {
+      Alert.alert('Login Failed', error.message || 'An error occurred');
+    }
   };
 
-  const handleDiscordLogin = () => {
-    // OAuth flow would be triggered here
-    console.log('Discord login');
+  const handleDiscordLogin = async () => {
+    try {
+      await signInWithDiscord();
+    } catch (error: any) {
+      Alert.alert('Login Failed', error.message || 'An error occurred');
+    }
   };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={[styles.logo, { color: colors.primary }]}>
-            🏗️
-          </Text>
+          <Text style={[styles.logoEmoji, { color: colors.primary }]}>🏗️</Text>
           <Text style={[styles.title, { color: colors.text }]}>
             Insane Dream Builder
           </Text>
@@ -37,12 +45,14 @@ export function LoginScreen() {
             onPress={handleGitHubLogin}
             variant="primary"
             fullWidth
+            loading={loading}
           />
           <Button
             title="Continue with Discord"
             onPress={handleDiscordLogin}
             variant="outline"
             fullWidth
+            loading={loading}
           />
         </View>
 
@@ -67,7 +77,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 48,
   },
-  logo: {
+  logoEmoji: {
     fontSize: 80,
     marginBottom: 16,
   },

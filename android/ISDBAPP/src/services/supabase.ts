@@ -1,10 +1,7 @@
 import 'react-native-gesture-handler';
 import { createClient } from '@supabase/supabase-js';
 import * as Keychain from 'react-native-keychain';
-
-// These would be replaced with actual values from environment
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co';
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config/supabase';
 
 class SecureStorage {
   async getItem(key: string): Promise<string | null> {
@@ -44,5 +41,3 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     detectSessionInUrl: false,
   },
 });
-
-export { SUPABASE_URL, SUPABASE_ANON_KEY };

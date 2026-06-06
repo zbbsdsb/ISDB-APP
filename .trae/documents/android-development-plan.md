@@ -18,9 +18,13 @@ This app mirrors the functionality of the web application at `Insane-Dream-Build
 
 ## Feature Roadmap
 
-### Phase 1: Foundation (Core Infrastructure) ✅ Spec Documented
+### Phase 1: Foundation (Core Infrastructure) ✅ Complete
 
 **Status**: [Detailed Phase 1 Spec & Tasks](../../../.trae/specs/android-phase-1-foundation/)
+
+### Phase 2: Authentication ✅ Spec Documented
+
+**Status**: [Detailed Phase 2 Spec & Tasks](../../../.trae/specs/android-phase-2-authentication/)
 
 | Feature | Priority | Description |
 |---------|----------|-------------|

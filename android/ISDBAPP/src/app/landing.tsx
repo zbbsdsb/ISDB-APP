@@ -1,14 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../hooks/use-theme';
 import { Button } from '../components/ui';
 
 interface LandingScreenProps {
-  onLogin: () => void;
+  onLogin?: () => void;
 }
 
 export function LandingScreen({ onLogin }: LandingScreenProps) {
   const { colors, isDark } = useTheme();
+  const navigation = useNavigation();
+
+  const handleGetStarted = () => {
+    navigation.navigate('Auth' as never);
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -32,7 +38,7 @@ export function LandingScreen({ onLogin }: LandingScreenProps) {
         <View style={styles.actions}>
           <Button
             title="Get Started"
-            onPress={onLogin}
+            onPress={handleGetStarted}
             size="lg"
             fullWidth
           />

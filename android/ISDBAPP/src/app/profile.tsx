@@ -1,21 +1,41 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, Alert } from 'react-native';
 import { useTheme } from '../hooks/use-theme';
+import { useAuth } from '../hooks/use-auth';
 import { Button, Card, Avatar } from '../components/ui';
 
 export function ProfileScreen() {
   const { colors } = useTheme();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = () => {
+    Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: signOut,
+        },
+      ],
+    );
+  };
+
+  const userDisplayName = user?.user_metadata?.user_name || 'Builder';
+  const userAvatar = user?.user_metadata?.avatar_url;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <Avatar size={80} />
+          <Avatar source={userAvatar ? { uri: userAvatar } : null} size={80} />
           <Text style={[styles.name, { color: colors.text }]}>
-            Your Name
+            {userDisplayName}
           </Text>
           <Text style={[styles.username, { color: colors.textSecondary }]}>
-            @username
+            @{userDisplayName.toLowerCase()}
           </Text>
         </View>
 
@@ -59,7 +79,7 @@ export function ProfileScreen() {
           />
           <Button
             title="Sign Out"
-            onPress={() => {}}
+            onPress={handleSignOut}
             variant="ghost"
             fullWidth
           />
