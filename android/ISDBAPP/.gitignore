@@ -84,3 +84,4 @@ config/.env*
 supabase-config.ts
 api-keys.ts
 *.env.*
+src/config/supabase.ts
