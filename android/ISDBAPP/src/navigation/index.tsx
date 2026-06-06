@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useTheme, ThemeProvider } from '../hooks/use-theme';
 import { useAuth } from '../hooks/use-auth';
+import { useProfile } from '../hooks/use-profile';
 import { DEEP_LINK_SCHEME } from '../constants';
 import {
   LandingScreen,
@@ -17,6 +18,7 @@ import {
   ProfileScreen,
   LoginScreen,
   AuthCallbackScreen,
+  OnboardingScreen,
 } from '../app';
 
 // Type definitions
@@ -24,6 +26,7 @@ export type RootStackParamList = {
   Landing: undefined;
   Auth: undefined;
   AuthCallback: undefined;
+  Onboarding: undefined;
   Main: undefined;
 };
 
@@ -55,6 +58,7 @@ const linking: LinkingOptions<RootStackParamList> = {
           AuthCallback: 'auth/callback',
         },
       },
+      Onboarding: 'onboarding',
       Main: {
         screens: {
           Home: 'home',
@@ -129,7 +133,9 @@ function MainNavigator() {
 
 function RootNavigator() {
   const { user, loading, initialized } = useAuth();
+  const { getProfile, checkProfileComplete } = useProfile();
   const { colors, isDark } = useTheme();
+  const [needsOnboarding, setNeedsOnboarding] = React.useState<boolean | null>(null);
 
   // Show loading screen while initializing
   if (!initialized) {
@@ -140,8 +146,37 @@ function RootNavigator() {
     );
   }
 
-  // Determine initial route based on auth status
-  const initialRouteName: keyof RootStackParamList = user ? 'Main' : 'Landing';
+  // Check if user needs onboarding
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      if (!user) {
+        setNeedsOnboarding(false);
+        return;
+      }
+      
+      const profile = await getProfile(user.id);
+      const isComplete = checkProfileComplete(profile);
+      setNeedsOnboarding(!isComplete);
+    };
+
+    if (user) {
+      checkOnboarding();
+    }
+  }, [user, getProfile, checkProfileComplete]);
+
+  if (needsOnboarding === null) {
+    return (
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  // Determine initial route based on auth status and profile completeness
+  let initialRouteName: keyof RootStackParamList = 'Landing';
+  if (user) {
+    initialRouteName = needsOnboarding ? 'Onboarding' : 'Main';
+  }
 
   return (
     <RootStack.Navigator
@@ -155,6 +190,7 @@ function RootNavigator() {
       <RootStack.Screen name="Landing" component={LandingScreen} />
       <RootStack.Screen name="Auth" component={AuthNavigator} />
       <RootStack.Screen name="AuthCallback" component={AuthCallbackScreen} />
+      <RootStack.Screen name="Onboarding" component={OnboardingScreen} />
       <RootStack.Screen name="Main" component={MainNavigator} />
     </RootStack.Navigator>
   );
