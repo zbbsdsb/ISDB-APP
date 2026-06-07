@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../hooks/use-theme';
@@ -11,30 +11,49 @@ export function AuthCallbackScreen() {
   const navigation = useNavigation();
   const [status, setStatus] = useState('Processing login...');
 
+  // Refs for cleanup
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mountedRef = useRef(true);
+
   useEffect(() => {
+    mountedRef.current = true;
+
     const checkAuth = async () => {
-      if (initialized) {
-        if (user) {
-          setStatus('Login successful! Redirecting...');
-          setTimeout(() => {
+      // Wait for auth to initialize
+      if (!initialized) return;
+
+      if (user) {
+        setStatus('Login successful! Redirecting...');
+        timeoutRef.current = setTimeout(() => {
+          if (mountedRef.current) {
             navigation.reset({
               index: 0,
               routes: [{ name: 'Main' as never }],
             });
-          }, 1000);
-        } else {
-          setStatus('Login failed. Please try again.');
-          setTimeout(() => {
+          }
+        }, 1000);
+      } else {
+        setStatus('Login failed. Please try again.');
+        timeoutRef.current = setTimeout(() => {
+          if (mountedRef.current) {
             navigation.reset({
               index: 0,
               routes: [{ name: 'Landing' as never }],
             });
-          }, 2000);
-        }
+          }
+        }, 2000);
       }
     };
 
     checkAuth();
+
+    return () => {
+      mountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
   }, [user, initialized, navigation]);
 
   return (

@@ -236,7 +236,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
               label="Interests"
               selectedTags={formData.interests}
               availableTags={tags}
-              onTagsChange={(interests) => {}}
+              onTagsChange={handleInterestsComplete}
               minTags={1}
               maxTags={5}
               placeholder="Search interests..."

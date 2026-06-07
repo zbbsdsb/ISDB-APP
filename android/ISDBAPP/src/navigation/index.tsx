@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavigationContainer, LinkingOptions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -135,7 +135,8 @@ function RootNavigator() {
   const { user, loading, initialized } = useAuth();
   const { getProfile, checkProfileComplete } = useProfile();
   const { colors, isDark } = useTheme();
-  const [needsOnboarding, setNeedsOnboarding] = React.useState<boolean | null>(null);
+  const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
+  const onboardingCheckRef = useRef(false);
 
   // Show loading screen while initializing
   if (!initialized) {
@@ -148,13 +149,18 @@ function RootNavigator() {
 
   // Check if user needs onboarding
   useEffect(() => {
+    // Mark this effect run as stale when cleanup runs
+    onboardingCheckRef.current = false;
+
     const checkOnboarding = async () => {
       if (!user) {
         setNeedsOnboarding(false);
         return;
       }
-      
+
       const profile = await getProfile(user.id);
+      // Guard: if this effect run is stale, skip state update
+      if (onboardingCheckRef.current) return;
       const isComplete = checkProfileComplete(profile);
       setNeedsOnboarding(!isComplete);
     };
@@ -162,6 +168,10 @@ function RootNavigator() {
     if (user) {
       checkOnboarding();
     }
+
+    return () => {
+      onboardingCheckRef.current = true;
+    };
   }, [user, getProfile, checkProfileComplete]);
 
   if (needsOnboarding === null) {
