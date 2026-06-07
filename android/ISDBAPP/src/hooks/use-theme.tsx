@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { useThemeStore } from '../store/theme-store';
 import { getColors, type Colors } from '../constants/theme-colors';
 
@@ -12,7 +12,7 @@ const ThemeContext = createContext<ThemeContextValue>({
   colors: getColors(true),
 });
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const { isDark } = useThemeStore();
 
   const value = useMemo(

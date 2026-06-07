@@ -1,15 +1,15 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { User } from '../types';
+import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 interface AuthState {
-  user: User | null;
-  session: any | null;
+  user: SupabaseUser | null;
+  session: Session | null;
   loading: boolean;
   initialized: boolean;
-  setUser: (user: User | null) => void;
-  setSession: (session: any | null) => void;
+  setUser: (user: SupabaseUser | null) => void;
+  setSession: (session: Session | null) => void;
   setLoading: (loading: boolean) => void;
   setInitialized: (initialized: boolean) => void;
   signOut: () => void;

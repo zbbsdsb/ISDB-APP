@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { APP_SCHEME } from '@isdb/shared';
 import { supabase } from '../services/supabase';
 import { useAuthStore } from '../store/auth-store';
-import type { User } from '../types';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+
+type Provider = 'github' | 'discord';
 
 export function useAuth() {
   const { user, session, loading, initialized, setUser, setSession, setLoading, setInitialized, signOut } = useAuthStore();
@@ -18,10 +20,10 @@ export function useAuth() {
   const initSession = async () => {
     try {
       const { data: { session: currentSession } } = await supabase.auth.getSession();
-      
+
       if (currentSession) {
-        const user = currentSession.user as User;
-        setUser(user);
+        // currentSession.user is Supabase User, matches auth-store's SupabaseUser type
+        setUser(currentSession.user as SupabaseUser);
         setSession(currentSession);
       } else {
         setUser(null);
@@ -36,42 +38,21 @@ export function useAuth() {
     }
   };
 
-  const signInWithGitHub = async () => {
+  const signInWithProvider = async (provider: Provider) => {
     try {
       setLoading(true);
       setError(null);
       const { data, error: signInError } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
+        provider,
         options: {
           redirectTo: `${APP_SCHEME}://auth/callback`,
         },
       });
-      
-      if (signInError) throw signInError;
-      return data;
-    } catch (err: any) {
-      setError(err.message || 'Failed to sign in with GitHub');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const signInWithDiscord = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const { data, error: signInError } = await supabase.auth.signInWithOAuth({
-        provider: 'discord',
-        options: {
-          redirectTo: `${APP_SCHEME}://auth/callback`,
-        },
-      });
-      
       if (signInError) throw signInError;
       return data;
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Discord');
+      setError(err.message || `Failed to sign in with ${provider}`);
       throw err;
     } finally {
       setLoading(false);
@@ -95,9 +76,10 @@ export function useAuth() {
     session,
     loading,
     error,
+    setError,
     initialized,
-    signInWithGitHub,
-    signInWithDiscord,
+    signInWithGitHub: () => signInWithProvider('github'),
+    signInWithDiscord: () => signInWithProvider('discord'),
     signOut: handleSignOut,
   };
 }

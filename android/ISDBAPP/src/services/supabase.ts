@@ -11,7 +11,7 @@ class SecureStorage {
         return credentials.password;
       }
       return null;
-    } catch {
+    } catch (_e) {
         return null;
     }
   }
