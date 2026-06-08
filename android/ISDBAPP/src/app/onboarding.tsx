@@ -58,10 +58,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
       const profile = await getProfile(user.id);
       if (profile && checkProfileComplete(profile)) {
         // User already has complete profile, redirect to home
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Main' }],
-        });
+        navigation.navigate('Main');
       }
     };
 
@@ -138,10 +135,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
   };
 
   const handleCeremonyComplete = () => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Main' }],
-    });
+    navigation.navigate('Main');
   };
 
   const handleBack = () => {
