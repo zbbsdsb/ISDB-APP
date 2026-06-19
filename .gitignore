@@ -30,6 +30,11 @@ lerna-debug.log*
 .env.local
 .env.*.local
 
+# Sensitive configuration
+**/src/config/supabase.ts
+**/supabase-config.ts
+**/api-keys.ts
+
 # TypeScript
 *.tsbuildinfo
 
@@ -55,3 +60,17 @@ desktop/out/
 # Supabase migrations
 supabase/migrations/
 !supabase/migrations/.gitkeep
+
+# WorkBuddy memory & plans
+.workbuddy/
+!.workbuddy/.gitkeep
+
+# IDE documents
+.trae/
+
+# Generated artifacts & screenshots
+overview.md
+android_screenshot*.png
+
+# Cleanup scripts
+cleanup_*.py
