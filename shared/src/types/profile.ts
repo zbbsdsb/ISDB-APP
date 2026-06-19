@@ -12,6 +12,14 @@ export interface Profile {
   skills: string[];
   interests: string[];
   country?: string;
+  // Synced from Web 版
+  goal?: 'seeking' | 'recruiting' | 'both';
+  identity_number?: number;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  signup_channel?: string;
+  // ---
   created_at: string;
   updated_at: string;
 }

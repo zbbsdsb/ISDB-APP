@@ -2,6 +2,16 @@ import { useState, useCallback } from 'react';
 import { supabase } from '../services/supabase';
 import type { Project, Profile } from '../types';
 
+interface ProjectOwner {
+  username?: string;
+  display_name?: string;
+  avatar_url?: string;
+}
+
+interface RawProject extends Omit<Project, 'owner'> {
+  owner?: ProjectOwner | ProjectOwner[] | null;
+}
+
 interface ProjectWithOwner extends Project {
   owner?: Profile;
 }
@@ -14,6 +24,19 @@ interface UseProjectsReturn {
   createProject: (projectData: Partial<Project>) => Promise<string | null>;
   updateProject: (projectId: string, projectData: Partial<Project>) => Promise<boolean>;
   deleteProject: (projectId: string) => Promise<boolean>;
+}
+
+function unwrapOwner(
+  owner: ProjectOwner | ProjectOwner[] | null | undefined
+): Profile | undefined {
+  if (!owner) return undefined;
+  const raw = Array.isArray(owner) ? owner[0] : owner;
+  if (!raw) return undefined;
+  return {
+    username: raw.username || '',
+    display_name: raw.display_name,
+    avatar_url: raw.avatar_url,
+  } as Profile;
 }
 
 export function useProjects(userId?: string): UseProjectsReturn {
@@ -42,15 +65,16 @@ export function useProjects(userId?: string): UseProjectsReturn {
 
       if (fetchError) throw fetchError;
 
-      const projectsWithOwner: ProjectWithOwner[] = (data || []).map((p: any) => ({
-          ...p,
-          sponsorship_enabled: p.sponsorship_enabled ?? false,
-          sponsorship_current: p.sponsorship_current ?? 0,
-          owner: Array.isArray(p.owner) && p.owner.length > 0 ? p.owner[0] : p.owner,
-        }));
+      const rawData = (data as unknown as RawProject[] || []);
+      const projectsWithOwner: ProjectWithOwner[] = rawData.map((p) => ({
+        ...p,
+        sponsorship_enabled: p.sponsorship_enabled ?? false,
+        sponsorship_current: p.sponsorship_current ?? 0,
+        owner: unwrapOwner(p.owner),
+      }));
 
       setProjects(projectsWithOwner);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching projects:', err);
       setError('Failed to load projects');
     } finally {
@@ -78,8 +102,8 @@ export function useProjects(userId?: string): UseProjectsReturn {
 
         if (insertError) throw insertError;
 
-        return data?.id || null;
-      } catch (err: any) {
+        return (data as unknown as { id: string } | null)?.id || null;
+      } catch (err: unknown) {
         console.error('Error creating project:', err);
         setError('Failed to create project');
         return null;
@@ -104,13 +128,13 @@ export function useProjects(userId?: string): UseProjectsReturn {
         setProjects(prev =>
           prev.map(p =>
             p.id === projectId
-              ? { ...p, ...projectData, updated_at: new Date().toISOString() } as ProjectWithOwner
+              ? ({ ...p, ...projectData, updated_at: new Date().toISOString() } as ProjectWithOwner)
               : p
           )
         );
 
         return true;
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error updating project:', err);
         setError('Failed to update project');
         return false;
@@ -131,7 +155,7 @@ export function useProjects(userId?: string): UseProjectsReturn {
       setProjects(prev => prev.filter(p => p.id !== projectId));
 
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error deleting project:', err);
       setError('Failed to delete project');
       return false;

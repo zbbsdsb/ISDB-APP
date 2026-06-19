@@ -20,6 +20,7 @@ export interface Project {
 
   // Images
   cover_image_url?: string;
+  thumbnail_url?: string;
 
   // Sponsorship
   sponsorship_enabled: boolean;

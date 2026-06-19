@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { APP_SCHEME } from '@isdb/shared';
 import { supabase } from '../services/supabase';
 import { useAuthStore } from '../store/auth-store';
@@ -9,36 +9,65 @@ type Provider = 'github' | 'discord';
 export function useAuth() {
   const { user, session, loading, initialized, setUser, setSession, setLoading, setInitialized, signOut } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
+  const hasStartedRef = useRef(false);
 
-  // Initialize session on mount
+  // Initialize session on mount — runs exactly once, even across re-renders
   useEffect(() => {
-    if (!initialized) {
-      initSession();
-    }
-  }, [initialized]);
+    if (initialized || hasStartedRef.current) return;
+    hasStartedRef.current = true;
 
-  const initSession = async () => {
-    try {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
+    let mounted = true;
 
-      if (currentSession) {
-        // currentSession.user is Supabase User, matches auth-store's SupabaseUser type
-        setUser(currentSession.user as SupabaseUser);
-        setSession(currentSession);
-      } else {
-        setUser(null);
-        setSession(null);
+    const initSession = async () => {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+
+        if (!mounted) return;
+
+        if (currentSession) {
+          setUser(currentSession.user as SupabaseUser);
+          setSession(currentSession);
+        } else {
+          setUser(null);
+          setSession(null);
+        }
+      } catch (err) {
+        if (!mounted) return;
+        console.error('Error initializing session:', err);
+        setError('Failed to initialize session');
+      } finally {
+        if (mounted) {
+          setLoading(false);
+          setInitialized(true);
+        }
       }
-    } catch (err) {
-      console.error('Error initializing session:', err);
-      setError('Failed to initialize session');
-    } finally {
-      setLoading(false);
-      setInitialized(true);
-    }
-  };
+    };
 
-  const signInWithProvider = async (provider: Provider) => {
+    initSession();
+
+    // Subscribe to auth state changes — keeps App in sync with token expiry /异地登录
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!mounted) return;
+        if (event === 'SIGNED_OUT' || !session) {
+          setUser(null);
+          setSession(null);
+        } else if (session?.user) {
+          setUser(session.user as SupabaseUser);
+          setSession(session);
+        }
+        setLoading(false);
+        setInitialized(true);
+      }
+    );
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [initialized, setUser, setSession, setLoading, setInitialized]);
+
+  const signInWithProvider = useCallback(async (provider: Provider) => {
     try {
       setLoading(true);
       setError(null);
@@ -57,9 +86,9 @@ export function useAuth() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setLoading, setError]);
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     try {
       setLoading(true);
       await supabase.auth.signOut();
@@ -69,7 +98,7 @@ export function useAuth() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setLoading, setError, signOut]);
 
   return {
     user,

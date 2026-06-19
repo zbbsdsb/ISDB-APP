@@ -12,35 +12,9 @@ import {
 import { useTheme } from '../hooks/use-theme';
 import { useAuth } from '../hooks/use-auth';
 import { useMatches } from '../hooks/use-matches';
+import type { MatchWithDetails } from '../hooks/use-matches';
 import { Avatar, Button, Card } from '../components/ui';
 import type { Match } from '@isdb/shared';
-
-interface MatchWithDetails {
-  id: string;
-  project_id: string;
-  user_id: string;
-  status: 'pending' | 'accepted' | 'rejected';
-  message?: string;
-  super_match?: boolean;
-  created_at: string;
-  project?: {
-    id: string;
-    title: string;
-    owner_id?: string;
-  };
-  applicant?: {
-    id: string;
-    username: string | null;
-    avatar_url: string | null;
-    github_username?: string | null;
-  };
-  owner?: {
-    id: string;
-    username: string | null;
-    avatar_url: string | null;
-    github_username?: string | null;
-  };
-}
 
 export function MatchesScreen() {
   const { colors } = useTheme();

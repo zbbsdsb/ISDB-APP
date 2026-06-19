@@ -1,14 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import type { NavigationProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../hooks/use-theme';
 import { useAuth } from '../hooks/use-auth';
+import type { RootStackParamList } from '../navigation';
 
 export function AuthCallbackScreen() {
   const { colors } = useTheme();
   const { user, initialized } = useAuth();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList, 'AuthCallback'>>();
   const [status, setStatus] = useState('Processing login...');
 
   // Refs for cleanup
@@ -28,7 +30,7 @@ export function AuthCallbackScreen() {
           if (mountedRef.current) {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Main' as never }],
+              routes: [{ name: 'Main' }],
             });
           }
         }, 1000);
@@ -38,7 +40,7 @@ export function AuthCallbackScreen() {
           if (mountedRef.current) {
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Landing' as never }],
+              routes: [{ name: 'Landing' }],
             });
           }
         }, 2000);

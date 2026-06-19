@@ -23,8 +23,22 @@ export function SwipeCard({ card, onSwipe, disabled }: SwipeCardProps) {
     return '#6b7280';
   };
 
+  // Web 版同步：自定义卡片字段
+  const accentColor = card.project.card_color || '#f59e0b';
+  const hasHook = !!card.project.hook_text;
+  const displayDescription = hasHook
+    ? card.project.hook_text
+    : card.project.description;
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { borderColor: `${accentColor}33` }]}>
+      {/* custom_badge 徽章（右上角） */}
+      {card.project.custom_badge && (
+        <View style={[styles.customBadge, { backgroundColor: accentColor }]}>
+          <Text style={styles.customBadgeText}>{card.project.custom_badge}</Text>
+        </View>
+      )}
+
       <View style={styles.header}>
         <View
           style={[
@@ -41,8 +55,22 @@ export function SwipeCard({ card, onSwipe, disabled }: SwipeCardProps) {
           {project.title}
         </Text>
         <Text style={styles.description} numberOfLines={4}>
-          {project.description}
+          {displayDescription}
         </Text>
+
+        {/* featured_tags 行（作者自定义标签，在 tags 之前） */}
+        {card.project.featured_tags && card.project.featured_tags.length > 0 && (
+          <View style={styles.featuredTags}>
+            {card.project.featured_tags.slice(0, 3).map((tag, index) => (
+              <View
+                key={index}
+                style={[styles.featuredTag, { backgroundColor: `${accentColor}33` }]}
+              >
+                <Text style={[styles.featuredTagText, { color: accentColor }]}>{tag}</Text>
+              </View>
+            ))}
+          </View>
+        )}
 
         <View style={styles.tags}>
           {(project.tags || []).slice(0, 4).map((tag, index) => (
@@ -131,6 +159,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(245, 158, 11, 0.2)',
     overflow: 'hidden',
+    position: 'relative', // for absolute-positioned customBadge
+  },
+  customBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  customBadgeText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: '700',
   },
   header: {
     padding: 16,
@@ -167,6 +210,21 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
     marginBottom: 16,
+  },
+  featuredTags: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 12,
+  },
+  featuredTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  featuredTagText: {
+    fontSize: 11,
+    fontWeight: '600',
   },
   tag: {
     backgroundColor: 'rgba(139, 92, 246, 0.2)',

@@ -1,17 +1,51 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { useTheme } from '../hooks/use-theme';
+import { useAuth } from '../hooks/use-auth';
+import { useProfile } from '../hooks/use-profile';
+import { useProjects } from '../hooks/use-projects';
+import { useMatches } from '../hooks/use-matches';
 import { Button, Card } from '../components/ui';
 
 export function HomeScreen() {
   const { colors } = useTheme();
+  const { user } = useAuth();
+  const { getProfile } = useProfile();
+  const { projects, fetchProjects } = useProjects(user?.id || '');
+  const { outgoingMatches, fetchMatches } = useMatches(user?.id || '');
+
+  const [builderId, setBuilderId] = useState<string>('---');
+  const [displayName, setDisplayName] = useState<string>('');
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchProjects();
+      fetchMatches();
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (user?.id) {
+      getProfile(user.id).then(profile => {
+        if (profile) {
+          const id = (profile as any)?.identity_number;
+          setBuilderId(id ? `#${String(id).padStart(5, '0')}` : '---');
+          setDisplayName((profile as any)?.display_name || user.email?.split('@')[0] || 'Builder');
+        }
+      });
+    }
+  }, [user?.id]);
+
+  const greeting = displayName
+    ? `Hi ${displayName}!`
+    : 'Welcome back!';
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <Text style={[styles.greeting, { color: colors.text }]}>
-            Welcome back!
+            {greeting}
           </Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             Ready to build something insane?
@@ -42,19 +76,25 @@ export function HomeScreen() {
           </Text>
           <View style={styles.statsRow}>
             <View style={styles.stat}>
-              <Text style={[styles.statValue, { color: colors.primary }]}>0</Text>
+              <Text style={[styles.statValue, { color: colors.primary }]}>
+                {projects.length}
+              </Text>
               <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
                 Projects
               </Text>
             </View>
             <View style={styles.stat}>
-              <Text style={[styles.statValue, { color: colors.primary }]}>0</Text>
+              <Text style={[styles.statValue, { color: colors.primary }]}>
+                {outgoingMatches.length}
+              </Text>
               <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
                 Matches
               </Text>
             </View>
             <View style={styles.stat}>
-              <Text style={[styles.statValue, { color: colors.primary }]}>---</Text>
+              <Text style={[styles.statValue, { color: colors.primary }]}>
+                {builderId}
+              </Text>
               <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
                 Builder ID
               </Text>

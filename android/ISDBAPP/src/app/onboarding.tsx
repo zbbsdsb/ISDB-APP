@@ -15,13 +15,17 @@ import { BasicInfoForm } from '../components/onboarding/basic-info-form';
 import { TagSelector } from '../components/onboarding/tag-selector';
 import { IdentityCeremony } from '../components/onboarding/identity-ceremony';
 import { StepIndicator } from '../components/onboarding/step-indicator';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { supabase } from '../services/supabase';
+import type { NavigationProp } from '@react-navigation/native';
+import type { RootStackParamList } from '../navigation';
 
 type OnboardingScreenProps = {
-  navigation: NativeStackNavigationProp<any>;
+  navigation: NavigationProp<RootStackParamList, 'Onboarding'>;
 };
 
-type Step = 'basic' | 'skills' | 'interests' | 'ceremony';
+type Step = 'basic' | 'skills' | 'interests' | 'goal' | 'ceremony';
+
+type GoalOption = 'seeking' | 'recruiting' | 'both';
 
 interface FormData {
   username: string;
@@ -30,6 +34,7 @@ interface FormData {
   country: string;
   skills: string[];
   interests: string[];
+  goal?: GoalOption | null;
 }
 
 export default function OnboardingScreen({ navigation }: OnboardingScreenProps) {
@@ -40,7 +45,8 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
   const [currentStep, setCurrentStep] = useState<Step>('basic');
   const [submitting, setSubmitting] = useState(false);
   const [builderId, setBuilderId] = useState<number>(1);
-  
+  const [selectedGoal, setSelectedGoal] = useState<GoalOption | null>(null);
+
   const [formData, setFormData] = useState<FormData>({
     username: '',
     display_name: '',
@@ -89,14 +95,18 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
     setCurrentStep('interests');
   };
 
-  const handleInterestsComplete = async (interests: string[]) => {
-    setFormData(prev => ({
-      ...prev,
-      interests,
-    }));
-    
-    // Submit profile to database
-    await handleSubmit({ ...formData, interests });
+  const handleInterestsNext = () => {
+    setCurrentStep('goal');
+  };
+
+  const handleGoalComplete = async () => {
+    // Build complete data object from current state + goal
+    const finalData: FormData = {
+      ...formData,
+      goal: selectedGoal ?? null,
+    };
+    setFormData(finalData);
+    await handleSubmit(finalData);
   };
 
   const handleSubmit = async (finalData: FormData) => {
@@ -105,6 +115,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
     setSubmitting(true);
     
     try {
+      // Create / update profile with upsert
       const success = await createProfile(user.id, {
         username: finalData.username,
         display_name: finalData.display_name || undefined,
@@ -112,15 +123,36 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
         country: finalData.country || undefined,
         skills: finalData.skills,
         interests: finalData.interests,
+        goal: (finalData.goal as string) || undefined,
       });
 
       if (success) {
-        // Get builder ID from profile (simulated - in real app this would come from database)
-        const profile = await getProfile(user.id);
-        const identityNumber = profile?.id ? 
-          parseInt(profile.id.split('-')[0], 16) % 1000000 || 1 : 
-          Math.floor(Math.random() * 1000000) + 1;
-        
+        // Step 1: Call RPC to ensure official identity_number is allocated
+        const { data: rpcData, error: rpcError } = await supabase.rpc(
+          'ensure_identity_number',
+          { p_user_id: user.id }
+        );
+
+        if (rpcError) {
+          console.error('[onboarding] ensure_identity_number RPC error:', rpcError);
+        }
+
+        // Step 2: Fallback chain — RPC result → existing profile field → error
+        let identityNumber: number;
+        if (rpcError || !rpcData) {
+          // RPC failed — try reading from existing profile
+          const existingProfile = await getProfile(user.id);
+          identityNumber = (existingProfile as any)?.identity_number || 1;
+        } else {
+          identityNumber = (rpcData as number) || 1;
+        }
+
+        // Step 3: Write identity_number back to profiles table for consistency
+        await supabase
+          .from('profiles')
+          .update({ identity_number: identityNumber })
+          .eq('id', user.id);
+
         setBuilderId(identityNumber);
         setCurrentStep('ceremony');
       } else {
@@ -146,6 +178,9 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
       case 'interests':
         setCurrentStep('skills');
         break;
+      case 'goal':
+        setCurrentStep('interests');
+        break;
     }
   };
 
@@ -162,17 +197,20 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
       case 'basic': return 1;
       case 'skills': return 2;
       case 'interests': return 3;
+      case 'goal': return 4;
       case 'ceremony': return 4;
       default: return 1;
     }
   };
+
+  const totalSteps = currentStep === 'ceremony' ? 4 : 4;
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       {currentStep !== 'ceremony' && (
         <View style={styles.header}>
-          <StepIndicator totalSteps={3} currentStep={getStepNumber()} />
+          <StepIndicator totalSteps={totalSteps} currentStep={getStepNumber()} />
         </View>
       )}
 
@@ -225,12 +263,14 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
             <Text style={styles.subtitle}>
               Select topics and areas you're interested in
             </Text>
-            
+
             <TagSelector
               label="Interests"
               selectedTags={formData.interests}
               availableTags={tags}
-              onTagsChange={handleInterestsComplete}
+              onTagsChange={(tags) => {
+                setFormData(prev => ({ ...prev, interests: tags }));
+              }}
               minTags={1}
               maxTags={5}
               placeholder="Search interests..."
@@ -241,14 +281,60 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
               <TouchableOpacity style={styles.backButton} onPress={handleBack}>
                 <Text style={styles.backButtonText}>Back</Text>
               </TouchableOpacity>
-              
+
+              <TouchableOpacity
+                style={[
+                  styles.nextButton,
+                  formData.interests.length < 1 && styles.nextButtonDisabled,
+                ]}
+                onPress={handleInterestsNext}
+                disabled={formData.interests.length < 1}
+              >
+                <Text style={styles.nextButtonText}>Next</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        {currentStep === 'goal' && (
+          <View style={styles.goalStep}>
+            <Text style={styles.title}>What's your goal?</Text>
+            <Text style={styles.subtitle}>
+              Tell us what you're looking for
+            </Text>
+
+            <View style={styles.goalOptions}>
+              {([
+                { value: 'seeking', label: 'Find a Project', desc: 'I want to join an existing project' },
+                { value: 'recruiting', label: 'Recruit Teammates', desc: 'I have a project and need collaborators' },
+                { value: 'both', label: 'Open to Both', desc: "I'm flexible — happy to join or recruit" },
+              ] as { value: GoalOption; label: string; desc: string }[]).map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.goalOption,
+                    selectedGoal === option.value && styles.goalOptionSelected,
+                  ]}
+                  onPress={() => setSelectedGoal(option.value)}
+                >
+                  <Text style={styles.goalLabel}>{option.label}</Text>
+                  <Text style={styles.goalDesc}>{option.desc}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <View style={styles.buttonRow}>
+              <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                <Text style={styles.backButtonText}>Back</Text>
+              </TouchableOpacity>
+
               <TouchableOpacity
                 style={[
                   styles.completeButton,
-                  formData.interests.length < 1 && styles.nextButtonDisabled,
+                  !selectedGoal && styles.nextButtonDisabled,
                 ]}
-                onPress={() => handleInterestsComplete(formData.interests)}
-                disabled={formData.interests.length < 1 || submitting}
+                onPress={handleGoalComplete}
+                disabled={!selectedGoal || submitting}
               >
                 {submitting ? (
                   <ActivityIndicator size="small" color="#000000" />
@@ -352,5 +438,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#000000',
+  },
+  goalStep: {
+    flex: 1,
+    padding: 24,
+    gap: 20,
+  },
+  goalOptions: {
+    gap: 12,
+  },
+  goalOption: {
+    backgroundColor: '#1f1f1f',
+    borderWidth: 1,
+    borderColor: '#374151',
+    borderRadius: 12,
+    padding: 16,
+  },
+  goalOptionSelected: {
+    borderColor: '#f59e0b',
+    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+  },
+  goalLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  goalDesc: {
+    fontSize: 13,
+    color: '#9ca3af',
   },
 });

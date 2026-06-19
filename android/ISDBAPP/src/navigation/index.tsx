@@ -136,9 +136,8 @@ function RootNavigator() {
   const { getProfile, checkProfileComplete } = useProfile();
   const { colors, isDark } = useTheme();
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
-  const onboardingCheckRef = useRef(false);
 
-  // Show loading screen while initializing
+  // Show loading screen while auth is initializing
   if (!initialized) {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
@@ -149,31 +148,30 @@ function RootNavigator() {
 
   // Check if user needs onboarding
   useEffect(() => {
-    // Mark this effect run as stale when cleanup runs
-    onboardingCheckRef.current = false;
+    let isMounted = true;
 
     const checkOnboarding = async () => {
       if (!user) {
-        setNeedsOnboarding(false);
+        if (isMounted) setNeedsOnboarding(false);
         return;
       }
 
       const profile = await getProfile(user.id);
-      // Guard: if this effect run is stale, skip state update
-      if (onboardingCheckRef.current) return;
+      // Guard: if this effect run is stale (component unmounted), skip state update
+      if (!isMounted) return;
       const isComplete = checkProfileComplete(profile);
       setNeedsOnboarding(!isComplete);
     };
 
-    if (user) {
-      checkOnboarding();
-    }
+    // Start the check - runs for both logged-in and logged-out users
+    checkOnboarding();
 
     return () => {
-      onboardingCheckRef.current = true;
+      isMounted = false;
     };
   }, [user, getProfile, checkProfileComplete]);
 
+  // Show loading while checking onboarding status
   if (needsOnboarding === null) {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>

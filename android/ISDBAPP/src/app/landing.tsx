@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import type { NavigationProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../hooks/use-theme';
 import { Button } from '../components/ui';
+import type { RootStackParamList } from '../navigation';
 
 interface LandingScreenProps {
   onLogin?: () => void;
@@ -10,10 +12,10 @@ interface LandingScreenProps {
 
 export function LandingScreen({ onLogin }: LandingScreenProps) {
   const { colors, isDark } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList, 'Landing'>>();
 
   const handleGetStarted = () => {
-    navigation.navigate('Auth' as never);
+    navigation.navigate('Auth');
   };
 
   return (

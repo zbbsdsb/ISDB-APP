@@ -164,13 +164,13 @@ export function SwipeScreen() {
             >
               {isTopCard ? (
                 <SwipeCard
-                  card={card as any}
+                  card={card}
                   onSwipe={handleSwipe}
                   disabled={isTransitioning}
                 />
               ) : (
                 <View style={styles.backgroundCard}>
-                  <SwipeCard card={card as any} onSwipe={() => {}} disabled />
+                  <SwipeCard card={card} onSwipe={() => {}} disabled />
                 </View>
               )}
             </View>

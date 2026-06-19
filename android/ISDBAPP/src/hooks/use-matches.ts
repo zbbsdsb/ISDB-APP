@@ -1,32 +1,55 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '../services/supabase';
-import type { Match } from '@isdb/shared';
 
-interface MatchWithDetails {
+export interface ProjectInfo {
+  id: string;
+  title: string;
+  owner_id?: string;
+}
+
+export interface ProfileInfo {
+  id: string;
+  username?: string;
+  display_name?: string;
+  avatar_url?: string;
+  github_username?: string;
+}
+
+export interface MatchWithDetails {
   id: string;
   project_id: string;
   user_id: string;
   status: 'pending' | 'accepted' | 'rejected';
-  message?: string;
+  message?: string | null;
   super_match?: boolean;
   created_at: string;
-  project?: {
-    id: string;
-    title: string;
-    owner_id?: string;
-  };
-  applicant?: {
-    id: string;
-    username: string | null;
-    avatar_url: string | null;
-    github_username?: string | null;
-  };
-  owner?: {
-    id: string;
-    username: string | null;
-    avatar_url: string | null;
-    github_username?: string | null;
-  };
+  project?: ProjectInfo | null;
+  applicant?: ProfileInfo | null;
+  owner?: ProfileInfo | null;
+}
+
+interface RawIncomingMatch {
+  id: string;
+  project_id: string;
+  user_id: string;
+  status: string;
+  message?: string | null;
+  super_match?: boolean | null;
+  created_at: string;
+  project?: ProjectInfo | ProjectInfo[] | null;
+  applicant?: ProfileInfo | ProfileInfo[] | null;
+}
+
+interface RawOutgoingMatch {
+  id: string;
+  project_id: string;
+  user_id: string;
+  status: string;
+  message?: string | null;
+  super_match?: boolean | null;
+  created_at: string;
+  project?: ProjectInfo | ProjectInfo[] | null;
+  owner?: ProfileInfo | ProfileInfo[] | null;
 }
 
 interface UseMatchesReturn {
@@ -37,6 +60,23 @@ interface UseMatchesReturn {
   fetchMatches: () => Promise<void>;
   acceptMatch: (matchId: string) => Promise<boolean>;
   rejectMatch: (matchId: string) => Promise<boolean>;
+}
+
+function unwrapProject(p: ProjectInfo | ProjectInfo[] | null | undefined): ProjectInfo | undefined {
+  if (!p) return undefined;
+  if (Array.isArray(p)) return p[0];
+  return p;
+}
+
+function unwrapProfile(p: ProfileInfo | ProfileInfo[] | null | undefined): ProfileInfo | undefined {
+  if (!p) return undefined;
+  if (Array.isArray(p)) return p[0];
+  return p;
+}
+
+function normalizeStatus(status: string): 'pending' | 'accepted' | 'rejected' {
+  if (status === 'accepted' || status === 'rejected') return status;
+  return 'pending';
 }
 
 export function useMatches(userId: string): UseMatchesReturn {
@@ -65,6 +105,7 @@ export function useMatches(userId: string): UseMatchesReturn {
           applicant:profiles!matches_user_id_fkey (
             id,
             username,
+            display_name,
             avatar_url,
             github_username
           )
@@ -88,6 +129,7 @@ export function useMatches(userId: string): UseMatchesReturn {
           owner:profiles!inner (
             id,
             username,
+            display_name,
             avatar_url,
             github_username
           )
@@ -97,21 +139,38 @@ export function useMatches(userId: string): UseMatchesReturn {
 
       if (outgoingError) throw outgoingError;
 
-      const mapMatch = (m: any): MatchWithDetails => ({
+      const incomingArr = (incoming as unknown as RawIncomingMatch[] || []);
+      const outgoingArr = (outgoing as unknown as RawOutgoingMatch[] || []);
+
+      const mapIncoming = (m: RawIncomingMatch): MatchWithDetails => ({
         id: m.id,
         user_id: m.user_id,
         project_id: m.project_id,
-        status: m.status,
-        message: m.message,
+        status: normalizeStatus(m.status),
+        message: m.message ?? null,
+        super_match: m.super_match ?? undefined,
         created_at: m.created_at,
-        project: Array.isArray(m.project) ? m.project[0] : m.project,
-        applicant: Array.isArray(m.applicant) ? m.applicant[0] : m.applicant,
-        owner: Array.isArray(m.owner) ? m.owner[0] : m.owner,
+        project: unwrapProject(m.project),
+        applicant: unwrapProfile(m.applicant),
+        owner: undefined,
       });
 
-      setIncomingMatches((incoming || []).map(mapMatch));
-      setOutgoingMatches((outgoing || []).map(mapMatch));
-    } catch (err: any) {
+      const mapOutgoing = (m: RawOutgoingMatch): MatchWithDetails => ({
+        id: m.id,
+        user_id: m.user_id,
+        project_id: m.project_id,
+        status: normalizeStatus(m.status),
+        message: m.message ?? null,
+        super_match: m.super_match ?? undefined,
+        created_at: m.created_at,
+        project: unwrapProject(m.project),
+        applicant: undefined,
+        owner: unwrapProfile(m.owner),
+      });
+
+      setIncomingMatches(incomingArr.map(mapIncoming));
+      setOutgoingMatches(outgoingArr.map(mapOutgoing));
+    } catch (err: unknown) {
       console.error('Error fetching matches:', err);
       setError('Failed to load matches');
     } finally {

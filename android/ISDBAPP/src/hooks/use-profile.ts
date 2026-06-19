@@ -21,8 +21,8 @@ export function useProfile() {
         .single();
 
       if (fetchError) throw fetchError;
-      return data;
-    } catch (err: any) {
+      return data as unknown as Profile | null;
+    } catch (err: unknown) {
       console.error('Error fetching profile:', err);
       return null;
     }
@@ -41,30 +41,39 @@ export function useProfile() {
         country?: string;
         skills: string[];
         interests: string[];
+        goal?: string;
       }
     ): Promise<boolean> => {
       setLoading(true);
       setError(null);
 
       try {
-        const { error: insertError } = await supabase.from('profiles').insert({
-          id: userId,
-          username: profileData.username,
-          display_name: profileData.display_name || null,
-          bio: profileData.bio || null,
-          country: profileData.country || null,
-          skills: profileData.skills,
-          interests: profileData.interests,
-        });
+        // Use upsert to support both new users (insert) and existing users (update)
+        const { error: upsertError } = await supabase.from('profiles').upsert(
+          {
+            id: userId,
+            username: profileData.username,
+            display_name: profileData.display_name || null,
+            bio: profileData.bio || null,
+            country: profileData.country || null,
+            skills: profileData.skills,
+            interests: profileData.interests,
+            goal: profileData.goal || null,
+          },
+          {
+            onConflict: 'id',
+          }
+        );
 
-        if (insertError) {
-          throw insertError;
+        if (upsertError) {
+          throw upsertError;
         }
 
         return true;
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error creating profile:', err);
-        setError(err.message || 'Failed to create profile');
+        const message = err instanceof Error ? err.message : 'Failed to create profile';
+        setError(message);
         return false;
       } finally {
         setLoading(false);
@@ -105,9 +114,10 @@ export function useProfile() {
         }
 
         return true;
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error updating profile:', err);
-        setError(err.message || 'Failed to update profile');
+        const message = err instanceof Error ? err.message : 'Failed to update profile';
+        setError(message);
         return false;
       } finally {
         setLoading(false);
@@ -122,18 +132,18 @@ export function useProfile() {
   const checkUsernameAvailable = useCallback(
     async (username: string): Promise<boolean> => {
       try {
-        const { data, error } = await supabase
+        const { data, error: fetchError } = await supabase
           .from('profiles')
           .select('username')
           .eq('username', username)
           .single();
 
-        if (error && error.code !== 'PGRST116') {
-          throw error;
+        if (fetchError && fetchError.code !== 'PGRST116') {
+          throw fetchError;
         }
 
         return !data;
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Error checking username:', err);
         return false;
       }

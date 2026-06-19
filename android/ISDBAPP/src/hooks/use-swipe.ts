@@ -1,18 +1,29 @@
 import { useState, useCallback, useRef } from 'react';
 import { supabase } from '../services/supabase';
-import type { Project } from '../types';
+import type { SwipeCard } from '@isdb/shared';
 
-interface SwipeCard {
-  project: Project;
-  matchScore: number;
-  matchReasons: string[];
-}
+type SwipeProject = SwipeCard['project'];
 
 interface SwipeHistory {
   card: SwipeCard;
   action: 'pass' | 'save' | 'match';
   swipeId?: string;
   matchId?: string | null;
+}
+
+interface RawProject {
+  id: string;
+  title: string;
+  description?: string | null;
+  tags?: string[] | null;
+  required_skills?: string[] | null;
+  github_url?: string | null;
+  cover_image_url?: string | null;
+  card_color?: string | null;
+  hook_text?: string | null;
+  featured_tags?: string[] | null;
+  custom_badge?: string | null;
+  owner?: Array<{ username?: string; display_name?: string; avatar_url?: string }> | null;
 }
 
 interface UseSwipeReturn {
@@ -46,24 +57,24 @@ export function useSwipe(
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const calculateMatchScore = useCallback(
-    (project: Project): { score: number; reasons: string[] } => {
+    (project: SwipeProject): { score: number; reasons: string[] } => {
       const reasons: string[] = [];
-      let totalScore = 0;
 
-      const normalizedUserSkills = userSkills.map(s => s.toLowerCase().trim());
-      const normalizedUserInterests = userInterests.map(i => i.toLowerCase().trim());
-      const normalizedRequiredSkills = (project.required_skills || []).map(s => s.toLowerCase().trim());
-      const normalizedProjectTags = (project.tags || []).map(t => t.toLowerCase().trim());
+      const normalizedUserSkills = userSkills.map((s) => s.toLowerCase().trim());
+      const normalizedUserInterests = userInterests.map((i) => i.toLowerCase().trim());
+      const normalizedRequiredSkills = (project.required_skills || []).map((s) => s.toLowerCase().trim());
+      const normalizedProjectTags = (project.tags || []).map((t) => t.toLowerCase().trim());
 
-      const exactSkillMatches = normalizedRequiredSkills.filter(skill =>
+      const exactSkillMatches = normalizedRequiredSkills.filter((skill) =>
         normalizedUserSkills.includes(skill)
       );
 
-      const partialSkillMatches = normalizedRequiredSkills.filter(skill =>
-        !normalizedUserSkills.includes(skill) &&
-        normalizedUserSkills.some(userSkill =>
-          skill.includes(userSkill) || userSkill.includes(skill)
-        )
+      const partialSkillMatches = normalizedRequiredSkills.filter(
+        (skill) =>
+          !normalizedUserSkills.includes(skill) &&
+          normalizedUserSkills.some(
+            (userSkill) => skill.includes(userSkill) || userSkill.includes(skill)
+          )
       );
 
       const exactSkillScore = Math.min(exactSkillMatches.length * 8, 45);
@@ -74,15 +85,16 @@ export function useSwipe(
         reasons.push(`${exactSkillMatches.length} matching skill${exactSkillMatches.length > 1 ? 's' : ''}`);
       }
 
-      const exactInterestMatches = normalizedProjectTags.filter(tag =>
+      const exactInterestMatches = normalizedProjectTags.filter((tag) =>
         normalizedUserInterests.includes(tag)
       );
 
-      const partialInterestMatches = normalizedProjectTags.filter(tag =>
-        !normalizedUserInterests.includes(tag) &&
-        normalizedUserInterests.some(userInterest =>
-          tag.includes(userInterest) || userInterest.includes(tag)
-        )
+      const partialInterestMatches = normalizedProjectTags.filter(
+        (tag) =>
+          !normalizedUserInterests.includes(tag) &&
+          normalizedUserInterests.some(
+            (userInterest) => tag.includes(userInterest) || userInterest.includes(tag)
+          )
       );
 
       const exactInterestScore = Math.min(exactInterestMatches.length * 6, 28);
@@ -93,13 +105,16 @@ export function useSwipe(
         reasons.push(`${exactInterestMatches.length} matching interest`);
       }
 
-      if (normalizedRequiredSkills.length > 0 &&
-          exactSkillMatches.length >= normalizedRequiredSkills.length * 0.7) {
-        totalScore += 10;
+      let bonusScore = 0;
+      if (
+        normalizedRequiredSkills.length > 0 &&
+        exactSkillMatches.length >= normalizedRequiredSkills.length * 0.7
+      ) {
+        bonusScore += 10;
         reasons.push('Great fit!');
       }
 
-      totalScore = totalSkillScore + totalInterestScore;
+      const totalScore = totalSkillScore + totalInterestScore + bonusScore;
 
       return { score: Math.min(totalScore, 100), reasons };
     },
@@ -120,10 +135,13 @@ export function useSwipe(
 
       if (swipedError) throw swipedError;
 
-      const swipedIds = swipedProjectIds?.map(s => s.project_id) || [];
-      const swipedIdSet = new Set(swipedIds);
+      const swipedIdSet = new Set<string>(
+        ((swipedProjectIds as unknown as { project_id: string }[]) || []).map(
+          (s) => s.project_id
+        )
+      );
 
-      let query = supabase
+      const { data: projects, error: projectsError } = await supabase
         .from('projects')
         .select(`
           id,
@@ -132,6 +150,11 @@ export function useSwipe(
           tags,
           required_skills,
           github_url,
+          cover_image_url,
+          card_color,
+          hook_text,
+          featured_tags,
+          custom_badge,
           owner:profiles!owner_id (
             username,
             display_name,
@@ -142,44 +165,42 @@ export function useSwipe(
         .neq('owner_id', userId)
         .limit(20);
 
-      if (swipedIds.length > 0 && swipedIds.length <= 50) {
-        query = query.not('id', 'in', `(${swipedIds.join(',')})`);
-      }
-
-      const { data: projects, error: projectsError } = await query;
-
       if (projectsError) throw projectsError;
 
-      const filteredProjects = (projects || []).filter(
-        (p: any) => !swipedIdSet.has(p.id)
+      const rawProjects = (projects as unknown as RawProject[] || []).filter(
+        (p) => !swipedIdSet.has(p.id)
       );
 
-      if (filteredProjects.length === 0) {
+      if (rawProjects.length === 0) {
         setCards([]);
         setLoading(false);
         return;
       }
 
-      const cardsWithMatchScores: SwipeCard[] = filteredProjects
-        .map((project: any) => {
-          const owner = Array.isArray(project.owner) && project.owner.length > 0
-            ? project.owner[0]
+      const cardsWithScores: SwipeCard[] = rawProjects
+        .map((project): SwipeCard => {
+          const ownerArr = Array.isArray(project.owner) ? project.owner : [];
+          const ownerObj = ownerArr.length > 0
+            ? ownerArr[0]
             : { username: 'unknown', display_name: undefined, avatar_url: undefined };
 
-          const transformedProject = {
+          const transformedProject: SwipeProject = {
             id: project.id,
             title: project.title,
             description: project.description || '',
             tags: project.tags || [],
             required_skills: project.required_skills || [],
-            github_url: project.github_url,
-            owner_id: userId,
-            status: 'looking' as const,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            sponsorship_enabled: false,
-            sponsorship_current: 0,
-            owner: owner as any,
+            github_url: project.github_url ?? undefined,
+            cover_image_url: project.cover_image_url ?? undefined,
+            card_color: project.card_color ?? undefined,
+            hook_text: project.hook_text ?? undefined,
+            featured_tags: project.featured_tags ?? undefined,
+            custom_badge: project.custom_badge ?? undefined,
+            owner: {
+              username: ownerObj.username || 'unknown',
+              display_name: ownerObj.display_name,
+              avatar_url: ownerObj.avatar_url,
+            },
           };
 
           const { score, reasons } = calculateMatchScore(transformedProject);
@@ -189,11 +210,11 @@ export function useSwipe(
             matchReasons: reasons,
           };
         })
-        .sort((a: SwipeCard, b: SwipeCard) => b.matchScore - a.matchScore);
+        .sort((a, b) => b.matchScore - a.matchScore);
 
-      setCards(cardsWithMatchScores);
+      setCards(cardsWithScores);
       setCurrentIndex(0);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching cards:', err);
       setError('Failed to load projects. Please try again.');
     } finally {
@@ -202,44 +223,54 @@ export function useSwipe(
   }, [userId, calculateMatchScore]);
 
   const recordSwipe = useCallback(
-    async (projectId: string, action: 'pass' | 'save' | 'match'): Promise<{ swipeId?: string }> => {
-      const { data, error } = await supabase
-        .from('swipes')
-        .insert({
-          user_id: userId,
-          project_id: projectId,
-          action,
-        })
-        .select('id')
-        .single();
+    async (
+      projectId: string,
+      action: 'pass' | 'save' | 'match'
+    ): Promise<{ swipeId?: string }> => {
+      try {
+        const { data, error: insertError } = await supabase
+          .from('swipes')
+          .insert({ user_id: userId, project_id: projectId, action })
+          .select('id')
+          .single();
 
-      if (error) {
-        console.error('Error recording swipe:', error);
+        if (insertError) {
+          console.error('Error recording swipe:', insertError);
+          return {};
+        }
+
+        return { swipeId: (data as unknown as { id: string })?.id };
+      } catch (err) {
+        console.error('Error recording swipe:', err);
         return {};
       }
-
-      return { swipeId: data?.id };
     },
     [userId]
   );
 
   const createMatch = useCallback(
     async (projectId: string): Promise<string | null> => {
-      const { data, error } = await supabase
-        .from('matches')
-        .insert({
-          user_id: userId,
-          project_id: projectId,
-        })
-        .select('id')
-        .single();
+      try {
+        const { data, error: insertError } = await supabase
+          .from('matches')
+          .insert({
+            user_id: userId,
+            project_id: projectId,
+            status: 'pending',
+          })
+          .select('id')
+          .single();
 
-      if (error) {
-        console.error('Error creating match:', error);
+        if (insertError) {
+          console.error('Error creating match:', insertError);
+          return null;
+        }
+
+        return (data as unknown as { id: string })?.id || null;
+      } catch (err) {
+        console.error('Error creating match:', err);
         return null;
       }
-
-      return data?.id || null;
     },
     [userId]
   );
@@ -250,15 +281,23 @@ export function useSwipe(
     const lastSwipe = history[history.length - 1];
 
     if (lastSwipe.swipeId) {
-      await supabase.from('swipes').delete().eq('id', lastSwipe.swipeId);
+      try {
+        await supabase.from('swipes').delete().eq('id', lastSwipe.swipeId);
+      } catch (err) {
+        console.error('Failed to undo swipe:', err);
+      }
     }
 
     if (lastSwipe.matchId) {
-      await supabase.from('matches').delete().eq('id', lastSwipe.matchId);
+      try {
+        await supabase.from('matches').delete().eq('id', lastSwipe.matchId);
+      } catch (err) {
+        console.error('Failed to undo match:', err);
+      }
     }
 
-    setHistory(prev => prev.slice(0, -1));
-    setCurrentIndex(prev => Math.max(0, prev - 1));
+    setHistory((prev) => prev.slice(0, -1));
+    setCurrentIndex((prev) => Math.max(0, prev - 1));
 
     if (undoTimeoutRef.current) {
       clearTimeout(undoTimeoutRef.current);
@@ -290,7 +329,7 @@ export function useSwipe(
         matchId = await createMatch(currentCard.project.id);
       }
 
-      setHistory(prev => [...prev, { card: currentCard, action, swipeId, matchId }]);
+      setHistory((prev) => [...prev, { card: currentCard, action, swipeId, matchId }]);
 
       setCanUndo(true);
       if (undoTimeoutRef.current) {
@@ -304,7 +343,7 @@ export function useSwipe(
         clearTimeout(transitionTimeoutRef.current);
       }
       transitionTimeoutRef.current = setTimeout(() => {
-        setCurrentIndex(prev => prev + 1);
+        setCurrentIndex((prev) => prev + 1);
         setIsTransitioning(false);
       }, 300);
     },
