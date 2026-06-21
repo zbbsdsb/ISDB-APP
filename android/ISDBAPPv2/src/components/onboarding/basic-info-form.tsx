@@ -10,7 +10,11 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
+import { useTheme } from '../../hooks/use-theme';
 import { useProfile } from '../../hooks/use-profile';
+import { m3Typography } from '../../constants/m3-typography';
+import { m3Spacing } from '../../constants/m3-spacing';
+import { m3Shape } from '../../constants/m3-shape';
 
 interface BasicInfoFormProps {
   initialData?: {
@@ -28,22 +32,12 @@ interface BasicInfoFormProps {
 }
 
 const COUNTRIES = [
-  'United States',
-  'China',
-  'India',
-  'United Kingdom',
-  'Germany',
-  'France',
-  'Japan',
-  'South Korea',
-  'Canada',
-  'Australia',
-  'Brazil',
-  'Russia',
-  'Other',
+  'United States', 'China', 'India', 'United Kingdom', 'Germany',
+  'France', 'Japan', 'South Korea', 'Canada', 'Australia', 'Brazil', 'Russia', 'Other',
 ];
 
 export function BasicInfoForm({ initialData, onNext }: BasicInfoFormProps) {
+  const { colors } = useTheme();
   const [username, setUsername] = useState(initialData?.username || '');
   const [displayName, setDisplayName] = useState(initialData?.display_name || '');
   const [bio, setBio] = useState(initialData?.bio || '');
@@ -51,11 +45,10 @@ export function BasicInfoForm({ initialData, onNext }: BasicInfoFormProps) {
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [checkingUsername, setCheckingUsername] = useState(false);
-  
+
   const { checkUsernameAvailable } = useProfile();
 
   const validateUsername = (value: string): boolean => {
-    // 3-20 characters, alphanumeric and underscore only
     const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
     if (!usernameRegex.test(value)) {
       setUsernameError('Username must be 3-20 characters (letters, numbers, underscore)');
@@ -67,14 +60,11 @@ export function BasicInfoForm({ initialData, onNext }: BasicInfoFormProps) {
 
   const handleUsernameChange = async (value: string) => {
     setUsername(value);
-    
     if (value.length >= 3) {
       if (!validateUsername(value)) return;
-      
       setCheckingUsername(true);
       const isAvailable = await checkUsernameAvailable(value);
       setCheckingUsername(false);
-      
       if (!isAvailable) {
         setUsernameError('Username is already taken');
       }
@@ -88,9 +78,7 @@ export function BasicInfoForm({ initialData, onNext }: BasicInfoFormProps) {
       setUsernameError('Username is required');
       return;
     }
-
     if (usernameError) return;
-
     onNext({
       username: username.trim(),
       display_name: displayName.trim(),
@@ -102,103 +90,110 @@ export function BasicInfoForm({ initialData, onNext }: BasicInfoFormProps) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
     >
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.title}>Tell us about yourself</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: colors.onBackground }]}>Tell us about yourself</Text>
+        <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
           This information will be displayed on your public profile
         </Text>
 
         <View style={styles.form}>
           {/* Username */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>
-              Username <Text style={styles.required}>*</Text>
+            <Text style={[styles.label, { color: colors.onBackground }]}>
+              Username <Text style={{ color: colors.error }}>*</Text>
             </Text>
             <View style={styles.usernameContainer}>
               <TextInput
                 style={[
                   styles.input,
-                  usernameError ? styles.inputError : null,
+                  {
+                    backgroundColor: colors.surfaceVariant,
+                    borderColor: usernameError ? colors.error : colors.outline,
+                    color: colors.onBackground,
+                  },
+                  usernameError ? { borderColor: colors.error } : null,
                 ]}
                 value={username}
                 onChangeText={handleUsernameChange}
                 placeholder="your_username"
+                placeholderTextColor={colors.onSurfaceVariant}
                 autoCapitalize="none"
                 autoCorrect={false}
               />
               {checkingUsername && (
-                <ActivityIndicator 
-                  size="small" 
-                  style={styles.usernameSpinner} 
-                />
+                <ActivityIndicator size="small" color={colors.primary} style={styles.usernameSpinner} />
               )}
             </View>
             {usernameError && (
-              <Text style={styles.errorText}>{usernameError}</Text>
+              <Text style={[styles.errorText, { color: colors.error }]}>{usernameError}</Text>
             )}
-            <Text style={styles.hint}>
+            <Text style={[styles.hint, { color: colors.onSurfaceVariant }]}>
               3-20 characters, letters, numbers, and underscore only
             </Text>
           </View>
 
           {/* Display Name */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Display Name</Text>
+            <Text style={[styles.label, { color: colors.onBackground }]}>Display Name</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: colors.surfaceVariant, borderColor: colors.outline, color: colors.onBackground }]}
               value={displayName}
               onChangeText={setDisplayName}
               placeholder="Your Display Name"
+              placeholderTextColor={colors.onSurfaceVariant}
               maxLength={100}
             />
           </View>
 
           {/* Bio */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Bio</Text>
+            <Text style={[styles.label, { color: colors.onBackground }]}>Bio</Text>
             <TextInput
-              style={[styles.input, styles.textArea]}
+              style={[styles.input, styles.textArea, { backgroundColor: colors.surfaceVariant, borderColor: colors.outline, color: colors.onBackground }]}
               value={bio}
               onChangeText={setBio}
               placeholder="Tell us about yourself..."
+              placeholderTextColor={colors.onSurfaceVariant}
               multiline
               numberOfLines={4}
               maxLength={280}
               textAlignVertical="top"
             />
-            <Text style={styles.charCount}>{bio.length}/280</Text>
+            <Text style={[styles.charCount, { color: colors.onSurfaceVariant }]}>{bio.length}/280</Text>
           </View>
 
           {/* Country */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Country</Text>
+            <Text style={[styles.label, { color: colors.onBackground }]}>Country</Text>
             <TouchableOpacity
-              style={styles.selectButton}
+              style={[styles.selectButton, { backgroundColor: colors.surfaceVariant, borderColor: colors.outline }]}
               onPress={() => setShowCountryPicker(!showCountryPicker)}
             >
-              <Text style={country ? styles.selectText : styles.selectPlaceholder}>
+              <Text style={country ? [styles.selectText, { color: colors.onBackground }] : [styles.selectPlaceholder, { color: colors.onSurfaceVariant }]}>
                 {country || 'Select your country'}
               </Text>
-              <Text style={styles.selectArrow}>▼</Text>
+              <Text style={{ color: colors.onSurfaceVariant }}>▼</Text>
             </TouchableOpacity>
 
             {showCountryPicker && (
-              <ScrollView style={styles.countryList}>
+              <ScrollView
+                style={[styles.countryList, { backgroundColor: colors.surface, borderColor: colors.outline }]}
+              >
                 {COUNTRIES.map((c) => (
                   <TouchableOpacity
                     key={c}
-                    style={styles.countryItem}
+                    style={[styles.countryItem, { borderBottomColor: colors.outlineVariant }]}
                     onPress={() => {
                       setCountry(c);
                       setShowCountryPicker(false);
                     }}
                   >
-                    <Text style={styles.countryText}>{c}</Text>
+                    <Text style={[styles.countryText, { color: colors.onBackground }]}>{c}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
@@ -206,8 +201,11 @@ export function BasicInfoForm({ initialData, onNext }: BasicInfoFormProps) {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.nextButton} onPress={handleSubmit}>
-          <Text style={styles.nextButtonText}>Next</Text>
+        <TouchableOpacity
+          style={[styles.nextButton, { backgroundColor: colors.primary }]}
+          onPress={handleSubmit}
+        >
+          <Text style={[styles.nextButtonText, { color: colors.onPrimary }]}>Next</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -215,123 +213,51 @@ export function BasicInfoForm({ initialData, onNext }: BasicInfoFormProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0f0f0f',
-  },
-  scrollContent: {
-    padding: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#9ca3af',
-    marginBottom: 32,
-  },
-  form: {
-    gap: 24,
-  },
-  inputGroup: {
-    gap: 8,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#d1d5db',
-  },
-  required: {
-    color: '#ef4444',
-  },
+  container: { flex: 1 },
+  scrollContent: { padding: m3Spacing.lg },
+  title: { ...m3Typography.headlineSmall, fontWeight: '700', marginBottom: m3Spacing.xs },
+  subtitle: { ...m3Typography.bodyMedium, marginBottom: m3Spacing.xl },
+  form: { gap: m3Spacing.lg },
+  inputGroup: { gap: m3Spacing.xs },
+  label: { ...m3Typography.labelLarge, fontWeight: '600' },
   input: {
-    backgroundColor: '#1f1f1f',
     borderWidth: 1,
-    borderColor: '#374151',
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: m3Shape.small,
+    padding: m3Spacing.sm,
     fontSize: 16,
-    color: '#ffffff',
   },
-  inputError: {
-    borderColor: '#ef4444',
-  },
-  usernameContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  usernameSpinner: {
-    marginLeft: 8,
-  },
-  errorText: {
-    fontSize: 12,
-    color: '#ef4444',
-  },
-  hint: {
-    fontSize: 12,
-    color: '#6b7280',
-  },
-  textArea: {
-    minHeight: 100,
-    paddingTop: 12,
-  },
-  charCount: {
-    fontSize: 12,
-    color: '#6b7280',
-    textAlign: 'right',
-  },
+  usernameContainer: { flexDirection: 'row', alignItems: 'center' },
+  usernameSpinner: { marginLeft: m3Spacing.xs },
+  errorText: { ...m3Typography.bodySmall },
+  hint: { ...m3Typography.bodySmall },
+  textArea: { minHeight: 100, paddingTop: m3Spacing.sm },
+  charCount: { ...m3Typography.bodySmall, textAlign: 'right' },
   selectButton: {
-    backgroundColor: '#1f1f1f',
     borderWidth: 1,
-    borderColor: '#374151',
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: m3Shape.small,
+    padding: m3Spacing.sm,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  selectText: {
-    fontSize: 16,
-    color: '#ffffff',
-  },
-  selectPlaceholder: {
-    fontSize: 16,
-    color: '#6b7280',
-  },
-  selectArrow: {
-    fontSize: 12,
-    color: '#9ca3af',
-  },
+  selectText: { fontSize: 16 },
+  selectPlaceholder: { fontSize: 16 },
   countryList: {
-    backgroundColor: '#1f1f1f',
     borderWidth: 1,
-    borderColor: '#374151',
-    borderRadius: 8,
+    borderRadius: m3Shape.small,
     maxHeight: 200,
     marginTop: 4,
   },
   countryItem: {
-    padding: 12,
+    padding: m3Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#374151',
   },
-  countryText: {
-    fontSize: 16,
-    color: '#ffffff',
-  },
+  countryText: { fontSize: 16 },
   nextButton: {
-    backgroundColor: '#f59e0b',
-    borderRadius: 8,
-    padding: 16,
+    borderRadius: m3Shape.small,
+    padding: m3Spacing.md,
     alignItems: 'center',
-    marginTop: 32,
+    marginTop: m3Spacing.xl,
   },
-  nextButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-  },
+  nextButtonText: { ...m3Typography.labelLarge, fontWeight: '600' },
 });

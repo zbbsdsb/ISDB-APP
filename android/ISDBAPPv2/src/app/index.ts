@@ -16,3 +16,4 @@ export { GroupCreateScreen } from './group-create';
 export { BadgesScreen } from './badges';
 export { SettingsScreen } from './settings';
 export { ReferralScreen } from './referral';
+export { GatheringScreen } from './gathering';

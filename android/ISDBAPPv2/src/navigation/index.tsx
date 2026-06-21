@@ -28,6 +28,7 @@ import {
   BadgesScreen,
   SettingsScreen,
   ReferralScreen,
+  GatheringScreen,
 } from '../app';
 
 // Type definitions
@@ -44,6 +45,7 @@ export type RootStackParamList = {
   Badges: undefined;
   Settings: undefined;
   Referral: undefined;
+  Gathering: undefined;
 };
 
 export type AuthStackParamList = {
@@ -84,6 +86,7 @@ const linking: LinkingOptions<RootStackParamList> = {
           Profile: 'profile',
         },
       },
+      Gathering: 'gathering',
     },
   },
 };
@@ -234,6 +237,7 @@ function RootNavigator() {
       <RootStack.Screen name="Badges" component={BadgesScreen} />
       <RootStack.Screen name="Settings" component={SettingsScreen} />
       <RootStack.Screen name="Referral" component={ReferralScreen} />
+      <RootStack.Screen name="Gathering" component={GatheringScreen} />
     </RootStack.Navigator>
   );
 }

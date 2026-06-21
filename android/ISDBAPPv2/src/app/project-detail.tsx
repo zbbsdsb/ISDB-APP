@@ -13,12 +13,13 @@ import { useToast } from '../hooks/use-toast';
 import { useProject } from '../hooks/use-project';
 import { supabase } from '../services/supabase';
 import { useAuthStore } from '../store/auth-store';
-import { Button, Card, Icon } from '../components/ui';
+import { Button, Card, Icon, Badge, ProgressBar } from '../components/ui';
 import { m3Typography } from '../constants/m3-typography';
 import { m3Spacing } from '../constants/m3-spacing';
 import type { RootStackParamList } from '../navigation';
 import { useProjectBlocks } from '../hooks/use-project-blocks';
 import { useProjectPosts } from '../hooks/use-project-posts';
+import { useBadges } from '../hooks/use-badges';
 import BlockRenderer from '../components/project-blocks/block-renderer';
 import PostList from '../components/project-posts/post-list';
 import PostCreate from '../components/project-posts/post-create';
@@ -35,6 +36,9 @@ export function ProjectDetailScreen() {
   const user = useAuthStore((s) => s.user);
   const { blocks, loading: blocksLoading } = useProjectBlocks(projectId);
   const { posts, loading: postsLoading, createPost } = useProjectPosts(projectId);
+  const { badges, userBadges, loading: badgesLoading } = useBadges();
+  const isOwner = user?.id === project?.owner_id;
+  const ownerBadges = isOwner ? badges.filter((b) => userBadges.has(b.id)) : [];
 
   const handleCollabRequest = async () => {
     if (!user) {
@@ -137,6 +141,36 @@ export function ProjectDetailScreen() {
           </View>
         </Card>
 
+        {/* Owner Badges */}
+        {!badgesLoading && ownerBadges.length > 0 && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.onBackground }]}>
+              Achievements
+            </Text>
+            <View style={styles.chipRow}>
+              {ownerBadges.slice(0, 6).map((b) => {
+                const badgeColor: 'warning' | 'secondary' | 'tertiary' =
+                  b.tier === 'gold' ? 'warning' :
+                  b.tier === 'silver' ? 'secondary' : 'tertiary';
+                return (
+                  <Badge
+                    key={b.id}
+                    label={b.name}
+                    size="sm"
+                    color={badgeColor}
+                    style={styles.badgeItem}
+                  />
+                );
+              })}
+              {ownerBadges.length > 6 && (
+                <Text style={[styles.moreBadges, { color: colors.onSurfaceVariant }]}>
+                  +{ownerBadges.length - 6}
+                </Text>
+              )}
+            </View>
+          </View>
+        )}
+
         {/* Tags */}
         {project.tags.length > 0 && (
           <View style={styles.section}>
@@ -191,17 +225,11 @@ export function ProjectDetailScreen() {
             <Text style={[styles.sectionTitle, { color: colors.onBackground }]}>
               Sponsorship
             </Text>
-            <View style={styles.progressBar}>
-              <View
-                style={[
-                  styles.progressFill,
-                  {
-                    width: `${progressRatio * 100}%`,
-                    backgroundColor: colors.primary,
-                  },
-                ]}
-              />
-            </View>
+            <ProgressBar
+              value={progressRatio * 100}
+              height={8}
+              style={{ marginBottom: m3Spacing.xs }}
+            />
             <Text style={[styles.progressText, { color: colors.onSurfaceVariant }]}>
               ${project.sponsorship_current} / ${project.sponsorship_goal} raised
             </Text>
@@ -312,15 +340,9 @@ const styles = StyleSheet.create({
   },
   chipText: { ...m3Typography.labelMedium },
   bodyText: { ...m3Typography.bodyMedium },
+  badgeItem: { marginBottom: 4 },
+  moreBadges: { ...m3Typography.labelSmall, alignSelf: 'center' },
 
-  progressBar: {
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#e0e0e0',
-    overflow: 'hidden',
-    marginBottom: m3Spacing.xs,
-  },
-  progressFill: { height: '100%', borderRadius: 4 },
   progressText: { ...m3Typography.bodySmall },
 
   linkRow: { flexDirection: 'row', alignItems: 'center', gap: m3Spacing.sm },

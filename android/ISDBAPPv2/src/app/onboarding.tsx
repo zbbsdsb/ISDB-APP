@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   Alert,
   ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../hooks/use-auth';
+import { useTheme } from '../hooks/use-theme';
 import { useProfile } from '../hooks/use-profile';
 import { useTags } from '../hooks/use-tags';
 import { BasicInfoForm } from '../components/onboarding/basic-info-form';
@@ -16,6 +16,8 @@ import { TagSelector } from '../components/onboarding/tag-selector';
 import { IdentityCeremony } from '../components/onboarding/identity-ceremony';
 import { StepIndicator } from '../components/onboarding/step-indicator';
 import { Button } from '../components/ui';
+import { m3Typography } from '../constants/m3-typography';
+import { m3Spacing } from '../constants/m3-spacing';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type OnboardingScreenProps = {
@@ -34,6 +36,7 @@ interface FormData {
 }
 
 export default function OnboardingScreen({ navigation }: OnboardingScreenProps) {
+  const { colors } = useTheme();
   const { user } = useAuth();
   const { createProfile, getProfile, checkProfileComplete } = useProfile();
   const { tags, loading: tagsLoading } = useTags();
@@ -81,12 +84,10 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
     setCurrentStep('skills');
   };
 
-  // Only update selected skills — no step advance (fixed bug)
   const handleSkillsChange = (skills: string[]) => {
     setFormData(prev => ({ ...prev, skills }));
   };
 
-  // Only update selected interests — no step advance (fixed bug)
   const handleInterestsChange = (interests: string[]) => {
     setFormData(prev => ({ ...prev, interests }));
   };
@@ -95,7 +96,6 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
     setCurrentStep('interests');
   };
 
-  // Build complete data locally to avoid stale state (fixed bug)
   const handleInterestsComplete = async () => {
     const completeData: FormData = {
       ...formData,
@@ -119,7 +119,6 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
       });
 
       if (success) {
-        // Fetch the newly created profile for identity number
         const profile = await getProfile(user.id);
         const identityNumber = profile?.id
           ? (parseInt(profile.id.split('-')[0], 16) % 1000000) || 1
@@ -158,8 +157,8 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
 
   if (!user) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#f59e0b" />
+      <SafeAreaView style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
   }
@@ -175,7 +174,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
       {currentStep !== 'ceremony' && (
         <View style={styles.header}>
@@ -191,8 +190,8 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
 
         {currentStep === 'skills' && (
           <View style={styles.tagForm}>
-            <Text style={styles.title}>What are your skills?</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: colors.onBackground }]}>What are your skills?</Text>
+            <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
               Select the technologies and skills you're experienced in
             </Text>
 
@@ -221,8 +220,8 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
 
         {currentStep === 'interests' && (
           <View style={styles.tagForm}>
-            <Text style={styles.title}>What are your interests?</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: colors.onBackground }]}>What are your interests?</Text>
+            <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
               Select topics and areas you're interested in
             </Text>
 
@@ -265,13 +264,11 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f0f0f',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0f0f0f',
   },
   header: {
     paddingHorizontal: 24,
@@ -286,14 +283,12 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   title: {
-    fontSize: 28,
+    ...m3Typography.headlineLarge,
     fontWeight: 'bold',
-    color: '#ffffff',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#9ca3af',
     marginBottom: 8,
   },
   buttonRow: {

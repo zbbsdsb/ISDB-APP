@@ -30,7 +30,8 @@ export type IconName =
   | 'plus'
   | 'check'
   | 'bell'
-  | 'logout';
+  | 'logout'
+  | 'arrowDown';
 
 const sizeMap: Record<string, number> = {
   sm: 16,
@@ -265,6 +266,18 @@ function renderIcon(name: IconName, fill: string) {
             fill="none"
           />
         </>
+      );
+
+    case 'arrowDown':
+      return (
+        <Path
+          d="M6 9l6 6 6-6"
+          stroke={fill}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
       );
 
     case 'plus':

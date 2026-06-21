@@ -41,6 +41,12 @@ const QUOTES = [
   },
 ];
 
+const HOW_IT_WORKS = [
+  { step: '01', title: 'Create Profile', subtitle: 'Showcase your skills and passions' },
+  { step: '02', title: 'Discover Projects', subtitle: 'Swipe through insane ideas' },
+  { step: '03', title: 'Build Together', subtitle: 'Collaborate and ship products' },
+];
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export function LandingScreen() {
@@ -52,12 +58,13 @@ export function LandingScreen() {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
 
+  // ── Gradient animation ──
+  const gradientAnim = useRef(new Animated.Value(0)).current;
+
   const currentQuote = QUOTES[quoteIndex];
 
-  // ── Rotate quote every 5 seconds ──
   useEffect(() => {
     const interval = setInterval(() => {
-      // Fade out
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
@@ -70,10 +77,8 @@ export function LandingScreen() {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        // Switch quote
         setQuoteIndex((prev) => (prev + 1) % QUOTES.length);
         slideAnim.setValue(20);
-        // Fade in
         Animated.parallel([
           Animated.timing(fadeAnim, {
             toValue: 1,
@@ -91,6 +96,21 @@ export function LandingScreen() {
     return () => clearInterval(interval);
   }, [fadeAnim, slideAnim]);
 
+  // Subtle background gradient shift
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(gradientAnim, { toValue: 1, duration: 8000, useNativeDriver: false }),
+        Animated.timing(gradientAnim, { toValue: 0, duration: 8000, useNativeDriver: false }),
+      ]),
+    ).start();
+  }, [gradientAnim]);
+
+  const bgOpacity = gradientAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.02, 0.06],
+  });
+
   const handleGetStarted = () => {
     navigation.navigate('Auth' as never);
   };
@@ -98,6 +118,16 @@ export function LandingScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          styles.gradientOverlay,
+          {
+            backgroundColor: colors.primary,
+            opacity: bgOpacity,
+          },
+        ]}
+      />
       <View style={styles.content}>
         {/* Top spacer */}
         <View style={styles.topSpacer} />
@@ -105,9 +135,7 @@ export function LandingScreen() {
         {/* Brand area */}
         <View style={styles.brandArea}>
           <Text style={[styles.brandIcon, { color: colors.primary }]}>✦</Text>
-          <Text style={[styles.brandName, { color: colors.primary }]}>
-            ISDB
-          </Text>
+          <Text style={[styles.brandName, { color: colors.primary }]}>ISDB</Text>
           <Text style={[styles.brandFull, { color: colors.onBackground }]}>
             Insane Dream Builder
           </Text>
@@ -135,6 +163,22 @@ export function LandingScreen() {
             </Text>
           </Card>
         </Animated.View>
+
+        {/* How it Works */}
+        <View style={styles.howSection}>
+          {HOW_IT_WORKS.map((item, idx) => (
+            <View key={item.step} style={styles.howRow}>
+              <Text style={[styles.howStep, { color: colors.primary }]}>{item.step}</Text>
+              <View style={styles.howContent}>
+                <Text style={[styles.howTitle, { color: colors.onBackground }]}>{item.title}</Text>
+                <Text style={[styles.howSubtitle, { color: colors.onSurfaceVariant }]}>{item.subtitle}</Text>
+              </View>
+              {idx < HOW_IT_WORKS.length - 1 && (
+                <View style={[styles.howLine, { backgroundColor: colors.outlineVariant }]} />
+              )}
+            </View>
+          ))}
+        </View>
 
         {/* Bottom actions */}
         <View style={styles.actions}>
@@ -165,13 +209,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  gradientOverlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
   content: {
     flex: 1,
     paddingHorizontal: m3Spacing.lg,
     justifyContent: 'space-between',
   },
   topSpacer: {
-    flex: 0.15,
+    flex: 0.1,
   },
   brandArea: {
     alignItems: 'center',
@@ -196,7 +243,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   quoteWrapper: {
-    flex: 1,
+    flex: 0.8,
     justifyContent: 'center',
     paddingHorizontal: m3Spacing.sm,
   },
@@ -209,6 +256,40 @@ const styles = StyleSheet.create({
     ...m3Typography.labelLarge,
     marginTop: m3Spacing.sm,
     textAlign: 'right',
+  },
+  howSection: {
+    flex: 0.6,
+    paddingHorizontal: m3Spacing.sm,
+  },
+  howRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: m3Spacing.sm,
+    position: 'relative',
+  },
+  howStep: {
+    ...m3Typography.titleMedium,
+    fontWeight: '700',
+    width: 32,
+    fontFamily: 'monospace',
+  },
+  howContent: {
+    marginLeft: m3Spacing.sm,
+  },
+  howTitle: {
+    ...m3Typography.labelLarge,
+    fontWeight: '600',
+  },
+  howSubtitle: {
+    ...m3Typography.bodySmall,
+    marginTop: 2,
+  },
+  howLine: {
+    position: 'absolute',
+    left: 14,
+    top: 30,
+    width: 2,
+    height: 24,
   },
   actions: {
     marginBottom: m3Spacing.xl,

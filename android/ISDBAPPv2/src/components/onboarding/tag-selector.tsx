@@ -8,6 +8,9 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { useTheme } from '../../hooks/use-theme';
+import { m3Shape } from '../../constants/m3-shape';
+import { m3Spacing } from '../../constants/m3-spacing';
 import type { Tag } from '../../types';
 
 interface TagSelectorProps {
@@ -31,9 +34,9 @@ export function TagSelector({
   placeholder = 'Search tags...',
   loading = false,
 }: TagSelectorProps) {
+  const { colors } = useTheme();
   const [search, setSearch] = useState('');
 
-  // Filter tags that are not selected and match search
   const filteredTags = useMemo(() => {
     return availableTags.filter(tag => {
       const isSelected = selectedTags.includes(tag.name);
@@ -42,7 +45,6 @@ export function TagSelector({
     });
   }, [availableTags, selectedTags, search]);
 
-  // Group tags by category
   const groupedTags = useMemo(() => {
     const groups: Record<string, Tag[]> = {};
     filteredTags.forEach(tag => {
@@ -69,8 +71,8 @@ export function TagSelector({
   return (
     <View style={styles.container}>
       <View style={styles.labelContainer}>
-        <Text style={styles.label}>{label}</Text>
-        <Text style={styles.requirement}>
+        <Text style={[styles.label, { color: colors.onBackground }]}>{label}</Text>
+        <Text style={[styles.requirement, { color: colors.onSurfaceVariant }]}>
           {minTags > 0 ? `${minTags}-${maxTags} required` : `Up to ${maxTags}`}
         </Text>
       </View>
@@ -81,11 +83,11 @@ export function TagSelector({
           {selectedTags.map((tag) => (
             <TouchableOpacity
               key={tag}
-              style={styles.selectedTag}
+              style={[styles.selectedTag, { backgroundColor: colors.primary }]}
               onPress={() => removeTag(tag)}
             >
-              <Text style={styles.selectedTagText}>{tag}</Text>
-              <Text style={styles.removeIcon}>×</Text>
+              <Text style={[styles.selectedTagText, { color: colors.onPrimary }]}>{tag}</Text>
+              <Text style={[styles.removeIcon, { color: colors.onPrimary }]}>×</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -95,19 +97,20 @@ export function TagSelector({
       {selectedTags.length < maxTags && (
         <View style={styles.searchContainer}>
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { backgroundColor: colors.surfaceVariant, borderColor: colors.outline, color: colors.onBackground }]}
             value={search}
             onChangeText={setSearch}
             placeholder={placeholder}
-            placeholderTextColor="#6b7280"
+            placeholderTextColor={colors.onSurfaceVariant}
             autoCapitalize="none"
             autoCorrect={false}
           />
 
           {loading && (
-            <ActivityIndicator 
-              size="small" 
-              style={styles.loadingSpinner} 
+            <ActivityIndicator
+              size="small"
+              style={styles.loadingSpinner}
+              color={colors.primary}
             />
           )}
         </View>
@@ -115,19 +118,19 @@ export function TagSelector({
 
       {/* Tag List */}
       {search && !loading && (
-        <ScrollView style={styles.tagList}>
+        <ScrollView style={[styles.tagList, { backgroundColor: colors.surface, borderColor: colors.outline }]}>
           {Object.entries(groupedTags).map(([category, tags]) => (
-            <View key={category} style={styles.categoryGroup}>
-              <Text style={styles.categoryTitle}>{category}</Text>
+            <View key={category} style={[styles.categoryGroup, { borderBottomColor: colors.outlineVariant }]}>
+              <Text style={[styles.categoryTitle, { color: colors.primary }]}>{category}</Text>
               {tags.slice(0, 10).map((tag) => (
                 <TouchableOpacity
                   key={tag.name}
-                  style={styles.tagItem}
+                  style={[styles.tagItem, { borderBottomColor: colors.outlineVariant }]}
                   onPress={() => addTag(tag.name)}
                 >
-                  <Text style={styles.tagName}>{tag.name}</Text>
+                  <Text style={[styles.tagName, { color: colors.onSurface }]}>{tag.name}</Text>
                   {tag.description && (
-                    <Text style={styles.tagDescription} numberOfLines={1}>
+                    <Text style={[styles.tagDescription, { color: colors.onSurfaceVariant }]} numberOfLines={1}>
                       {tag.description}
                     </Text>
                   )}
@@ -137,7 +140,7 @@ export function TagSelector({
           ))}
 
           {filteredTags.length === 0 && (
-            <Text style={styles.noResults}>
+            <Text style={[styles.noResults, { color: colors.onSurfaceVariant }]}>
               No tags found matching "{search}"
             </Text>
           )}
@@ -146,7 +149,7 @@ export function TagSelector({
 
       {/* Validation Message */}
       {selectedTags.length < minTags && (
-        <Text style={styles.validationText}>
+        <Text style={[styles.validationText, { color: colors.error }]}>
           Please select at least {minTags} {label.toLowerCase()}
         </Text>
       )}
@@ -166,11 +169,9 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#d1d5db',
   },
   requirement: {
     fontSize: 12,
-    color: '#6b7280',
   },
   selectedContainer: {
     flexDirection: 'row',
@@ -180,7 +181,6 @@ const styles = StyleSheet.create({
   selectedTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f59e0b',
     borderRadius: 16,
     paddingVertical: 6,
     paddingHorizontal: 12,
@@ -189,12 +189,10 @@ const styles = StyleSheet.create({
   selectedTagText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#000000',
   },
   removeIcon: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000000',
     marginLeft: 2,
   },
   searchContainer: {
@@ -203,33 +201,26 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: '#1f1f1f',
     borderWidth: 1,
-    borderColor: '#374151',
-    borderRadius: 8,
+    borderRadius: m3Shape.small,
     padding: 12,
     fontSize: 16,
-    color: '#ffffff',
   },
   loadingSpinner: {
     marginLeft: 8,
   },
   tagList: {
-    backgroundColor: '#1f1f1f',
     borderWidth: 1,
-    borderColor: '#374151',
-    borderRadius: 8,
+    borderRadius: m3Shape.small,
     maxHeight: 250,
   },
   categoryGroup: {
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#374151',
   },
   categoryTitle: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#f59e0b',
     paddingHorizontal: 12,
     paddingVertical: 4,
     textTransform: 'uppercase',
@@ -239,27 +230,22 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#374151',
   },
   tagName: {
     fontSize: 14,
-    color: '#ffffff',
     fontWeight: '500',
   },
   tagDescription: {
     fontSize: 12,
-    color: '#9ca3af',
     marginTop: 2,
   },
   noResults: {
     fontSize: 14,
-    color: '#6b7280',
     textAlign: 'center',
     padding: 20,
   },
   validationText: {
     fontSize: 12,
-    color: '#ef4444',
     marginTop: 4,
   },
 });
