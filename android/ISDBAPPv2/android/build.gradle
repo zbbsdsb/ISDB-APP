@@ -21,3 +21,12 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+// Expose SDK versions at rootProject.ext level so subprojects can read them
+ext {
+    buildToolsVersion = "36.0.0"
+    minSdkVersion = 24
+    compileSdkVersion = 36
+    targetSdkVersion = 34
+    kotlinVersion = "1.9.24"
+}
