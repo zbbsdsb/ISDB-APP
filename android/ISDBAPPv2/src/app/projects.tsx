@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {supabase} from '../services/supabase';
 import {Button, Card, Skeleton} from '../components/ui';
@@ -71,7 +71,9 @@ export function ProjectsScreen() {
 
         const {data, error} = await query;
 
-        if (error) {throw error;}
+        if (error) {
+          throw error;
+        }
 
         if (isRefresh) {
           setProjects(data || []);
@@ -117,7 +119,9 @@ export function ProjectsScreen() {
 
   // Load more
   const handleLoadMore = useCallback(async () => {
-    if (loadingMore || !hasMore) {return;}
+    if (loadingMore || !hasMore) {
+      return;
+    }
     setLoadingMore(true);
     const nextPage = page + 1;
     setPage(nextPage);
@@ -194,7 +198,9 @@ export function ProjectsScreen() {
   );
 
   const renderFooter = () => {
-    if (!loadingMore) {return null;}
+    if (!loadingMore) {
+      return null;
+    }
     return (
       <View style={styles.footer}>
         <ActivityIndicator size="small" color={colors.primary} />
@@ -203,7 +209,9 @@ export function ProjectsScreen() {
   };
 
   const renderEmpty = () => {
-    if (loading) {return null;}
+    if (loading) {
+      return null;
+    }
     return (
       <View style={styles.emptyContainer}>
         <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>

@@ -76,7 +76,9 @@ export function BasicInfoForm({initialData, onNext}: BasicInfoFormProps) {
   const handleUsernameChange = async (value: string) => {
     setUsername(value);
     if (value.length >= 3) {
-      if (!validateUsername(value)) {return;}
+      if (!validateUsername(value)) {
+        return;
+      }
       setCheckingUsername(true);
       const isAvailable = await checkUsernameAvailable(value);
       setCheckingUsername(false);
@@ -93,7 +95,9 @@ export function BasicInfoForm({initialData, onNext}: BasicInfoFormProps) {
       setUsernameError('Username is required');
       return;
     }
-    if (usernameError) {return;}
+    if (usernameError) {
+      return;
+    }
     onNext({
       username: username.trim(),
       display_name: displayName.trim(),

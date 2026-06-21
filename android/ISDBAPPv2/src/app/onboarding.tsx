@@ -56,7 +56,9 @@ export default function OnboardingScreen({navigation}: OnboardingScreenProps) {
   // Check if user already has a complete profile
   useEffect(() => {
     const checkExistingProfile = async () => {
-      if (!user) {return;}
+      if (!user) {
+        return;
+      }
 
       const profile = await getProfile(user.id);
       if (profile && checkProfileComplete(profile)) {
@@ -103,7 +105,9 @@ export default function OnboardingScreen({navigation}: OnboardingScreenProps) {
   };
 
   const handleSubmit = async (finalData: FormData) => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
 
     setSubmitting(true);
 

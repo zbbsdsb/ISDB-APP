@@ -39,8 +39,12 @@ export function useGroups(): UseGroupsResult {
         .select('*')
         .order('created_at', {ascending: false});
 
-      if (fetchError) {throw fetchError;}
-      if (data) {setGroups(data as Group[]);}
+      if (fetchError) {
+        throw fetchError;
+      }
+      if (data) {
+        setGroups(data as Group[]);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -49,19 +53,57 @@ export function useGroups(): UseGroupsResult {
   }, [setGroups]);
 
   const fetchMyGroupIds = useCallback(async () => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     try {
       const {data, error: fetchError} = await supabase
         .from('group_members')
         .select('group_id')
         .eq('user_id', user.id);
 
-      if (fetchError) {throw fetchError;}
-      if (data) {setJoinedGroupIds(data.map(m => m.group_id));}
+      if (fetchError) {
+        throw fetchError;
+      }
+      if (data) {
+        setJoinedGroupIds(data.map(m => m.group_id));
+      }
     } catch (err: any) {
       console.error('Error fetching my groups:', err);
     }
   }, [user, setJoinedGroupIds]);
+
+  const checkMembership = useCallback(
+    async (groupId: string): Promise<boolean> => {
+      if (!user) {
+        return false;
+      }
+      const {data} = await supabase
+        .from('group_members')
+        .select('id')
+        .eq('group_id', groupId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+      return !!data;
+    },
+    [user],
+  );
+
+  const getUserRole = useCallback(
+    async (groupId: string): Promise<'owner' | 'admin' | 'member' | null> => {
+      if (!user) {
+        return null;
+      }
+      const {data} = await supabase
+        .from('group_members')
+        .select('role')
+        .eq('group_id', groupId)
+        .eq('user_id', user.id)
+        .single();
+      return data?.role || null;
+    },
+    [user],
+  );
 
   const fetchGroupDetail = useCallback(
     async (groupId: string): Promise<GroupWithDetails | null> => {
@@ -74,7 +116,9 @@ export function useGroups(): UseGroupsResult {
           .eq('id', groupId)
           .single();
 
-        if (fetchError) {throw fetchError;}
+        if (fetchError) {
+          throw fetchError;
+        }
 
         // Get member count
         const {count} = await supabase
@@ -99,30 +143,6 @@ export function useGroups(): UseGroupsResult {
     [user, checkMembership, getUserRole],
   );
 
-  const checkMembership = useCallback(async (groupId: string): Promise<boolean> => {
-    if (!user) {return false;}
-    const {data} = await supabase
-      .from('group_members')
-      .select('id')
-      .eq('group_id', groupId)
-      .eq('user_id', user.id)
-      .maybeSingle();
-    return !!data;
-  }, [user]);
-
-  const getUserRole = useCallback(async (
-    groupId: string,
-  ): Promise<'owner' | 'admin' | 'member' | null> => {
-    if (!user) {return null;}
-    const {data} = await supabase
-      .from('group_members')
-      .select('role')
-      .eq('group_id', groupId)
-      .eq('user_id', user.id)
-      .single();
-    return data?.role || null;
-  }, [user]);
-
   const fetchGroupMembers = useCallback(
     async (groupId: string): Promise<GroupMember[]> => {
       try {
@@ -131,7 +151,9 @@ export function useGroups(): UseGroupsResult {
           .select('*')
           .eq('group_id', groupId);
 
-        if (fetchError) {throw fetchError;}
+        if (fetchError) {
+          throw fetchError;
+        }
         return data || [];
       } catch (err: any) {
         console.error('Error fetching members:', err);
@@ -147,7 +169,9 @@ export function useGroups(): UseGroupsResult {
       description?: string;
       tags?: string[];
     }): Promise<string | null> => {
-      if (!user) {return null;}
+      if (!user) {
+        return null;
+      }
       setLoading(true);
       try {
         const {data: newGroup, error: insertError} = await supabase
@@ -161,7 +185,9 @@ export function useGroups(): UseGroupsResult {
           .select()
           .single();
 
-        if (insertError) {throw insertError;}
+        if (insertError) {
+          throw insertError;
+        }
 
         // Auto-join as owner
         await supabase.from('group_members').insert({
@@ -184,7 +210,9 @@ export function useGroups(): UseGroupsResult {
 
   const joinGroup = useCallback(
     async (groupId: string): Promise<boolean> => {
-      if (!user) {return false;}
+      if (!user) {
+        return false;
+      }
       try {
         const {error: joinError} = await supabase.from('group_members').insert({
           group_id: groupId,
@@ -192,7 +220,9 @@ export function useGroups(): UseGroupsResult {
           role: 'member',
         });
 
-        if (joinError) {throw joinError;}
+        if (joinError) {
+          throw joinError;
+        }
         storeJoin(groupId);
         return true;
       } catch (err: any) {
@@ -205,7 +235,9 @@ export function useGroups(): UseGroupsResult {
 
   const leaveGroup = useCallback(
     async (groupId: string): Promise<boolean> => {
-      if (!user) {return false;}
+      if (!user) {
+        return false;
+      }
       try {
         const {error: leaveError} = await supabase
           .from('group_members')
@@ -213,7 +245,9 @@ export function useGroups(): UseGroupsResult {
           .eq('group_id', groupId)
           .eq('user_id', user.id);
 
-        if (leaveError) {throw leaveError;}
+        if (leaveError) {
+          throw leaveError;
+        }
         storeLeave(groupId);
         return true;
       } catch (err: any) {

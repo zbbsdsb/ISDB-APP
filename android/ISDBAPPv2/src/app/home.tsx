@@ -71,7 +71,9 @@ export function HomeScreen() {
   };
 
   const fetchData = useCallback(async () => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     setDataLoading(true);
 
     try {
@@ -79,13 +81,17 @@ export function HomeScreen() {
       const {count: pCount} = await supabase
         .from('projects')
         .select('*', {count: 'exact', head: true});
-      if (pCount !== null) {setProjectCount(pCount);}
+      if (pCount !== null) {
+        setProjectCount(pCount);
+      }
 
       const {count: mCount} = await supabase
         .from('matches')
         .select('*', {count: 'exact', head: true})
         .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
-      if (mCount !== null) {setMatchCount(mCount);}
+      if (mCount !== null) {
+        setMatchCount(mCount);
+      }
 
       // Online count (try/catch — table may not exist)
       try {
@@ -96,7 +102,9 @@ export function HomeScreen() {
             'created_at',
             new Date(Date.now() - 5 * 60 * 1000).toISOString(),
           );
-        if (oCount !== null) {setOnlineCount(oCount);}
+        if (oCount !== null) {
+          setOnlineCount(oCount);
+        }
       } catch {
         // presence table might not exist, silently skip
       }
@@ -107,7 +115,9 @@ export function HomeScreen() {
         .select('id, title, created_at')
         .order('created_at', {ascending: false})
         .limit(3);
-      if (recent) {setRecentProjects(recent);}
+      if (recent) {
+        setRecentProjects(recent);
+      }
 
       // Recommended projects (randomized by fetching latest and shuffling)
       const {data: recs} = await supabase
@@ -174,7 +184,9 @@ export function HomeScreen() {
   // Reload profile
   useFocusEffect(
     useCallback(() => {
-      if (!user?.id) {return;}
+      if (!user?.id) {
+        return;
+      }
       setProfileLoading(true);
       getProfile(user.id).then(data => {
         setProfile(data);
@@ -187,7 +199,6 @@ export function HomeScreen() {
     profile?.display_name || user?.user_metadata?.user_name || 'Builder';
   const userAvatar = profile?.avatar_url || user?.user_metadata?.avatar_url;
   const bio = profile?.bio;
-  const _skills = profile?.skills || [];
   const builderId = user?.id?.slice(0, 4).toUpperCase() || '---';
 
   return (
@@ -268,8 +279,12 @@ export function HomeScreen() {
           {profileLoading ? (
             <View style={styles.identitySkeleton}>
               <Skeleton variant="circular" width={60} height={60} />
-              <View style={{flex: 1, marginLeft: m3Spacing.md}}>
-                <Skeleton width="60%" height={18} style={{marginBottom: 6}} />
+              <View style={styles.identityInfo}>
+                <Skeleton
+                  width="60%"
+                  height={18}
+                  style={styles.skeletonMargin}
+                />
                 <Skeleton width="40%" height={14} />
               </View>
             </View>
@@ -588,6 +603,7 @@ const styles = StyleSheet.create({
     marginTop: m3Spacing.sm,
   },
   moreBadges: {...m3Typography.labelSmall, alignSelf: 'center'},
+  skeletonMargin: {marginBottom: 6},
 
   // Today's Stack
   sectionTitle: {

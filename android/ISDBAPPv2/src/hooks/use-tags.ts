@@ -42,7 +42,9 @@ export function useTags() {
    * Search tags by name
    */
   const searchTags = (query: string): Tag[] => {
-    if (!query.trim()) {return tags;}
+    if (!query.trim()) {
+      return tags;
+    }
 
     const lowerQuery = query.toLowerCase();
     return tags.filter(tag => tag.name.toLowerCase().includes(lowerQuery));

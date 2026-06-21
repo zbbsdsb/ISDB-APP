@@ -38,10 +38,16 @@ export function MessagesListScreen() {
     const now = new Date();
     const diffMs = now.getTime() - d.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) {return 'now';}
-    if (diffMins < 60) {return `${diffMins}m`;}
+    if (diffMins < 1) {
+      return 'now';
+    }
+    if (diffMins < 60) {
+      return `${diffMins}m`;
+    }
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) {return `${diffHours}h`;}
+    if (diffHours < 24) {
+      return `${diffHours}h`;
+    }
     return d.toLocaleDateString();
   };
 

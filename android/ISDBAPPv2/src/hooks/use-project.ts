@@ -27,7 +27,9 @@ export function useProject(projectId: string): UseProjectResult {
         .eq('id', projectId)
         .single();
 
-      if (fetchError) {throw fetchError;}
+      if (fetchError) {
+        throw fetchError;
+      }
       setProject(data as unknown as Project);
     } catch (err: any) {
       setError(err.message || 'Failed to load project');
@@ -38,7 +40,9 @@ export function useProject(projectId: string): UseProjectResult {
   }, [projectId]);
 
   useEffect(() => {
-    if (projectId) {fetchProject();}
+    if (projectId) {
+      fetchProject();
+    }
   }, [projectId, fetchProject]);
 
   return {project, loading, error, refresh: fetchProject};

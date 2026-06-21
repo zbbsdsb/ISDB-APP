@@ -54,7 +54,9 @@ export function GatheringScreen() {
           .from('sessions')
           .select('*', {count: 'exact', head: true})
           .gte('created_at', fiveMinAgo);
-        if (count !== null) {setOnlineCount(count);}
+        if (count !== null) {
+          setOnlineCount(count);
+        }
       } catch {
         // sessions table may not exist
       }
@@ -156,7 +158,7 @@ export function GatheringScreen() {
           padding={m3Spacing.lg}
           style={styles.onlineCard}>
           {loading ? (
-            <View style={{alignItems: 'center'}}>
+            <View style={styles.loadingCenter}>
               <Skeleton width={80} height={36} />
               <Skeleton
                 width={120}
@@ -309,6 +311,7 @@ export function GatheringScreen() {
 const styles = StyleSheet.create({
   container: {flex: 1},
   content: {padding: m3Spacing.lg},
+  loadingCenter: {alignItems: 'center'},
 
   // Header
   header: {

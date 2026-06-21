@@ -57,7 +57,9 @@ export function useSwipe(): UseSwipeResult {
 
   const loadProjects = useCallback(
     async (pageNum = 0) => {
-      if (!user) {return;}
+      if (!user) {
+        return;
+      }
       setLoading(pageNum === 0);
       setLoadingMore(pageNum > 0);
       setError(null);
@@ -89,7 +91,9 @@ export function useSwipe(): UseSwipeResult {
           rangeEnd,
         );
 
-        if (fetchError) {throw fetchError;}
+        if (fetchError) {
+          throw fetchError;
+        }
         const fetched = (data || []) as unknown as SwipeProject[];
         if (pageNum === 0) {
           setProjects(fetched);
@@ -97,7 +101,9 @@ export function useSwipe(): UseSwipeResult {
           setProjects(prev => [...prev, ...fetched]);
         }
         setHasMore(fetched.length === PAGE_SIZE);
-        if (pageNum === 0) {setCurrentIndex(0);}
+        if (pageNum === 0) {
+          setCurrentIndex(0);
+        }
       } catch (err: any) {
         console.error('Error loading projects:', err);
         setError(err.message);
@@ -114,7 +120,9 @@ export function useSwipe(): UseSwipeResult {
       projectId: string,
       action: SwipeActionType,
     ): Promise<{isMatch: boolean; matchId?: string} | null> => {
-      if (!user) {return null;}
+      if (!user) {
+        return null;
+      }
       try {
         const {data, error: insertError} = await supabase
           .from('swipes')
@@ -122,7 +130,9 @@ export function useSwipe(): UseSwipeResult {
           .select('id')
           .single();
 
-        if (insertError) {throw insertError;}
+        if (insertError) {
+          throw insertError;
+        }
 
         lastSwipeRef.current = {projectId, swipeId: data.id, action};
         setCanUndo(true);
@@ -142,7 +152,9 @@ export function useSwipe(): UseSwipeResult {
             .select('id')
             .single();
 
-          if (matchError) {throw matchError;}
+          if (matchError) {
+            throw matchError;
+          }
 
           return {isMatch: true, matchId: matchData?.id};
         }
@@ -158,7 +170,9 @@ export function useSwipe(): UseSwipeResult {
   );
 
   const undoLastSwipe = useCallback(async () => {
-    if (!lastSwipeRef.current) {return;}
+    if (!lastSwipeRef.current) {
+      return;
+    }
     const {swipeId, projectId, action} = lastSwipeRef.current;
     try {
       if (swipeId) {

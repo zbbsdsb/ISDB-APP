@@ -168,6 +168,17 @@ export function Button({
     outputRange: [0, 0.12],
   });
 
+  // Computed style object (avoids inline object literal in style prop)
+  const computedButtonStyle = {
+    backgroundColor: c.bg,
+    borderColor: c.border,
+    borderWidth: m3Variant === 'outlined' ? 1 : 0,
+    paddingVertical: s.py,
+    paddingHorizontal: s.px,
+    minHeight: s.minHeight,
+    borderRadius: m3Shape.small,
+  };
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -177,15 +188,7 @@ export function Button({
       activeOpacity={1}
       style={[
         styles.base,
-        {
-          backgroundColor: c.bg,
-          borderColor: c.border,
-          borderWidth: m3Variant === 'outlined' ? 1 : 0,
-          paddingVertical: s.py,
-          paddingHorizontal: s.px,
-          minHeight: s.minHeight,
-          borderRadius: m3Shape.small,
-        },
+        computedButtonStyle,
         fullWidth && styles.fullWidth,
         style,
       ]}>
@@ -212,7 +215,7 @@ export function Button({
               style={[
                 styles.label,
                 {color: c.text, fontSize: s.fontSize},
-                icon ? {marginLeft: 8} : null,
+                icon ? styles.labelWithIcon : null,
                 textStyle,
               ]}>
               {title}
@@ -242,6 +245,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 0.1,
     textAlign: 'center',
+  },
+  labelWithIcon: {
+    marginLeft: 8,
   },
   stateLayer: {
     borderRadius: m3Shape.small,

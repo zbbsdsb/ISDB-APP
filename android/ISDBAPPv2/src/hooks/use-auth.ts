@@ -20,13 +20,6 @@ export function useAuth() {
   } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
 
-  // Initialize session on mount
-  useEffect(() => {
-    if (!initialized) {
-      initSession();
-    }
-  }, [initialized, initSession]);
-
   const initSession = useCallback(async () => {
     try {
       const {
@@ -50,6 +43,13 @@ export function useAuth() {
     }
   }, [setUser, setSession, setLoading, setInitialized, setError]);
 
+  // Initialize session on mount
+  useEffect(() => {
+    if (!initialized) {
+      initSession();
+    }
+  }, [initialized, initSession]);
+
   const signInWithProvider = async (provider: Provider) => {
     try {
       setLoading(true);
@@ -61,7 +61,9 @@ export function useAuth() {
         },
       });
 
-      if (signInError) {throw signInError;}
+      if (signInError) {
+        throw signInError;
+      }
       return data;
     } catch (err: any) {
       setError(err.message || `Failed to sign in with ${provider}`);

@@ -12,7 +12,9 @@ export function useProjectBlocks(projectId: string): UseProjectBlocksResult {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!projectId) {return;}
+    if (!projectId) {
+      return;
+    }
     const load = async () => {
       setLoading(true);
       const {data} = await supabase
@@ -21,7 +23,9 @@ export function useProjectBlocks(projectId: string): UseProjectBlocksResult {
         .eq('project_id', projectId)
         .eq('is_visible', true)
         .order('sort_order', {ascending: true});
-      if (data) {setBlocks(data as ProjectBlock[]);}
+      if (data) {
+        setBlocks(data as ProjectBlock[]);
+      }
       setLoading(false);
     };
     load();

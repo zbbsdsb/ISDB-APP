@@ -46,7 +46,9 @@ export function Skeleton({
   });
 
   const getBorderRadius = () => {
-    if (borderRadius !== undefined) {return borderRadius;}
+    if (borderRadius !== undefined) {
+      return borderRadius;
+    }
     switch (variant) {
       case 'circular':
         return 9999;

@@ -21,7 +21,9 @@ export function useProfile() {
           .eq('id', userId)
           .single();
 
-        if (fetchError) {throw fetchError;}
+        if (fetchError) {
+          throw fetchError;
+        }
         return data;
       } catch (err: any) {
         console.error('Error fetching profile:', err);
@@ -125,14 +127,14 @@ export function useProfile() {
   const checkUsernameAvailable = useCallback(
     async (username: string): Promise<boolean> => {
       try {
-        const {data, error} = await supabase
+        const {data, error: fetchError} = await supabase
           .from('profiles')
           .select('username')
           .eq('username', username)
           .single();
 
-        if (error && error.code !== 'PGRST116') {
-          throw error;
+        if (fetchError && fetchError.code !== 'PGRST116') {
+          throw fetchError;
         }
 
         return !data;
@@ -153,7 +155,9 @@ export function useProfile() {
    */
   const checkProfileComplete = useCallback(
     (profile: Profile | null): boolean => {
-      if (!profile) {return false;}
+      if (!profile) {
+        return false;
+      }
 
       const hasUsername =
         !!profile.username && profile.username.trim().length > 0;

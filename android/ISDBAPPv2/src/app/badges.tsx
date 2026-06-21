@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -32,7 +32,9 @@ export function BadgesScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (loading) {return;}
+    if (loading) {
+      return;
+    }
 
     // First load — just record the count
     if (prevCount === -1) {
@@ -63,9 +65,20 @@ export function BadgesScreen() {
       }
       setPrevCount(unlockedCount);
     }
-  }, [unlockedCount, loading, badges, fadeAnim, prevCount, scaleAnim, userBadges]);
+  }, [
+    unlockedCount,
+    loading,
+    badges,
+    fadeAnim,
+    prevCount,
+    scaleAnim,
+    userBadges,
+  ]);
 
-  const closeCelebration = () => {
+  const closeCelebration = useCallback(() => {
+    const finish = () => {
+      setCelebratingBadge(null);
+    };
     Animated.parallel([
       Animated.timing(scaleAnim, {
         toValue: 0,
@@ -77,18 +90,17 @@ export function BadgesScreen() {
         duration: 150,
         useNativeDriver: true,
       }),
-    }).start(() => {
-      setCelebratingBadge(null);
-    });
-  };
+    ]).start(finish);
+  }, [scaleAnim, fadeAnim]);
 
   // Auto-close after 3 seconds
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    if (!celebratingBadge) {return;}
+    if (!celebratingBadge) {
+      return;
+    }
     const timer = setTimeout(closeCelebration, 3000);
     return () => clearTimeout(timer);
-  }, [celebratingBadge]);
+  }, [celebratingBadge, closeCelebration]);
 
   return (
     <SafeAreaView
@@ -104,7 +116,7 @@ export function BadgesScreen() {
         <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
           Badges
         </Text>
-        <View style={{width: 48}} />
+        <View style={styles.headerSpacer} />
       </View>
 
       {loading ? (
@@ -136,6 +148,7 @@ export function BadgesScreen() {
                   key={badge.id}
                   style={[
                     styles.badgeCard,
+                    // eslint-disable-next-line react-native/no-inline-styles
                     {
                       backgroundColor: unlocked
                         ? colors.surface
@@ -288,6 +301,7 @@ const styles = StyleSheet.create({
     height: 56,
   },
   headerTitle: {...m3Typography.titleMedium},
+  headerSpacer: {width: 48},
   scrollContent: {padding: m3Spacing.lg},
   statsText: {
     ...m3Typography.bodyLarge,

@@ -12,10 +12,14 @@ export default function CtaBlock({config}: CtaBlockProps) {
   const url: string = config?.url || '';
 
   const handlePress = () => {
-    if (url) {Linking.openURL(url);}
+    if (url) {
+      Linking.openURL(url);
+    }
   };
 
-  if (!url) {return null;}
+  if (!url) {
+    return null;
+  }
 
   return (
     <Button

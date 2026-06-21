@@ -26,8 +26,12 @@ export function TextInput({
   const [isFocused, setIsFocused] = useState(false);
 
   const getBorderColor = () => {
-    if (error) {return colors.error;}
-    if (isFocused) {return colors.primary;}
+    if (error) {
+      return colors.error;
+    }
+    if (isFocused) {
+      return colors.primary;
+    }
     return colors.outline;
   };
 

@@ -16,7 +16,9 @@ export default function PostCreate({onSubmit}: PostCreateProps) {
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    if (!content.trim()) {return;}
+    if (!content.trim()) {
+      return;
+    }
     setSubmitting(true);
     await onSubmit(content.trim());
     setContent('');

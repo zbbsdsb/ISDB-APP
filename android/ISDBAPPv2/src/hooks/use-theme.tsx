@@ -1,4 +1,4 @@
-import {createContext, useContext, useMemo, type ReactNode} from 'react';
+import React, {createContext, useContext, useMemo, type ReactNode} from 'react';
 import {useThemeStore} from '../store/theme-store';
 import {getM3Colors, type M3Colors} from '../constants/m3-colors';
 

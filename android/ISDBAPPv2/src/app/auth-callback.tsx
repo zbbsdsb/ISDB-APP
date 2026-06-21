@@ -1,4 +1,4 @@
-import {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
@@ -20,7 +20,9 @@ export function AuthCallbackScreen() {
 
     const checkAuth = async () => {
       // Wait for auth to initialize
-      if (!initialized) {return;}
+      if (!initialized) {
+        return;
+      }
 
       if (user) {
         setStatus('Login successful! Redirecting...');

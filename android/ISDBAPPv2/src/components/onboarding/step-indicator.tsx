@@ -23,7 +23,7 @@ export function StepIndicator({totalSteps, currentStep}: StepIndicatorProps) {
                   ? colors.primary
                   : colors.outlineVariant,
             },
-            index + 1 <= currentStep && {width: 24},
+            index + 1 <= currentStep && styles.activeDot,
           ]}
         />
       ))}
@@ -43,5 +43,8 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
+  },
+  activeDot: {
+    width: 24,
   },
 });

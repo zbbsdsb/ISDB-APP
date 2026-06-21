@@ -1,10 +1,5 @@
 import React, {useRef} from 'react';
-import {
-  StyleSheet,
-  ViewStyle,
-  TouchableOpacity,
-  Animated,
-} from 'react-native';
+import {StyleSheet, ViewStyle, TouchableOpacity, Animated} from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
 import {m3Shape} from '../../constants/m3-shape';
 import {m3Elevation} from '../../constants/m3-elevation';
@@ -37,7 +32,9 @@ export function Card({
   const pressAnim = useRef(new Animated.Value(0)).current;
 
   const handlePressIn = () => {
-    if (!onPress) {return;}
+    if (!onPress) {
+      return;
+    }
     Animated.spring(pressAnim, {
       toValue: 1,
       useNativeDriver: true,
@@ -47,7 +44,9 @@ export function Card({
   };
 
   const handlePressOut = () => {
-    if (!onPress) {return;}
+    if (!onPress) {
+      return;
+    }
     Animated.spring(pressAnim, {
       toValue: 0,
       useNativeDriver: true,

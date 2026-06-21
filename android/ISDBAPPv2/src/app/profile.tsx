@@ -35,7 +35,9 @@ export function ProfileScreen() {
   const topBadges = unlockedBadges.slice(0, 4);
 
   const loadProfile = useCallback(async () => {
-    if (!user?.id) {return;}
+    if (!user?.id) {
+      return;
+    }
     setProfileLoading(true);
     const data = await getProfile(user.id);
     setProfile(data);
@@ -100,7 +102,11 @@ export function ProfileScreen() {
                 height={22}
                 style={{marginTop: m3Spacing.sm}}
               />
-              <Skeleton width={100} height={16} style={{marginTop: 6}} />
+              <Skeleton
+                width={100}
+                height={16}
+                style={styles.skeletonMarginSm}
+              />
             </View>
           ) : (
             <>
@@ -388,6 +394,7 @@ const styles = StyleSheet.create({
   content: {padding: m3Spacing.lg},
   header: {alignItems: 'center', marginBottom: m3Spacing.xl},
   headerSkeleton: {alignItems: 'center'},
+  skeletonMarginSm: {marginTop: 6},
   name: {
     ...m3Typography.headlineSmall,
     fontWeight: '700',

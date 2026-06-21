@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider } from './src/hooks/use-theme';
@@ -12,7 +12,7 @@ import { Navigation } from './src/navigation';
 
 function App(): React.JSX.Element {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={styles.container}>
       <SafeAreaProvider>
         <ThemeProvider>
           <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
@@ -24,3 +24,7 @@ function App(): React.JSX.Element {
 }
 
 export default App;
+
+const styles = StyleSheet.create({
+  container: {flex: 1},
+});

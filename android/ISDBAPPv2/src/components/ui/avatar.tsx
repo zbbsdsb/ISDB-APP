@@ -4,17 +4,11 @@ import {useTheme} from '../../hooks/use-theme';
 
 interface AvatarProps {
   source?: {uri: string} | null;
-  fallback?: string;
   size?: number;
   style?: ViewStyle;
 }
 
-export function Avatar({
-  source,
-  fallback = 'U',
-  size = 40,
-  style,
-}: AvatarProps) {
+export function Avatar({source, size = 40, style}: AvatarProps) {
   const {colors} = useTheme();
 
   return (
@@ -33,7 +27,7 @@ export function Avatar({
         <Image source={source} style={styles.image} />
       ) : (
         <View style={styles.fallback}>
-          <AvatarFallbackText text={fallback} size={size} />
+          <AvatarFallbackText size={size} />
         </View>
       )}
     </View>
@@ -46,7 +40,7 @@ function AvatarFallbackText({size}: {size: number}) {
   return (
     <View style={styles.fallbackContainer}>
       <View style={[styles.fallbackText, {width: size, height: size}]}>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={styles.centerFill}>
           <View
             style={[
               styles.initials,
@@ -57,17 +51,17 @@ function AvatarFallbackText({size}: {size: number}) {
                 borderRadius: (size * 0.7) / 2,
               },
             ]}>
-            <View
-              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={styles.centerFill}>
               <View
-                style={{
-                  width: size * 0.5,
-                  height: size * 0.5,
-                  borderRadius: (size * 0.5) / 2,
-                  backgroundColor: colors.secondary,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+                style={[
+                  styles.centerContent,
+                  {
+                    width: size * 0.5,
+                    height: size * 0.5,
+                    borderRadius: (size * 0.5) / 2,
+                    backgroundColor: colors.secondary,
+                  },
+                ]}>
                 <View
                   style={{
                     width: size * 0.3,
@@ -108,6 +102,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   initials: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centerFill: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centerContent: {
     justifyContent: 'center',
     alignItems: 'center',
   },

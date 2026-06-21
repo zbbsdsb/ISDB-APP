@@ -15,7 +15,9 @@ export function useReferral(): ReferralInfo & {shareText: string} {
   const user = useAuthStore(s => s.user);
 
   useEffect(() => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     const load = async () => {
       setLoading(true);
       // Get user's referral code

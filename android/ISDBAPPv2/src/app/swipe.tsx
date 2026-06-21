@@ -69,7 +69,9 @@ export function SwipeScreen() {
       action: SwipeActionType,
       direction: 'left' | 'right',
     ) => {
-      if (!currentProject || swiping || submitting) {return;}
+      if (!currentProject || swiping || submitting) {
+        return;
+      }
       setSubmitting(true);
 
       try {
@@ -161,19 +163,25 @@ export function SwipeScreen() {
 
   // ── Button handlers ──
   const handlePass = () => {
-    if (!currentProject || swiping || submitting) {return;}
+    if (!currentProject || swiping || submitting) {
+      return;
+    }
     setSwiping(true);
     submitAndAnimate(currentProject.id, 'pass', 'left');
   };
 
   const handleSave = () => {
-    if (!currentProject || swiping || submitting) {return;}
+    if (!currentProject || swiping || submitting) {
+      return;
+    }
     setSwiping(true);
     submitAndAnimate(currentProject.id, 'save', 'right');
   };
 
   const handleMatch = () => {
-    if (!currentProject || swiping || submitting) {return;}
+    if (!currentProject || swiping || submitting) {
+      return;
+    }
     setSwiping(true);
     submitAndAnimate(currentProject.id, 'match', 'right');
   };
@@ -288,17 +296,17 @@ export function SwipeScreen() {
             style={[
               styles.overlayBadge,
               styles.likeBadge,
-              {opacity: likeOpacity, borderColor: '#22c55e'},
+              {opacity: likeOpacity},
             ]}>
-            <Text style={[styles.overlayText, {color: '#22c55e'}]}>LIKE</Text>
+            <Text style={[styles.overlayText, styles.likeText]}>LIKE</Text>
           </Animated.View>
           <Animated.View
             style={[
               styles.overlayBadge,
               styles.nopeBadge,
-              {opacity: nopeOpacity, borderColor: '#ef4444'},
+              {opacity: nopeOpacity},
             ]}>
-            <Text style={[styles.overlayText, {color: '#ef4444'}]}>NOPE</Text>
+            <Text style={[styles.overlayText, styles.nopeText]}>NOPE</Text>
           </Animated.View>
 
           {/* Card content */}
@@ -408,7 +416,8 @@ export function SwipeScreen() {
           <TouchableOpacity
             style={[
               styles.actionBtn,
-              {backgroundColor: colors.surface, borderColor: '#ef4444'},
+              styles.passActionBtn,
+              {backgroundColor: colors.surface},
             ]}
             onPress={handlePass}
             disabled={submitting}>
@@ -417,7 +426,8 @@ export function SwipeScreen() {
           <TouchableOpacity
             style={[
               styles.actionBtn,
-              {backgroundColor: colors.surface, borderColor: '#3b82f6'},
+              styles.saveActionBtn,
+              {backgroundColor: colors.surface},
             ]}
             onPress={handleSave}
             disabled={submitting}>
@@ -430,7 +440,9 @@ export function SwipeScreen() {
             ]}
             onPress={handleMatch}
             disabled={submitting}>
-            <Text style={{color: colors.onPrimary, fontSize: 24}}>⚡</Text>
+            <Text style={[styles.matchActionText, {color: colors.onPrimary}]}>
+              ⚡
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -558,8 +570,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     transform: [{rotate: '-15deg'}],
   },
-  likeBadge: {left: 20},
-  nopeBadge: {right: 20},
+  likeBadge: {left: 20, borderColor: '#22c55e'},
+  nopeBadge: {right: 20, borderColor: '#ef4444'},
+  likeText: {color: '#22c55e'},
+  nopeText: {color: '#ef4444'},
   overlayText: {fontSize: 24, fontWeight: '800'},
   actionRow: {
     flexDirection: 'row',
@@ -576,6 +590,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
   },
+  passActionBtn: {borderColor: '#ef4444'},
+  saveActionBtn: {borderColor: '#3b82f6'},
+  matchActionText: {fontSize: 24},
   // Match modal
   matchOverlay: {
     flex: 1,

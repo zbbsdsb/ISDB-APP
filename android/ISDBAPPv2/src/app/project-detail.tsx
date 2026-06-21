@@ -56,7 +56,9 @@ export function ProjectDetailScreen() {
         project_id: projectId,
         status: 'pending',
       });
-      if (insertError) {throw insertError;}
+      if (insertError) {
+        throw insertError;
+      }
       showToast('Request sent!', 'success');
       setTimeout(() => navigation.goBack(), 1500);
     } catch (err: any) {
@@ -114,7 +116,7 @@ export function ProjectDetailScreen() {
         <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
           Project
         </Text>
-        <View style={{width: 48}} />
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -366,6 +368,7 @@ const styles = StyleSheet.create({
     height: 56,
   },
   headerTitle: {...m3Typography.titleMedium},
+  headerSpacer: {width: 48},
   scrollContent: {padding: m3Spacing.lg, paddingBottom: m3Spacing.xxl},
   projectTitle: {...m3Typography.headlineSmall, marginBottom: m3Spacing.xs},
   description: {...m3Typography.bodyLarge, marginBottom: m3Spacing.lg},

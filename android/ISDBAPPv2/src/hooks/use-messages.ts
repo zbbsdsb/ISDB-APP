@@ -23,7 +23,9 @@ export function useMessages(): UseMessagesResult {
   );
 
   const fetchConversations = useCallback(async () => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     setLoading(true);
     try {
       const {data, error: fetchError} = await supabase
@@ -45,8 +47,12 @@ export function useMessages(): UseMessagesResult {
         .not('last_message', 'is', null)
         .order('last_message_at', {ascending: false});
 
-      if (fetchError) {throw fetchError;}
-      if (data) {setConversations(data as unknown as Conversation[]);}
+      if (fetchError) {
+        throw fetchError;
+      }
+      if (data) {
+        setConversations(data as unknown as Conversation[]);
+      }
     } catch (err: any) {
       console.error('Error fetching conversations:', err);
       setError(err.message);
@@ -66,7 +72,9 @@ export function useMessages(): UseMessagesResult {
           .eq('match_id', matchId)
           .order('created_at', {ascending: true});
 
-        if (fetchError) {throw fetchError;}
+        if (fetchError) {
+          throw fetchError;
+        }
         return (data as unknown as Message[]) || [];
       } catch (err: any) {
         console.error('Error fetching messages:', err);
@@ -78,7 +86,9 @@ export function useMessages(): UseMessagesResult {
 
   const sendMessage = useCallback(
     async (matchId: string, content: string): Promise<boolean> => {
-      if (!user || !content.trim()) {return false;}
+      if (!user || !content.trim()) {
+        return false;
+      }
       try {
         const {error: insertError} = await supabase.from('messages').insert({
           match_id: matchId,
@@ -86,7 +96,9 @@ export function useMessages(): UseMessagesResult {
           content: content.trim(),
         });
 
-        if (insertError) {throw insertError;}
+        if (insertError) {
+          throw insertError;
+        }
 
         // Update match with last message
         await supabase
@@ -108,7 +120,9 @@ export function useMessages(): UseMessagesResult {
 
   // Subscribe to new messages
   useEffect(() => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
 
     const channel = supabase
       .channel('messages-realtime')

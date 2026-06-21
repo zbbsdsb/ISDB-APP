@@ -5,7 +5,6 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import {
@@ -38,16 +37,18 @@ export function GroupDetailScreen() {
   const [activeTab, setActiveTab] = useState<'info' | 'members'>('info');
   const [actionLoading, setActionLoading] = useState(false);
 
-  useEffect(() => {
-    loadGroup();
-  }, [groupId, loadGroup]);
-
   const loadGroup = useCallback(async () => {
     const g = await fetchGroupDetail(groupId);
-    if (g) {setGroup(g);}
+    if (g) {
+      setGroup(g);
+    }
     const m = await fetchGroupMembers(groupId);
     setMembers(m);
   }, [groupId, fetchGroupDetail, fetchGroupMembers]);
+
+  useEffect(() => {
+    loadGroup();
+  }, [groupId, loadGroup]);
 
   const isJoined = joinedIds.has(groupId);
 
@@ -55,10 +56,14 @@ export function GroupDetailScreen() {
     setActionLoading(true);
     if (isJoined) {
       const ok = await leaveGroup(groupId);
-      if (ok) {loadGroup();}
+      if (ok) {
+        loadGroup();
+      }
     } else {
       const ok = await joinGroup(groupId);
-      if (ok) {loadGroup();}
+      if (ok) {
+        loadGroup();
+      }
     }
     setActionLoading(false);
   };
@@ -88,7 +93,7 @@ export function GroupDetailScreen() {
         <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
           Group
         </Text>
-        <View style={{width: 48}} />
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -232,6 +237,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   headerTitle: {...m3Typography.titleMedium},
+  headerSpacer: {width: 48},
   scroll: {padding: m3Spacing.lg, paddingBottom: m3Spacing.xxl},
   groupName: {...m3Typography.headlineSmall, marginBottom: m3Spacing.xs},
   desc: {...m3Typography.bodyLarge, marginBottom: m3Spacing.lg},

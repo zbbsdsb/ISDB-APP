@@ -40,7 +40,9 @@ const sizeMap: Record<string, number> = {
 };
 
 function getSize(s: IconSize): number {
-  if (typeof s === 'number') {return s;}
+  if (typeof s === 'number') {
+    return s;
+  }
   return sizeMap[s] ?? 24;
 }
 

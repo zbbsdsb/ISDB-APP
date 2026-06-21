@@ -10,10 +10,8 @@ interface TeamBlockProps {
   projectId: string;
 }
 
-export default function TeamBlock({config}: TeamBlockProps) {
+export default function TeamBlock(_props: TeamBlockProps) {
   const {colors} = useTheme();
-  const showRoles = config?.show_roles !== false;
-  const maxDisplay = config?.max_display || 5;
 
   // Team data would come from a join on project_members; for now show placeholder
   return (

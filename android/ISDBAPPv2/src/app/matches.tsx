@@ -29,14 +29,18 @@ export function MatchesScreen() {
   const [loading, setLoading] = useState(true);
 
   const fetchMatches = useCallback(async () => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     setLoading(true);
     const {data} = await supabase
       .from('matches')
       .select('*, project:projects!project_id(title)')
       .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
       .order('created_at', {ascending: false});
-    if (data) {setMatches(data as MatchItem[]);}
+    if (data) {
+      setMatches(data as MatchItem[]);
+    }
     setLoading(false);
   }, [user]);
 
@@ -63,7 +67,7 @@ export function MatchesScreen() {
       <Button
         title="Start Swiping"
         onPress={() => navigation.navigate('Swipe')}
-        style={{marginTop: 16}}
+        style={styles.startButton}
       />
     </View>
   );
@@ -130,4 +134,5 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {...m3Typography.titleLarge, marginBottom: 8},
   emptySubtitle: {...m3Typography.bodyMedium, textAlign: 'center'},
+  startButton: {marginTop: 16},
 });

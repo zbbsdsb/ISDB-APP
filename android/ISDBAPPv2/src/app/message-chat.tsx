@@ -41,18 +41,20 @@ export function MessageChatScreen() {
   const [sending, setSending] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
-  useEffect(() => {
-    loadMessages();
-    clearUnread(matchId);
-  }, [matchId, loadMessages, clearUnread]);
-
   const loadMessages = useCallback(async () => {
     const msgs = await fetchMessages(matchId);
     setMessages(msgs);
   }, [matchId, fetchMessages]);
 
+  useEffect(() => {
+    loadMessages();
+    clearUnread(matchId);
+  }, [matchId, loadMessages, clearUnread]);
+
   const handleSend = async () => {
-    if (!inputText.trim() || sending) {return;}
+    if (!inputText.trim() || sending) {
+      return;
+    }
     setSending(true);
     const ok = await sendMessage(matchId, inputText);
     if (ok) {
@@ -76,11 +78,11 @@ export function MessageChatScreen() {
           style={[
             styles.bubble,
             isMine
-              ? {backgroundColor: colors.primary, borderBottomRightRadius: 4}
-              : {
-                  backgroundColor: colors.surfaceVariant,
-                  borderBottomLeftRadius: 4,
-                },
+              ? [styles.bubbleMineRadius, {backgroundColor: colors.primary}]
+              : [
+                  styles.bubbleOtherRadius,
+                  {backgroundColor: colors.surfaceVariant},
+                ],
           ]}>
           <Text
             style={[
@@ -92,10 +94,8 @@ export function MessageChatScreen() {
           <Text
             style={[
               styles.bubbleTime,
-              {
-                color: isMine ? colors.onPrimary : colors.onSurfaceVariant,
-                opacity: 0.7,
-              },
+              {color: isMine ? colors.onPrimary : colors.onSurfaceVariant},
+              styles.bubbleTimeOpacity,
             ]}>
             {new Date(item.created_at).toLocaleTimeString([], {
               hour: '2-digit',
@@ -130,7 +130,7 @@ export function MessageChatScreen() {
           numberOfLines={1}>
           {title}
         </Text>
-        <View style={{width: 48}} />
+        <View style={styles.headerSpacer} />
       </View>
 
       {/* Messages */}
@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   headerTitle: {...m3Typography.titleMedium, flex: 1, textAlign: 'center'},
+  headerSpacer: {width: 48},
   messageList: {
     padding: m3Spacing.md,
     paddingBottom: m3Spacing.lg,
@@ -221,8 +222,11 @@ const styles = StyleSheet.create({
     paddingVertical: m3Spacing.sm,
     borderRadius: m3Shape.medium,
   },
+  bubbleMineRadius: {borderBottomRightRadius: 4},
+  bubbleOtherRadius: {borderBottomLeftRadius: 4},
   bubbleText: {...m3Typography.bodyMedium},
   bubbleTime: {...m3Typography.labelSmall, marginTop: 2, textAlign: 'right'},
+  bubbleTimeOpacity: {opacity: 0.7},
   emptyChat: {flex: 1, justifyContent: 'center', alignItems: 'center'},
   emptyText: {...m3Typography.bodyLarge},
   inputBar: {

@@ -99,30 +99,23 @@ export function Select({
               keyExtractor={item => item.value}
               renderItem={({item}) => {
                 const isSelected = item.value === value;
+                const optionTextStyle = isSelected
+                  ? {
+                      color: colors.onPrimaryContainer,
+                      fontWeight: '600' as const,
+                    }
+                  : {color: colors.onSurface, fontWeight: '400' as const};
                 return (
                   <TouchableOpacity
                     style={[
                       styles.option,
-                      {
-                        backgroundColor: isSelected
-                          ? colors.primaryContainer
-                          : 'transparent',
-                      },
+                      isSelected && {backgroundColor: colors.primaryContainer},
                     ]}
                     onPress={() => {
                       onChange(item.value);
                       setOpen(false);
                     }}>
-                    <Text
-                      style={[
-                        styles.optionText,
-                        {
-                          color: isSelected
-                            ? colors.onPrimaryContainer
-                            : colors.onSurface,
-                          fontWeight: isSelected ? '600' : '400',
-                        },
-                      ]}>
+                    <Text style={[styles.optionText, optionTextStyle]}>
                       {item.label}
                     </Text>
                     {isSelected && (
@@ -184,6 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: m3Spacing.md,
     paddingVertical: 12,
+    backgroundColor: 'transparent',
   },
   optionText: {
     ...m3Typography.bodyMedium,

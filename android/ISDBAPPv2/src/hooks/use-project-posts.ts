@@ -15,7 +15,9 @@ export function useProjectPosts(projectId: string): UseProjectPostsResult {
   const user = useAuthStore(s => s.user);
 
   useEffect(() => {
-    if (!projectId) {return;}
+    if (!projectId) {
+      return;
+    }
     const load = async () => {
       setLoading(true);
       const {data} = await supabase
@@ -23,7 +25,9 @@ export function useProjectPosts(projectId: string): UseProjectPostsResult {
         .select('*')
         .eq('project_id', projectId)
         .order('created_at', {ascending: false});
-      if (data) {setPosts(data as ProjectPost[]);}
+      if (data) {
+        setPosts(data as ProjectPost[]);
+      }
       setLoading(false);
     };
     load();
@@ -31,7 +35,9 @@ export function useProjectPosts(projectId: string): UseProjectPostsResult {
 
   const createPost = useCallback(
     async (content: string, type: string = 'update'): Promise<boolean> => {
-      if (!user || !projectId) {return false;}
+      if (!user || !projectId) {
+        return false;
+      }
       const {error} = await supabase.from('project_posts').insert({
         project_id: projectId,
         user_id: user.id,
@@ -48,7 +54,9 @@ export function useProjectPosts(projectId: string): UseProjectPostsResult {
         .select('*')
         .eq('project_id', projectId)
         .order('created_at', {ascending: false});
-      if (data) {setPosts(data as ProjectPost[]);}
+      if (data) {
+        setPosts(data as ProjectPost[]);
+      }
       return true;
     },
     [user, projectId],

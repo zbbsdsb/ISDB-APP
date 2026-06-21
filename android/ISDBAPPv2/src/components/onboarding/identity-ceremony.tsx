@@ -77,13 +77,7 @@ export function IdentityCeremony({
       });
     }, 500);
     return () => clearTimeout(timer1);
-  }, [
-    fadeAnim,
-    scaleAnim,
-    contentFade,
-    buttonFade,
-    buttonSlide,
-  ]);
+  }, [fadeAnim, scaleAnim, contentFade, buttonFade, buttonSlide]);
 
   const handleEnter = () => {
     Animated.timing(fadeAnim, {

@@ -36,7 +36,9 @@ export function SettingsScreen() {
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    if (!user?.id) {return;}
+    if (!user?.id) {
+      return;
+    }
     const load = async () => {
       const profile = await getProfile(user.id);
       if (profile) {
@@ -53,7 +55,9 @@ export function SettingsScreen() {
   }, [user?.id, getProfile]);
 
   const handleSave = async () => {
-    if (!user?.id) {return;}
+    if (!user?.id) {
+      return;
+    }
     const skills = skillsText
       .split(',')
       .map((s: string) => s.trim())
@@ -95,7 +99,7 @@ export function SettingsScreen() {
     <SafeAreaView
       style={[styles.container, {backgroundColor: colors.background}]}>
       <KeyboardAvoidingView
-        style={{flex: 1}}
+        style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {/* Header */}
         <View style={styles.header}>
@@ -244,6 +248,7 @@ export function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: {flex: 1},
+  flex: {flex: 1},
   centerContent: {flex: 1, justifyContent: 'center', alignItems: 'center'},
   header: {
     flexDirection: 'row',

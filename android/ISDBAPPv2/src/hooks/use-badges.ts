@@ -27,9 +27,12 @@ export function useBadges(): UseBadgesResult {
               .eq('user_id', user.id)
           : Promise.resolve({data: []}),
       ]);
-      if (allBadges) {setBadges(allBadges as Badge[]);}
-      if (myBadges)
-        {setUserBadges(new Set(myBadges.map((b: any) => b.badge_id)));}
+      if (allBadges) {
+        setBadges(allBadges as Badge[]);
+      }
+      if (myBadges) {
+        setUserBadges(new Set(myBadges.map((b: any) => b.badge_id)));
+      }
       setLoading(false);
     };
     load();

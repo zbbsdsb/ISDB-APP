@@ -14,7 +14,6 @@ import {useReferral} from '../hooks/use-referral';
 import {Button, Icon, Card} from '../components/ui';
 import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
-import {m3Shape} from '../constants/m3-shape';
 
 export function ReferralScreen() {
   const {colors} = useTheme();
@@ -49,7 +48,7 @@ export function ReferralScreen() {
         <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
           Invite Friends
         </Text>
-        <View style={{width: 48}} />
+        <View style={styles.headerSpacer} />
       </View>
 
       {loading ? (
@@ -125,6 +124,7 @@ const styles = StyleSheet.create({
     height: 56,
   },
   headerTitle: {...m3Typography.titleMedium},
+  headerSpacer: {width: 48},
   content: {flex: 1, padding: m3Spacing.lg},
   codeCard: {alignItems: 'center', marginBottom: m3Spacing.lg},
   emoji: {fontSize: 48, marginBottom: m3Spacing.md},

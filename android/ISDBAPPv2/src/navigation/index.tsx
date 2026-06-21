@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {NavigationContainer, LinkingOptions} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -135,33 +135,67 @@ function AuthNavigator() {
   );
 }
 
+// Module-level per-tab icon components (stable references, avoids react/no-unstable-nested-components)
+function HomeTabIcon(props: {focused: boolean; color: string}) {
+  return <TabIcon name="home" {...props} />;
+}
+function SwipeTabIcon(props: {focused: boolean; color: string}) {
+  return <TabIcon name="swipe" {...props} />;
+}
+function ProjectsTabIcon(props: {focused: boolean; color: string}) {
+  return <TabIcon name="projects" {...props} />;
+}
+function MatchesTabIcon(props: {focused: boolean; color: string}) {
+  return <TabIcon name="matches" {...props} />;
+}
+function ProfileTabIcon(props: {focused: boolean; color: string}) {
+  return <TabIcon name="profile" {...props} />;
+}
+
+const TAB_ICON_MAP: Record<
+  string,
+  React.ComponentType<{focused: boolean; color: string}>
+> = {
+  Home: HomeTabIcon,
+  Swipe: SwipeTabIcon,
+  Projects: ProjectsTabIcon,
+  Matches: MatchesTabIcon,
+  Profile: ProfileTabIcon,
+};
+
 function MainNavigator() {
   const {colors} = useTheme();
 
+  const screenOptions = React.useCallback(
+    ({route}: {route: {name: string}}) => ({
+      // eslint-disable-next-line react/no-unstable-nested-components
+      tabBarIcon: ({focused, color}: {focused: boolean; color: string}) => {
+        const TabIconComponent = TAB_ICON_MAP[route.name] || HomeTabIcon;
+        return <TabIconComponent focused={focused} color={color} />;
+      },
+      tabBarActiveTintColor: colors.primary,
+      tabBarInactiveTintColor: colors.onSurfaceVariant,
+      tabBarLabelStyle: {
+        fontSize: 12,
+        fontWeight: '500' as const,
+        letterSpacing: 0.5,
+        marginTop: 2,
+      },
+      tabBarStyle: {
+        backgroundColor: colors.surface,
+        borderTopWidth: 0,
+        ...m3Elevation[2],
+        height: 80,
+        paddingBottom: 8,
+        paddingTop: 6,
+      },
+      headerShown: false,
+    }),
+    [colors],
+  );
+
   return (
-    <MainTab.Navigator
-      screenOptions={({route}) => ({
-        tabBarIcon: ({focused, color}) => (
-          <TabIcon name={route.name} focused={focused} color={color} />
-        ),
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.onSurfaceVariant,
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
-          letterSpacing: 0.5,
-          marginTop: 2,
-        },
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopWidth: 0,
-          ...m3Elevation[2],
-          height: 80,
-          paddingBottom: 8,
-          paddingTop: 6,
-        },
-        headerShown: false,
-      })}>
+    <MainTab.Navigator screenOptions={screenOptions}>
       <MainTab.Screen name="Home" component={HomeScreen} />
       <MainTab.Screen name="Swipe" component={SwipeScreen} />
       <MainTab.Screen name="Projects" component={ProjectsScreen} />
@@ -191,7 +225,9 @@ function RootNavigator() {
     const checkOnboarding = async () => {
       const profile = await getProfile(user.id);
       // Guard: if this effect run is stale, skip state update
-      if (onboardingCheckRef.current) {return;}
+      if (onboardingCheckRef.current) {
+        return;
+      }
       const isComplete = checkProfileComplete(profile);
       setNeedsOnboarding(!isComplete);
     };
