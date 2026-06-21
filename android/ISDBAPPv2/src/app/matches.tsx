@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../hooks/use-theme';
 import { useAuthStore } from '../store/auth-store';
 import { supabase } from '../services/supabase';
@@ -25,19 +25,29 @@ export function MatchesScreen() {
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchMatches = useCallback(async () => {
     if (!user) return;
-    const fetchMatches = async () => {
-      const { data } = await supabase
-        .from('matches')
-        .select('*, project:projects!project_id(title)')
-        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
-        .order('created_at', { ascending: false });
-      if (data) setMatches(data as MatchItem[]);
-      setLoading(false);
-    };
-    fetchMatches();
+    setLoading(true);
+    const { data } = await supabase
+      .from('matches')
+      .select('*, project:projects!project_id(title)')
+      .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+      .order('created_at', { ascending: false });
+    if (data) setMatches(data as MatchItem[]);
+    setLoading(false);
   }, [user]);
+
+  // Fetch on mount (initial load)
+  useEffect(() => {
+    fetchMatches();
+  }, [fetchMatches]);
+
+  // Re-fetch every time this tab gains focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchMatches();
+    }, [fetchMatches]),
+  );
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>

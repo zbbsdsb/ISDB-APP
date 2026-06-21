@@ -13,3 +13,6 @@ export { MessageChatScreen } from './message-chat';
 export { GroupsListScreen } from './groups-list';
 export { GroupDetailScreen } from './group-detail';
 export { GroupCreateScreen } from './group-create';
+export { BadgesScreen } from './badges';
+export { SettingsScreen } from './settings';
+export { ReferralScreen } from './referral';

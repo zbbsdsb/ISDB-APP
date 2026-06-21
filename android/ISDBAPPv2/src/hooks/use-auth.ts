@@ -4,7 +4,7 @@ import { supabase } from '../services/supabase';
 import { useAuthStore } from '../store/auth-store';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
-type Provider = 'github' | 'discord';
+type Provider = 'github' | 'discord' | 'google';
 
 export function useAuth() {
   const { user, session, loading, initialized, setUser, setSession, setLoading, setInitialized, signOut } = useAuthStore();
@@ -80,6 +80,7 @@ export function useAuth() {
     initialized,
     signInWithGitHub: () => signInWithProvider('github'),
     signInWithDiscord: () => signInWithProvider('discord'),
+    signInWithGoogle: () => signInWithProvider('google'),
     signOut: handleSignOut,
   };
 }

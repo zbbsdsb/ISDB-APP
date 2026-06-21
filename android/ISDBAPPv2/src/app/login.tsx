@@ -9,7 +9,7 @@ import { m3Spacing } from '../constants/m3-spacing';
 
 export function LoginScreen() {
   const { colors } = useTheme();
-  const { signInWithGitHub, signInWithDiscord, loading } = useAuth();
+  const { signInWithGitHub, signInWithDiscord, signInWithGoogle, loading } = useAuth();
   const navigation = useNavigation();
 
   const handleGitHubLogin = async () => {
@@ -23,6 +23,14 @@ export function LoginScreen() {
   const handleDiscordLogin = async () => {
     try {
       await signInWithDiscord();
+    } catch (error: any) {
+      Alert.alert('Login Failed', error.message || 'An error occurred');
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
     } catch (error: any) {
       Alert.alert('Login Failed', error.message || 'An error occurred');
     }
@@ -69,7 +77,7 @@ export function LoginScreen() {
           />
           <Button
             title="Continue with Google"
-            onPress={() => Alert.alert('Coming soon', 'Google sign-in is not yet available')}
+            onPress={handleGoogleLogin}
             variant="outlined"
             fullWidth
             icon={<Icon name="google" size="md" />}

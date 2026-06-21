@@ -6,15 +6,22 @@ import {
   SafeAreaView,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { useRoute, useNavigation, type RouteProp } from '@react-navigation/native';
 import { useTheme } from '../hooks/use-theme';
+import { useToast } from '../hooks/use-toast';
 import { useProject } from '../hooks/use-project';
+import { supabase } from '../services/supabase';
+import { useAuthStore } from '../store/auth-store';
 import { Button, Card, Icon } from '../components/ui';
 import { m3Typography } from '../constants/m3-typography';
 import { m3Spacing } from '../constants/m3-spacing';
 import type { RootStackParamList } from '../navigation';
+import { useProjectBlocks } from '../hooks/use-project-blocks';
+import { useProjectPosts } from '../hooks/use-project-posts';
+import BlockRenderer from '../components/project-blocks/block-renderer';
+import PostList from '../components/project-posts/post-list';
+import PostCreate from '../components/project-posts/post-create';
 
 type ProjectDetailRouteProp = RouteProp<RootStackParamList, 'ProjectDetail'>;
 
@@ -24,6 +31,30 @@ export function ProjectDetailScreen() {
   const navigation = useNavigation();
   const { projectId } = route.params;
   const { project, loading, error } = useProject(projectId);
+  const { show: showToast, ToastComponent } = useToast();
+  const user = useAuthStore((s) => s.user);
+  const { blocks, loading: blocksLoading } = useProjectBlocks(projectId);
+  const { posts, loading: postsLoading, createPost } = useProjectPosts(projectId);
+
+  const handleCollabRequest = async () => {
+    if (!user) {
+      showToast('Please log in first', 'error');
+      return;
+    }
+    try {
+      const { error: insertError } = await supabase.from('matches').insert({
+        user1_id: user.id,
+        user2_id: project!.owner_id,
+        project_id: projectId,
+        status: 'pending',
+      });
+      if (insertError) throw insertError;
+      showToast('Request sent!', 'success');
+      setTimeout(() => navigation.goBack(), 1500);
+    } catch (err: any) {
+      showToast(err.message || 'Failed to send request', 'error');
+    }
+  };
 
   if (loading) {
     return (
@@ -193,21 +224,44 @@ export function ProjectDetailScreen() {
         <View style={styles.actions}>
           <Button
             title="Request to Collaborate"
-            onPress={() => Alert.alert('Coming Soon', 'Collab request will be available soon')}
+            onPress={handleCollabRequest}
             variant="filled"
             size="lg"
             fullWidth
           />
           <Button
             title="Share"
-            onPress={() => Alert.alert('Coming Soon', 'Sharing will be available soon')}
+            onPress={() => showToast('Sharing coming soon', 'info')}
             variant="outlined"
             size="md"
             fullWidth
             icon={<Icon name="share" size="sm" color={colors.primary} />}
           />
         </View>
+
+        {/* ── Project Blocks ── */}
+        {blocksLoading ? (
+          <ActivityIndicator style={{ marginVertical: m3Spacing.md }} color={colors.primary} />
+        ) : (
+          blocks.map((block) => (
+            <View key={block.id} style={styles.section}>
+              <BlockRenderer
+                blockType={block.block_type}
+                config={block.config as Record<string, any>}
+                projectId={projectId}
+              />
+            </View>
+          ))
+        )}
+
+        {/* ── Posts / Updates ── */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.onBackground }]}>Updates</Text>
+          <PostCreate onSubmit={async (content) => { await createPost(content, 'update'); }} />
+          <PostList posts={posts} loading={postsLoading} />
+        </View>
       </ScrollView>
+      {ToastComponent}
     </SafeAreaView>
   );
 }

@@ -25,6 +25,9 @@ import {
   GroupsListScreen,
   GroupDetailScreen,
   GroupCreateScreen,
+  BadgesScreen,
+  SettingsScreen,
+  ReferralScreen,
 } from '../app';
 
 // Type definitions
@@ -38,6 +41,9 @@ export type RootStackParamList = {
   MessageChat: { matchId: string; title: string };
   GroupDetail: { groupId: string };
   GroupCreate: undefined;
+  Badges: undefined;
+  Settings: undefined;
+  Referral: undefined;
 };
 
 export type AuthStackParamList = {
@@ -225,6 +231,9 @@ function RootNavigator() {
       <RootStack.Screen name="MessageChat" component={MessageChatScreen} />
       <RootStack.Screen name="GroupDetail" component={GroupDetailScreen} />
       <RootStack.Screen name="GroupCreate" component={GroupCreateScreen} />
+      <RootStack.Screen name="Badges" component={BadgesScreen} />
+      <RootStack.Screen name="Settings" component={SettingsScreen} />
+      <RootStack.Screen name="Referral" component={ReferralScreen} />
     </RootStack.Navigator>
   );
 }
