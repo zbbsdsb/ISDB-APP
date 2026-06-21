@@ -1,15 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '../hooks/use-theme';
-import { useAuth } from '../hooks/use-auth';
-import { Button, Icon } from '../components/ui';
-import { m3Typography } from '../constants/m3-typography';
-import { m3Spacing } from '../constants/m3-spacing';
+import {View, Text, StyleSheet, SafeAreaView, Alert} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {useTheme} from '../hooks/use-theme';
+import {useAuth} from '../hooks/use-auth';
+import {Button, Icon} from '../components/ui';
+import {m3Typography} from '../constants/m3-typography';
+import {m3Spacing} from '../constants/m3-spacing';
 
 export function LoginScreen() {
-  const { colors } = useTheme();
-  const { signInWithGitHub, signInWithDiscord, signInWithGoogle, loading } = useAuth();
+  const {colors} = useTheme();
+  const {signInWithGitHub, signInWithDiscord, signInWithGoogle, loading} =
+    useAuth();
   const navigation = useNavigation();
 
   const handleGitHubLogin = async () => {
@@ -37,7 +38,8 @@ export function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: colors.background}]}>
       <View style={styles.content}>
         {/* Back button */}
         <Button
@@ -49,11 +51,11 @@ export function LoginScreen() {
         />
 
         <View style={styles.header}>
-          <Text style={[styles.logoEmoji, { color: colors.primary }]}>🏗️</Text>
-          <Text style={[styles.title, { color: colors.onBackground }]}>
+          <Text style={[styles.logoEmoji, {color: colors.primary}]}>🏗️</Text>
+          <Text style={[styles.title, {color: colors.onBackground}]}>
             Insane Dream Builder
           </Text>
-          <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
+          <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]}>
             Sign in to continue
           </Text>
         </View>
@@ -65,7 +67,13 @@ export function LoginScreen() {
             variant="tonal"
             fullWidth
             loading={loading}
-            icon={<Icon name="github" size="md" color={colors.onSecondaryContainer} />}
+            icon={
+              <Icon
+                name="github"
+                size="md"
+                color={colors.onSecondaryContainer}
+              />
+            }
           />
           <Button
             title="Continue with Discord"
@@ -84,7 +92,7 @@ export function LoginScreen() {
           />
         </View>
 
-        <Text style={[styles.terms, { color: colors.onSurfaceVariant }]}>
+        <Text style={[styles.terms, {color: colors.onSurfaceVariant}]}>
           By continuing, you agree to our Terms of Service and Privacy Policy
         </Text>
       </View>

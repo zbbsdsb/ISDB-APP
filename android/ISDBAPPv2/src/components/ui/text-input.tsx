@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   TextInput as RNTextInput,
   View,
@@ -7,7 +7,7 @@ import {
   TextInputProps as RNTextInputProps,
   ViewStyle,
 } from 'react-native';
-import { useTheme } from '../../hooks/use-theme';
+import {useTheme} from '../../hooks/use-theme';
 
 interface TextInputProps extends RNTextInputProps {
   label?: string;
@@ -22,19 +22,21 @@ export function TextInput({
   style,
   ...props
 }: TextInputProps) {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
   const getBorderColor = () => {
-    if (error) return colors.error;
-    if (isFocused) return colors.primary;
+    if (error) {return colors.error;}
+    if (isFocused) {return colors.primary;}
     return colors.outline;
   };
 
   return (
     <View style={[styles.container, containerStyle]}>
       {label && (
-        <Text style={[styles.label, { color: colors.onBackground }]}>{label}</Text>
+        <Text style={[styles.label, {color: colors.onBackground}]}>
+          {label}
+        </Text>
       )}
       <RNTextInput
         style={[
@@ -52,7 +54,7 @@ export function TextInput({
         {...props}
       />
       {error && (
-        <Text style={[styles.error, { color: colors.error }]}>{error}</Text>
+        <Text style={[styles.error, {color: colors.error}]}>{error}</Text>
       )}
     </View>
   );

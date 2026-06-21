@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import type { Group } from '@isdb/shared';
+import {create} from 'zustand';
+import type {Group} from '@isdb/shared';
 
 interface GroupStore {
   groups: Group[];
@@ -11,29 +11,27 @@ interface GroupStore {
   leaveGroup: (groupId: string) => void;
 }
 
-export const useGroupStore = create<GroupStore>((set) => ({
+export const useGroupStore = create<GroupStore>(set => ({
   groups: [],
   joinedGroupIds: new Set(),
 
-  setGroups: (groups) => set({ groups }),
+  setGroups: groups => set({groups}),
 
-  addGroup: (group) =>
-    set((state) => ({ groups: [group, ...state.groups] })),
+  addGroup: group => set(state => ({groups: [group, ...state.groups]})),
 
-  setJoinedGroupIds: (ids) =>
-    set({ joinedGroupIds: new Set(ids) }),
+  setJoinedGroupIds: ids => set({joinedGroupIds: new Set(ids)}),
 
-  joinGroup: (groupId) =>
-    set((state) => {
+  joinGroup: groupId =>
+    set(state => {
       const next = new Set(state.joinedGroupIds);
       next.add(groupId);
-      return { joinedGroupIds: next };
+      return {joinedGroupIds: next};
     }),
 
-  leaveGroup: (groupId) =>
-    set((state) => {
+  leaveGroup: groupId =>
+    set(state => {
       const next = new Set(state.joinedGroupIds);
       next.delete(groupId);
-      return { joinedGroupIds: next };
+      return {joinedGroupIds: next};
     }),
 }));

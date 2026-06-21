@@ -1,26 +1,29 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useTheme } from '../../hooks/use-theme';
+import {View, StyleSheet} from 'react-native';
+import {useTheme} from '../../hooks/use-theme';
 
 interface StepIndicatorProps {
   totalSteps: number;
   currentStep: number;
 }
 
-export function StepIndicator({ totalSteps, currentStep }: StepIndicatorProps) {
-  const { colors } = useTheme();
+export function StepIndicator({totalSteps, currentStep}: StepIndicatorProps) {
+  const {colors} = useTheme();
 
   return (
     <View style={styles.container}>
-      {Array.from({ length: totalSteps }, (_, index) => (
+      {Array.from({length: totalSteps}, (_, index) => (
         <View
           key={index}
           style={[
             styles.dot,
             {
-              backgroundColor: index + 1 <= currentStep ? colors.primary : colors.outlineVariant,
+              backgroundColor:
+                index + 1 <= currentStep
+                  ? colors.primary
+                  : colors.outlineVariant,
             },
-            index + 1 <= currentStep && { width: 24 },
+            index + 1 <= currentStep && {width: 24},
           ]}
         />
       ))}

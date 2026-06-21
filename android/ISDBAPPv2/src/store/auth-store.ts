@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import {create} from 'zustand';
+import {persist, createJSONStorage} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
+import type {User as SupabaseUser, Session} from '@supabase/supabase-js';
 
 interface AuthState {
   user: SupabaseUser | null;
@@ -17,21 +17,21 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    set => ({
       user: null,
       session: null,
       loading: true,
       initialized: false,
-      setUser: (user) => set({ user, loading: false }),
-      setSession: (session) => set({ session }),
-      setLoading: (loading) => set({ loading }),
-      setInitialized: (initialized) => set({ initialized }),
-      signOut: () => set({ user: null, session: null, loading: false }),
+      setUser: user => set({user, loading: false}),
+      setSession: session => set({session}),
+      setLoading: loading => set({loading}),
+      setInitialized: initialized => set({initialized}),
+      signOut: () => set({user: null, session: null, loading: false}),
     }),
     {
       name: 'auth-store',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({ user: state.user, session: state.session }),
-    }
-  )
+      partialize: state => ({user: state.user, session: state.session}),
+    },
+  ),
 );

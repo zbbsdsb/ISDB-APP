@@ -1,13 +1,23 @@
-import { useState, useEffect } from 'react';
-import { APP_SCHEME } from '@isdb/shared';
-import { supabase } from '../services/supabase';
-import { useAuthStore } from '../store/auth-store';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
+import {useState, useEffect, useCallback} from 'react';
+import {APP_SCHEME} from '@isdb/shared';
+import {supabase} from '../services/supabase';
+import {useAuthStore} from '../store/auth-store';
+import type {User as SupabaseUser} from '@supabase/supabase-js';
 
 type Provider = 'github' | 'discord' | 'google';
 
 export function useAuth() {
-  const { user, session, loading, initialized, setUser, setSession, setLoading, setInitialized, signOut } = useAuthStore();
+  const {
+    user,
+    session,
+    loading,
+    initialized,
+    setUser,
+    setSession,
+    setLoading,
+    setInitialized,
+    signOut,
+  } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
 
   // Initialize session on mount
@@ -15,11 +25,13 @@ export function useAuth() {
     if (!initialized) {
       initSession();
     }
-  }, [initialized]);
+  }, [initialized, initSession]);
 
-  const initSession = async () => {
+  const initSession = useCallback(async () => {
     try {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      const {
+        data: {session: currentSession},
+      } = await supabase.auth.getSession();
 
       if (currentSession) {
         // currentSession.user is Supabase User, matches auth-store's SupabaseUser type
@@ -36,20 +48,20 @@ export function useAuth() {
       setLoading(false);
       setInitialized(true);
     }
-  };
+  }, [setUser, setSession, setLoading, setInitialized, setError]);
 
   const signInWithProvider = async (provider: Provider) => {
     try {
       setLoading(true);
       setError(null);
-      const { data, error: signInError } = await supabase.auth.signInWithOAuth({
+      const {data, error: signInError} = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo: `${APP_SCHEME}://auth/callback`,
         },
       });
 
-      if (signInError) throw signInError;
+      if (signInError) {throw signInError;}
       return data;
     } catch (err: any) {
       setError(err.message || `Failed to sign in with ${provider}`);

@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import { NavigationContainer, LinkingOptions } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import { useTheme } from '../hooks/use-theme';
-import { useAuth } from '../hooks/use-auth';
-import { useProfile } from '../hooks/use-profile';
-import { DEEP_LINK_SCHEME } from '../constants';
-import { Icon, type IconName } from '../components/ui';
-import { m3Elevation } from '../constants/m3-elevation';
+import {useEffect, useRef, useState} from 'react';
+import {NavigationContainer, LinkingOptions} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {View, StyleSheet, ActivityIndicator} from 'react-native';
+import {useTheme} from '../hooks/use-theme';
+import {useAuth} from '../hooks/use-auth';
+import {useProfile} from '../hooks/use-profile';
+import {DEEP_LINK_SCHEME} from '../constants';
+import {Icon, type IconName} from '../components/ui';
+import {m3Elevation} from '../constants/m3-elevation';
 import {
   LandingScreen,
   HomeScreen,
@@ -20,9 +20,7 @@ import {
   AuthCallbackScreen,
   OnboardingScreen,
   ProjectDetailScreen,
-  MessagesListScreen,
   MessageChatScreen,
-  GroupsListScreen,
   GroupDetailScreen,
   GroupCreateScreen,
   BadgesScreen,
@@ -38,9 +36,9 @@ export type RootStackParamList = {
   AuthCallback: undefined;
   Onboarding: undefined;
   Main: undefined;
-  ProjectDetail: { projectId: string };
-  MessageChat: { matchId: string; title: string };
-  GroupDetail: { groupId: string };
+  ProjectDetail: {projectId: string};
+  MessageChat: {matchId: string; title: string};
+  GroupDetail: {groupId: string};
   GroupCreate: undefined;
   Badges: undefined;
   Settings: undefined;
@@ -100,7 +98,15 @@ const TAB_ICONS: Record<string, IconName> = {
   Profile: 'profile',
 };
 
-function TabIcon({ name, focused, color }: { name: string; focused: boolean; color: string }) {
+function TabIcon({
+  name,
+  focused,
+  color,
+}: {
+  name: string;
+  focused: boolean;
+  color: string;
+}) {
   return (
     <View style={styles.tabIcon}>
       <Icon
@@ -109,23 +115,20 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
         color={color}
       />
       {/* Active indicator dot */}
-      {focused && (
-        <View style={[styles.activeDot, { backgroundColor: color }]} />
-      )}
+      {focused && <View style={[styles.activeDot, {backgroundColor: color}]} />}
     </View>
   );
 }
 
 function AuthNavigator() {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
 
   return (
     <AuthStack.Navigator
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: colors.background },
-      }}
-    >
+        contentStyle: {backgroundColor: colors.background},
+      }}>
       <AuthStack.Screen name="Login" component={LoginScreen} />
       <AuthStack.Screen name="AuthCallback" component={AuthCallbackScreen} />
     </AuthStack.Navigator>
@@ -133,12 +136,12 @@ function AuthNavigator() {
 }
 
 function MainNavigator() {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
 
   return (
     <MainTab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color }) => (
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color}) => (
           <TabIcon name={route.name} focused={focused} color={color} />
         ),
         tabBarActiveTintColor: colors.primary,
@@ -158,8 +161,7 @@ function MainNavigator() {
           paddingTop: 6,
         },
         headerShown: false,
-      })}
-    >
+      })}>
       <MainTab.Screen name="Home" component={HomeScreen} />
       <MainTab.Screen name="Swipe" component={SwipeScreen} />
       <MainTab.Screen name="Projects" component={ProjectsScreen} />
@@ -170,9 +172,9 @@ function MainNavigator() {
 }
 
 function RootNavigator() {
-  const { user, loading, initialized } = useAuth();
-  const { getProfile, checkProfileComplete } = useProfile();
-  const { colors, isDark } = useTheme();
+  const {user, initialized} = useAuth();
+  const {getProfile, checkProfileComplete} = useProfile();
+  const {colors} = useTheme();
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
   const onboardingCheckRef = useRef(false);
 
@@ -189,7 +191,7 @@ function RootNavigator() {
     const checkOnboarding = async () => {
       const profile = await getProfile(user.id);
       // Guard: if this effect run is stale, skip state update
-      if (onboardingCheckRef.current) return;
+      if (onboardingCheckRef.current) {return;}
       const isComplete = checkProfileComplete(profile);
       setNeedsOnboarding(!isComplete);
     };
@@ -210,7 +212,8 @@ function RootNavigator() {
   // Show loading screen while initializing auth or checking onboarding
   if (!initialized || needsOnboarding === null) {
     return (
-      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+      <View
+        style={[styles.loadingContainer, {backgroundColor: colors.background}]}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
@@ -221,10 +224,9 @@ function RootNavigator() {
       initialRouteName={initialRouteName}
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: colors.background },
+        contentStyle: {backgroundColor: colors.background},
         animation: 'fade_from_bottom',
-      }}
-    >
+      }}>
       <RootStack.Screen name="Landing" component={LandingScreen} />
       <RootStack.Screen name="Auth" component={AuthNavigator} />
       <RootStack.Screen name="AuthCallback" component={AuthCallbackScreen} />
@@ -243,7 +245,7 @@ function RootNavigator() {
 }
 
 export function Navigation() {
-  const { colors, isDark } = useTheme();
+  const {colors, isDark} = useTheme();
 
   return (
     <NavigationContainer
@@ -276,8 +278,7 @@ export function Navigation() {
             fontWeight: '900',
           },
         },
-      }}
-    >
+      }}>
       <RootNavigator />
     </NavigationContainer>
   );

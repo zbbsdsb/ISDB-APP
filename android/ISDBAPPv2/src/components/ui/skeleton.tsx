@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Animated, StyleSheet, ViewStyle } from 'react-native';
-import { useTheme } from '../../hooks/use-theme';
-import { m3Shape } from '../../constants/m3-shape';
+import React, {useEffect, useRef} from 'react';
+import {Animated, StyleSheet, ViewStyle} from 'react-native';
+import {useTheme} from '../../hooks/use-theme';
+import {m3Shape} from '../../constants/m3-shape';
 
 interface SkeletonProps {
   width?: number | string;
@@ -18,7 +18,7 @@ export function Skeleton({
   variant = 'text',
   style,
 }: SkeletonProps) {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const pulseAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export function Skeleton({
   });
 
   const getBorderRadius = () => {
-    if (borderRadius !== undefined) return borderRadius;
+    if (borderRadius !== undefined) {return borderRadius;}
     switch (variant) {
       case 'circular':
         return 9999;
@@ -69,7 +69,10 @@ export function Skeleton({
           backgroundColor: colors.surfaceVariant,
           opacity,
         },
-        variant === 'circular' && { width: (width as number) || 40, height: (height as number) || 40 },
+        variant === 'circular' && {
+          width: (width as number) || 40,
+          height: (height as number) || 40,
+        },
         style,
       ]}
     />

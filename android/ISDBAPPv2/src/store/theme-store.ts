@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import {create} from 'zustand';
+import {persist, createJSONStorage} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
@@ -22,9 +22,10 @@ export const useThemeStore = create<ThemeState>()(
     (set, get) => ({
       mode: 'dark', // Default to dark on Android
       isDark: true,
-      setMode: (mode) => {
-        const isDark = mode === 'system' ? getSystemDarkMode() : mode === 'dark';
-        set({ mode, isDark });
+      setMode: mode => {
+        const isDark =
+          mode === 'system' ? getSystemDarkMode() : mode === 'dark';
+        set({mode, isDark});
       },
       toggleTheme: () => {
         const newMode = get().mode === 'dark' ? 'light' : 'dark';
@@ -34,12 +35,15 @@ export const useThemeStore = create<ThemeState>()(
     {
       name: 'theme-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => state => {
         if (state) {
-          const isDark = state.mode === 'system' ? getSystemDarkMode() : state.mode === 'dark';
+          const isDark =
+            state.mode === 'system'
+              ? getSystemDarkMode()
+              : state.mode === 'dark';
           state.isDark = isDark;
         }
       },
-    }
-  )
+    },
+  ),
 );

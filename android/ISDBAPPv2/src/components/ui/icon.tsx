@@ -1,6 +1,6 @@
 import React from 'react';
-import Svg, { Path, Circle, Rect, type SvgProps } from 'react-native-svg';
-import { useTheme } from '../../hooks/use-theme';
+import Svg, {Path, Circle, type SvgProps} from 'react-native-svg';
+import {useTheme} from '../../hooks/use-theme';
 
 type IconSize = 'sm' | 'md' | 'lg' | number;
 
@@ -40,7 +40,7 @@ const sizeMap: Record<string, number> = {
 };
 
 function getSize(s: IconSize): number {
-  if (typeof s === 'number') return s;
+  if (typeof s === 'number') {return s;}
   return sizeMap[s] ?? 24;
 }
 
@@ -48,28 +48,22 @@ function getSize(s: IconSize): number {
  * ISDB App Icon component — SVG brand icons via react-native-svg.
  * All icons use currentColor fill (or explicit color prop) to adapt to theme.
  */
-export function Icon({ name, size = 'md', color, ...svgProps }: IconProps) {
-  const { colors } = useTheme();
+export function Icon({name, size = 'md', color, ...svgProps}: IconProps) {
+  const {colors} = useTheme();
   const s = getSize(size);
   const fill = color ?? colors.onBackground;
 
   const icon = renderIcon(name, fill);
 
   return (
-    <Svg
-      width={s}
-      height={s}
-      viewBox="0 0 24 24"
-      fill="none"
-      {...svgProps}
-    >
+    <Svg width={s} height={s} viewBox="0 0 24 24" fill="none" {...svgProps}>
       {icon}
     </Svg>
   );
 }
 
 function renderIcon(name: IconName, fill: string) {
-  const props = { fill };
+  const props = {fill};
 
   switch (name) {
     // ── Brand Icons ──
@@ -92,20 +86,29 @@ function renderIcon(name: IconName, fill: string) {
     case 'google':
       return (
         <>
-          <Path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-          <Path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-          <Path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-          <Path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+          <Path
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            fill="#4285F4"
+          />
+          <Path
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            fill="#34A853"
+          />
+          <Path
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+            fill="#FBBC05"
+          />
+          <Path
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+            fill="#EA4335"
+          />
         </>
       );
 
     // ── Tab Icons ──
     case 'home':
       return (
-        <Path
-          fill={fill}
-          d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-        />
+        <Path fill={fill} d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
       );
 
     case 'swipe':
@@ -127,7 +130,14 @@ function renderIcon(name: IconName, fill: string) {
             strokeLinejoin="round"
             fill="none"
           />
-          <Circle cx="12" cy="12" r="3" stroke={fill} strokeWidth={2} fill="none" />
+          <Circle
+            cx="12"
+            cy="12"
+            r="3"
+            stroke={fill}
+            strokeWidth={2}
+            fill="none"
+          />
           <Path
             d="M12 3v2m0 14v2"
             stroke={fill}
@@ -165,7 +175,14 @@ function renderIcon(name: IconName, fill: string) {
     case 'profile':
       return (
         <>
-          <Circle cx="12" cy="8" r="4" stroke={fill} strokeWidth={2} fill="none" />
+          <Circle
+            cx="12"
+            cy="8"
+            r="4"
+            stroke={fill}
+            strokeWidth={2}
+            fill="none"
+          />
           <Path
             d="M20 21a8 8 0 00-16 0"
             stroke={fill}
@@ -217,9 +234,30 @@ function renderIcon(name: IconName, fill: string) {
     case 'share':
       return (
         <>
-          <Circle cx="18" cy="5" r="3" stroke={fill} strokeWidth={2} fill="none" />
-          <Circle cx="6" cy="12" r="3" stroke={fill} strokeWidth={2} fill="none" />
-          <Circle cx="18" cy="19" r="3" stroke={fill} strokeWidth={2} fill="none" />
+          <Circle
+            cx="18"
+            cy="5"
+            r="3"
+            stroke={fill}
+            strokeWidth={2}
+            fill="none"
+          />
+          <Circle
+            cx="6"
+            cy="12"
+            r="3"
+            stroke={fill}
+            strokeWidth={2}
+            fill="none"
+          />
+          <Circle
+            cx="18"
+            cy="19"
+            r="3"
+            stroke={fill}
+            strokeWidth={2}
+            fill="none"
+          />
           <Path
             d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"
             stroke={fill}
@@ -257,7 +295,14 @@ function renderIcon(name: IconName, fill: string) {
     case 'search':
       return (
         <>
-          <Circle cx="11" cy="11" r="8" stroke={fill} strokeWidth={2} fill="none" />
+          <Circle
+            cx="11"
+            cy="11"
+            r="8"
+            stroke={fill}
+            strokeWidth={2}
+            fill="none"
+          />
           <Path
             d="M21 21l-4.35-4.35"
             stroke={fill}
@@ -349,8 +394,6 @@ function renderIcon(name: IconName, fill: string) {
       );
 
     default:
-      return (
-        <Circle cx="12" cy="12" r="8" fill={fill} opacity={0.3} />
-      );
+      return <Circle cx="12" cy="12" r="8" fill={fill} opacity={0.3} />;
   }
 }

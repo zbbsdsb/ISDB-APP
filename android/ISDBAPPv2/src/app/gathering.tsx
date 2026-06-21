@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
   Text,
@@ -8,16 +8,15 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { useTheme } from '../hooks/use-theme';
-import { supabase } from '../services/supabase';
-import { useAuthStore } from '../store/auth-store';
-import { Button, Card, Skeleton } from '../components/ui';
-import { m3Typography } from '../constants/m3-typography';
-import { m3Spacing } from '../constants/m3-spacing';
-import { m3Shape } from '../constants/m3-shape';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../navigation';
+import {useNavigation} from '@react-navigation/native';
+import {useTheme} from '../hooks/use-theme';
+import {supabase} from '../services/supabase';
+import {Card, Skeleton} from '../components/ui';
+import {m3Typography} from '../constants/m3-typography';
+import {m3Spacing} from '../constants/m3-spacing';
+import {m3Shape} from '../constants/m3-shape';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {RootStackParamList} from '../navigation';
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -37,7 +36,7 @@ interface ActiveProject {
 }
 
 export function GatheringScreen() {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const navigation = useNavigation<NavProp>();
 
   const [onlineCount, setOnlineCount] = useState<number | null>(null);
@@ -51,11 +50,11 @@ export function GatheringScreen() {
       // Online count
       try {
         const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-        const { count } = await supabase
+        const {count} = await supabase
           .from('sessions')
-          .select('*', { count: 'exact', head: true })
+          .select('*', {count: 'exact', head: true})
           .gte('created_at', fiveMinAgo);
-        if (count !== null) setOnlineCount(count);
+        if (count !== null) {setOnlineCount(count);}
       } catch {
         // sessions table may not exist
       }
@@ -63,14 +62,14 @@ export function GatheringScreen() {
       // Recent activities — mix of project updates and matches
       const activityItems: ActivityItem[] = [];
 
-      const { data: recentProjects } = await supabase
+      const {data: recentProjects} = await supabase
         .from('projects')
         .select('id, title, updated_at')
-        .order('updated_at', { ascending: false })
+        .order('updated_at', {ascending: false})
         .limit(5);
 
       if (recentProjects) {
-        recentProjects.forEach((p) => {
+        recentProjects.forEach(p => {
           activityItems.push({
             id: `p-${p.id}`,
             type: 'project_updated',
@@ -81,10 +80,10 @@ export function GatheringScreen() {
         });
       }
 
-      const { data: recentMatches } = await supabase
+      const {data: recentMatches} = await supabase
         .from('matches')
         .select('id, created_at, project:projects!project_id(title)')
-        .order('created_at', { ascending: false })
+        .order('created_at', {ascending: false})
         .limit(5);
 
       if (recentMatches) {
@@ -102,7 +101,8 @@ export function GatheringScreen() {
 
       // Sort by timestamp descending
       activityItems.sort(
-        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
       setActivities(activityItems.slice(0, 10));
 
@@ -127,42 +127,63 @@ export function GatheringScreen() {
   }, [fetchData]);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: colors.background}]}>
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />
-        }
-      >
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.primary}
+          />
+        }>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.onBackground }]}>Gathering</Text>
+          <Text style={[styles.title, {color: colors.onBackground}]}>
+            Gathering
+          </Text>
           <TouchableOpacity onPress={handleRefresh}>
-            <Text style={[styles.refreshBtn, { color: colors.primary }]}>Refresh</Text>
+            <Text style={[styles.refreshBtn, {color: colors.primary}]}>
+              Refresh
+            </Text>
           </TouchableOpacity>
         </View>
 
         {/* ── Online count ── */}
-        <Card variant="elevated" padding={m3Spacing.lg} style={styles.onlineCard}>
+        <Card
+          variant="elevated"
+          padding={m3Spacing.lg}
+          style={styles.onlineCard}>
           {loading ? (
-            <View style={{ alignItems: 'center' }}>
+            <View style={{alignItems: 'center'}}>
               <Skeleton width={80} height={36} />
-              <Skeleton width={120} height={16} style={{ marginTop: m3Spacing.xs }} />
+              <Skeleton
+                width={120}
+                height={16}
+                style={{marginTop: m3Spacing.xs}}
+              />
             </View>
           ) : (
             <>
               <View style={styles.onlineDotsRow}>
-                {Array.from({ length: Math.min(onlineCount || 0, 5) }).map((_, i) => (
-                  <View
-                    key={i}
-                    style={[styles.onlineDot, { backgroundColor: colors.primary, opacity: 1 - i * 0.1 }]}
-                  />
-                ))}
+                {Array.from({length: Math.min(onlineCount || 0, 5)}).map(
+                  (_, i) => (
+                    <View
+                      key={i}
+                      style={[
+                        styles.onlineDot,
+                        {backgroundColor: colors.primary, opacity: 1 - i * 0.1},
+                      ]}
+                    />
+                  ),
+                )}
               </View>
-              <Text style={[styles.onlineCount, { color: colors.onBackground }]}>
+              <Text style={[styles.onlineCount, {color: colors.onBackground}]}>
                 {onlineCount ?? '—'}
               </Text>
-              <Text style={[styles.onlineLabel, { color: colors.onSurfaceVariant }]}>
+              <Text
+                style={[styles.onlineLabel, {color: colors.onSurfaceVariant}]}>
                 Builders Online Now
               </Text>
             </>
@@ -170,66 +191,102 @@ export function GatheringScreen() {
         </Card>
 
         {/* ── Recent Activity ── */}
-        <Text style={[styles.sectionTitle, { color: colors.onBackground }]}>Recent Activity</Text>
+        <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+          Recent Activity
+        </Text>
         {loading ? (
           <View>
-            <Skeleton width="100%" height={48} style={{ marginBottom: m3Spacing.sm }} />
-            <Skeleton width="100%" height={48} style={{ marginBottom: m3Spacing.sm }} />
+            <Skeleton
+              width="100%"
+              height={48}
+              style={{marginBottom: m3Spacing.sm}}
+            />
+            <Skeleton
+              width="100%"
+              height={48}
+              style={{marginBottom: m3Spacing.sm}}
+            />
             <Skeleton width="100%" height={48} />
           </View>
         ) : activities.length > 0 ? (
-          <Card variant="filled" padding={m3Spacing.md} style={styles.activityCard}>
+          <Card
+            variant="filled"
+            padding={m3Spacing.md}
+            style={styles.activityCard}>
             {activities.map((item, idx) => (
               <TouchableOpacity
                 key={item.id}
                 onPress={() => {
                   if (item.projectId) {
-                    navigation.navigate('ProjectDetail', { projectId: item.projectId });
+                    navigation.navigate('ProjectDetail', {
+                      projectId: item.projectId,
+                    });
                   }
-                }}
-              >
+                }}>
                 <View style={styles.activityRow}>
                   <Text style={styles.activityIcon}>
-                    {item.type === 'project_updated' ? '📋' : item.type === 'match' ? '🤝' : '👤'}
+                    {item.type === 'project_updated'
+                      ? '📋'
+                      : item.type === 'match'
+                      ? '🤝'
+                      : '👤'}
                   </Text>
-                  <Text style={[styles.activityText, { color: colors.onSurface }]}>
+                  <Text
+                    style={[styles.activityText, {color: colors.onSurface}]}>
                     {item.text}
                   </Text>
                 </View>
                 {idx < activities.length - 1 && (
-                  <View style={[styles.activityDivider, { backgroundColor: colors.outlineVariant }]} />
+                  <View
+                    style={[
+                      styles.activityDivider,
+                      {backgroundColor: colors.outlineVariant},
+                    ]}
+                  />
                 )}
               </TouchableOpacity>
             ))}
           </Card>
         ) : (
-          <Text style={[styles.emptyText, { color: colors.onSurfaceVariant }]}>
+          <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
             No recent activity
           </Text>
         )}
 
         {/* ── Active Projects ── */}
-        <Text style={[styles.sectionTitle, { color: colors.onBackground }]}>Active Projects</Text>
+        <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+          Active Projects
+        </Text>
         {loading ? (
           <View style={styles.projectsSkeletonRow}>
             <Skeleton width="48%" height={100} borderRadius={m3Shape.medium} />
             <Skeleton width="48%" height={100} borderRadius={m3Shape.medium} />
           </View>
         ) : activeProjects.length > 0 ? (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.projectsScroll}>
-            {activeProjects.map((p) => (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.projectsScroll}>
+            {activeProjects.map(p => (
               <TouchableOpacity
                 key={p.id}
-                onPress={() => navigation.navigate('ProjectDetail', { projectId: p.id })}
-              >
-                <Card variant="elevated" padding={m3Spacing.md} style={styles.projectCard}>
+                onPress={() =>
+                  navigation.navigate('ProjectDetail', {projectId: p.id})
+                }>
+                <Card
+                  variant="elevated"
+                  padding={m3Spacing.md}
+                  style={styles.projectCard}>
                   <Text
-                    style={[styles.projectTitle, { color: colors.onSurface }]}
-                    numberOfLines={2}
-                  >
+                    style={[styles.projectTitle, {color: colors.onSurface}]}
+                    numberOfLines={2}>
                     {p.title}
                   </Text>
-                  <Text style={[styles.projectTime, { color: colors.onSurfaceVariant }]}>
+                  <Text
+                    style={[
+                      styles.projectTime,
+                      {color: colors.onSurfaceVariant},
+                    ]}>
                     {new Date(p.updated_at).toLocaleDateString()}
                   </Text>
                 </Card>
@@ -237,21 +294,21 @@ export function GatheringScreen() {
             ))}
           </ScrollView>
         ) : (
-          <Text style={[styles.emptyText, { color: colors.onSurfaceVariant }]}>
+          <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
             No active projects
           </Text>
         )}
 
         {/* Bottom spacer */}
-        <View style={{ height: m3Spacing.xl }} />
+        <View style={{height: m3Spacing.xl}} />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { padding: m3Spacing.lg },
+  container: {flex: 1},
+  content: {padding: m3Spacing.lg},
 
   // Header
   header: {
@@ -260,29 +317,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: m3Spacing.lg,
   },
-  title: { ...m3Typography.headlineSmall, fontWeight: '700' },
-  refreshBtn: { ...m3Typography.labelLarge, fontWeight: '600' },
+  title: {...m3Typography.headlineSmall, fontWeight: '700'},
+  refreshBtn: {...m3Typography.labelLarge, fontWeight: '600'},
 
   // Online count
-  onlineCard: { alignItems: 'center', marginBottom: m3Spacing.lg },
-  onlineDotsRow: { flexDirection: 'row', gap: 6, marginBottom: m3Spacing.sm },
-  onlineDot: { width: 12, height: 12, borderRadius: 6 },
-  onlineCount: { ...m3Typography.displaySmall, fontWeight: '700' },
-  onlineLabel: { ...m3Typography.bodyLarge, marginTop: m3Spacing.xs },
+  onlineCard: {alignItems: 'center', marginBottom: m3Spacing.lg},
+  onlineDotsRow: {flexDirection: 'row', gap: 6, marginBottom: m3Spacing.sm},
+  onlineDot: {width: 12, height: 12, borderRadius: 6},
+  onlineCount: {...m3Typography.displaySmall, fontWeight: '700'},
+  onlineLabel: {...m3Typography.bodyLarge, marginTop: m3Spacing.xs},
 
   // Activity
-  sectionTitle: { ...m3Typography.titleMedium, marginBottom: m3Spacing.sm, marginTop: m3Spacing.sm },
-  activityCard: { marginBottom: m3Spacing.md },
-  activityRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: m3Spacing.sm },
-  activityIcon: { fontSize: 16, marginRight: m3Spacing.sm },
-  activityText: { ...m3Typography.bodySmall, flex: 1 },
-  activityDivider: { height: 1, marginLeft: 28 },
-  emptyText: { ...m3Typography.bodyMedium, marginBottom: m3Spacing.md },
+  sectionTitle: {
+    ...m3Typography.titleMedium,
+    marginBottom: m3Spacing.sm,
+    marginTop: m3Spacing.sm,
+  },
+  activityCard: {marginBottom: m3Spacing.md},
+  activityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: m3Spacing.sm,
+  },
+  activityIcon: {fontSize: 16, marginRight: m3Spacing.sm},
+  activityText: {...m3Typography.bodySmall, flex: 1},
+  activityDivider: {height: 1, marginLeft: 28},
+  emptyText: {...m3Typography.bodyMedium, marginBottom: m3Spacing.md},
 
   // Projects
-  projectsSkeletonRow: { flexDirection: 'row', gap: m3Spacing.sm, marginBottom: m3Spacing.md },
-  projectsScroll: { marginBottom: m3Spacing.md },
-  projectCard: { width: 160, marginRight: m3Spacing.sm },
-  projectTitle: { ...m3Typography.labelLarge, fontWeight: '600' },
-  projectTime: { ...m3Typography.bodySmall, marginTop: m3Spacing.xs },
+  projectsSkeletonRow: {
+    flexDirection: 'row',
+    gap: m3Spacing.sm,
+    marginBottom: m3Spacing.md,
+  },
+  projectsScroll: {marginBottom: m3Spacing.md},
+  projectCard: {width: 160, marginRight: m3Spacing.sm},
+  projectTitle: {...m3Typography.labelLarge, fontWeight: '600'},
+  projectTime: {...m3Typography.bodySmall, marginTop: m3Spacing.xs},
 });

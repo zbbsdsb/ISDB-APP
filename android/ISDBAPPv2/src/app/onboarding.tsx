@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,18 +7,17 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { useAuth } from '../hooks/use-auth';
-import { useTheme } from '../hooks/use-theme';
-import { useProfile } from '../hooks/use-profile';
-import { useTags } from '../hooks/use-tags';
-import { BasicInfoForm } from '../components/onboarding/basic-info-form';
-import { TagSelector } from '../components/onboarding/tag-selector';
-import { IdentityCeremony } from '../components/onboarding/identity-ceremony';
-import { StepIndicator } from '../components/onboarding/step-indicator';
-import { Button } from '../components/ui';
-import { m3Typography } from '../constants/m3-typography';
-import { m3Spacing } from '../constants/m3-spacing';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {useAuth} from '../hooks/use-auth';
+import {useTheme} from '../hooks/use-theme';
+import {useProfile} from '../hooks/use-profile';
+import {useTags} from '../hooks/use-tags';
+import {BasicInfoForm} from '../components/onboarding/basic-info-form';
+import {TagSelector} from '../components/onboarding/tag-selector';
+import {IdentityCeremony} from '../components/onboarding/identity-ceremony';
+import {StepIndicator} from '../components/onboarding/step-indicator';
+import {Button} from '../components/ui';
+import {m3Typography} from '../constants/m3-typography';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type OnboardingScreenProps = {
   navigation: NativeStackNavigationProp<any>;
@@ -35,11 +34,11 @@ interface FormData {
   interests: string[];
 }
 
-export default function OnboardingScreen({ navigation }: OnboardingScreenProps) {
-  const { colors } = useTheme();
-  const { user } = useAuth();
-  const { createProfile, getProfile, checkProfileComplete } = useProfile();
-  const { tags, loading: tagsLoading } = useTags();
+export default function OnboardingScreen({navigation}: OnboardingScreenProps) {
+  const {colors} = useTheme();
+  const {user} = useAuth();
+  const {createProfile, getProfile, checkProfileComplete} = useProfile();
+  const {tags, loading: tagsLoading} = useTags();
 
   const [currentStep, setCurrentStep] = useState<Step>('basic');
   const [submitting, setSubmitting] = useState(false);
@@ -57,19 +56,19 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
   // Check if user already has a complete profile
   useEffect(() => {
     const checkExistingProfile = async () => {
-      if (!user) return;
+      if (!user) {return;}
 
       const profile = await getProfile(user.id);
       if (profile && checkProfileComplete(profile)) {
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Main' }],
+          routes: [{name: 'Main'}],
         });
       }
     };
 
     checkExistingProfile();
-  }, [user]);
+  }, [user, checkProfileComplete, getProfile, navigation]);
 
   const handleBasicInfoNext = (data: {
     username: string;
@@ -85,11 +84,11 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
   };
 
   const handleSkillsChange = (skills: string[]) => {
-    setFormData(prev => ({ ...prev, skills }));
+    setFormData(prev => ({...prev, skills}));
   };
 
   const handleInterestsChange = (interests: string[]) => {
-    setFormData(prev => ({ ...prev, interests }));
+    setFormData(prev => ({...prev, interests}));
   };
 
   const handleSkillsNext = () => {
@@ -104,7 +103,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
   };
 
   const handleSubmit = async (finalData: FormData) => {
-    if (!user) return;
+    if (!user) {return;}
 
     setSubmitting(true);
 
@@ -121,7 +120,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
       if (success) {
         const profile = await getProfile(user.id);
         const identityNumber = profile?.id
-          ? (parseInt(profile.id.split('-')[0], 16) % 1000000) || 1
+          ? parseInt(profile.id.split('-')[0], 16) % 1000000 || 1
           : Math.floor(Math.random() * 1000000) + 1;
 
         setBuilderId(identityNumber);
@@ -140,7 +139,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
   const handleCeremonyComplete = () => {
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Main' }],
+      routes: [{name: 'Main'}],
     });
   };
 
@@ -157,7 +156,8 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
 
   if (!user) {
     return (
-      <SafeAreaView style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.loadingContainer, {backgroundColor: colors.background}]}>
         <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
@@ -165,16 +165,22 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
 
   const getStepNumber = (): number => {
     switch (currentStep) {
-      case 'basic': return 1;
-      case 'skills': return 2;
-      case 'interests': return 3;
-      case 'ceremony': return 4;
-      default: return 1;
+      case 'basic':
+        return 1;
+      case 'skills':
+        return 2;
+      case 'interests':
+        return 3;
+      case 'ceremony':
+        return 4;
+      default:
+        return 1;
     }
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: colors.background}]}>
       {/* Header */}
       {currentStep !== 'ceremony' && (
         <View style={styles.header}>
@@ -190,8 +196,10 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
 
         {currentStep === 'skills' && (
           <View style={styles.tagForm}>
-            <Text style={[styles.title, { color: colors.onBackground }]}>What are your skills?</Text>
-            <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
+            <Text style={[styles.title, {color: colors.onBackground}]}>
+              What are your skills?
+            </Text>
+            <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]}>
               Select the technologies and skills you're experienced in
             </Text>
 
@@ -220,8 +228,10 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
 
         {currentStep === 'interests' && (
           <View style={styles.tagForm}>
-            <Text style={[styles.title, { color: colors.onBackground }]}>What are your interests?</Text>
-            <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
+            <Text style={[styles.title, {color: colors.onBackground}]}>
+              What are your interests?
+            </Text>
+            <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]}>
               Select topics and areas you're interested in
             </Text>
 

@@ -1,14 +1,13 @@
-import React, { useRef } from 'react';
+import React, {useRef} from 'react';
 import {
-  View,
   StyleSheet,
   ViewStyle,
   TouchableOpacity,
   Animated,
 } from 'react-native';
-import { useTheme } from '../../hooks/use-theme';
-import { m3Shape } from '../../constants/m3-shape';
-import { m3Elevation } from '../../constants/m3-elevation';
+import {useTheme} from '../../hooks/use-theme';
+import {m3Shape} from '../../constants/m3-shape';
+import {m3Elevation} from '../../constants/m3-elevation';
 
 /**
  * M3 Card variants:
@@ -34,11 +33,11 @@ export function Card({
   onPress,
   style,
 }: CardProps) {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const pressAnim = useRef(new Animated.Value(0)).current;
 
   const handlePressIn = () => {
-    if (!onPress) return;
+    if (!onPress) {return;}
     Animated.spring(pressAnim, {
       toValue: 1,
       useNativeDriver: true,
@@ -48,7 +47,7 @@ export function Card({
   };
 
   const handlePressOut = () => {
-    if (!onPress) return;
+    if (!onPress) {return;}
     Animated.spring(pressAnim, {
       toValue: 0,
       useNativeDriver: true,
@@ -99,10 +98,9 @@ export function Card({
       style={[
         styles.card,
         getStyle(),
-        onPress ? { transform: [{ scale: pressScale }] } : null,
+        onPress ? {transform: [{scale: pressScale}]} : null,
         style,
-      ]}
-    >
+      ]}>
       {children}
     </Animated.View>
   );
@@ -113,8 +111,7 @@ export function Card({
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        activeOpacity={1}
-      >
+        activeOpacity={1}>
         {content}
       </TouchableOpacity>
     );

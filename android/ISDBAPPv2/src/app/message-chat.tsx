@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -9,28 +9,32 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useRoute, useNavigation, type RouteProp } from '@react-navigation/native';
-import { useTheme } from '../hooks/use-theme';
-import { useMessages } from '../hooks/use-messages';
-import { useMessageStore } from '../store/message-store';
-import { useAuthStore } from '../store/auth-store';
-import { Button, Icon } from '../components/ui';
-import { m3Typography } from '../constants/m3-typography';
-import { m3Spacing } from '../constants/m3-spacing';
-import { m3Shape } from '../constants/m3-shape';
-import type { Message } from '@isdb/shared';
-import type { RootStackParamList } from '../navigation';
+import {
+  useRoute,
+  useNavigation,
+  type RouteProp,
+} from '@react-navigation/native';
+import {useTheme} from '../hooks/use-theme';
+import {useMessages} from '../hooks/use-messages';
+import {useMessageStore} from '../store/message-store';
+import {useAuthStore} from '../store/auth-store';
+import {Button, Icon} from '../components/ui';
+import {m3Typography} from '../constants/m3-typography';
+import {m3Spacing} from '../constants/m3-spacing';
+import {m3Shape} from '../constants/m3-shape';
+import type {Message} from '@isdb/shared';
+import type {RootStackParamList} from '../navigation';
 
 type MessageChatRouteProp = RouteProp<RootStackParamList, 'MessageChat'>;
 
 export function MessageChatScreen() {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const route = useRoute<MessageChatRouteProp>();
   const navigation = useNavigation();
-  const { matchId, title } = route.params;
-  const { fetchMessages, sendMessage } = useMessages();
-  const clearUnread = useMessageStore((s) => s.clearUnread);
-  const user = useAuthStore((s) => s.user);
+  const {matchId, title} = route.params;
+  const {fetchMessages, sendMessage} = useMessages();
+  const clearUnread = useMessageStore(s => s.clearUnread);
+  const user = useAuthStore(s => s.user);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -40,15 +44,15 @@ export function MessageChatScreen() {
   useEffect(() => {
     loadMessages();
     clearUnread(matchId);
-  }, [matchId]);
+  }, [matchId, loadMessages, clearUnread]);
 
-  const loadMessages = async () => {
+  const loadMessages = useCallback(async () => {
     const msgs = await fetchMessages(matchId);
     setMessages(msgs);
-  };
+  }, [matchId, fetchMessages]);
 
   const handleSend = async () => {
-    if (!inputText.trim() || sending) return;
+    if (!inputText.trim() || sending) {return;}
     setSending(true);
     const ok = await sendMessage(matchId, inputText);
     if (ok) {
@@ -60,37 +64,39 @@ export function MessageChatScreen() {
     setSending(false);
   };
 
-  const renderBubble = ({ item }: { item: Message }) => {
+  const renderBubble = ({item}: {item: Message}) => {
     const isMine = item.sender_id === user?.id;
     return (
-      <View style={[styles.bubbleRow, isMine ? styles.bubbleRowMine : styles.bubbleRowOther]}>
+      <View
+        style={[
+          styles.bubbleRow,
+          isMine ? styles.bubbleRowMine : styles.bubbleRowOther,
+        ]}>
         <View
           style={[
             styles.bubble,
             isMine
-              ? { backgroundColor: colors.primary, borderBottomRightRadius: 4 }
-              : { backgroundColor: colors.surfaceVariant, borderBottomLeftRadius: 4 },
-          ]}
-        >
+              ? {backgroundColor: colors.primary, borderBottomRightRadius: 4}
+              : {
+                  backgroundColor: colors.surfaceVariant,
+                  borderBottomLeftRadius: 4,
+                },
+          ]}>
           <Text
             style={[
               styles.bubbleText,
-              { color: isMine ? colors.onPrimary : colors.onSurface },
-            ]}
-          >
+              {color: isMine ? colors.onPrimary : colors.onSurface},
+            ]}>
             {item.content}
           </Text>
           <Text
             style={[
               styles.bubbleTime,
               {
-                color: isMine
-                  ? colors.onPrimary
-                  : colors.onSurfaceVariant,
+                color: isMine ? colors.onPrimary : colors.onSurfaceVariant,
                 opacity: 0.7,
               },
-            ]}
-          >
+            ]}>
             {new Date(item.created_at).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit',
@@ -102,37 +108,47 @@ export function MessageChatScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: colors.background}]}>
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.outlineVariant }]}>
+      <View
+        style={[
+          styles.header,
+          {
+            backgroundColor: colors.surface,
+            borderBottomColor: colors.outlineVariant,
+          },
+        ]}>
         <Button
           title=""
           onPress={() => navigation.goBack()}
           variant="text"
           icon={<Icon name="back" size="sm" color={colors.onBackground} />}
         />
-        <Text style={[styles.headerTitle, { color: colors.onBackground }]} numberOfLines={1}>
+        <Text
+          style={[styles.headerTitle, {color: colors.onBackground}]}
+          numberOfLines={1}>
           {title}
         </Text>
-        <View style={{ width: 48 }} />
+        <View style={{width: 48}} />
       </View>
 
       {/* Messages */}
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-      >
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
         <FlatList
           ref={flatListRef}
           data={messages}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           renderItem={renderBubble}
           contentContainerStyle={styles.messageList}
           onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
           ListEmptyComponent={
             <View style={styles.emptyChat}>
-              <Text style={[styles.emptyText, { color: colors.onSurfaceVariant }]}>
+              <Text
+                style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
                 No messages yet. Say hello!
               </Text>
             </View>
@@ -140,7 +156,14 @@ export function MessageChatScreen() {
         />
 
         {/* Input bar */}
-        <View style={[styles.inputBar, { backgroundColor: colors.surface, borderTopColor: colors.outlineVariant }]}>
+        <View
+          style={[
+            styles.inputBar,
+            {
+              backgroundColor: colors.surface,
+              borderTopColor: colors.outlineVariant,
+            },
+          ]}>
           <TextInput
             style={[
               styles.input,
@@ -173,8 +196,8 @@ export function MessageChatScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  flex: { flex: 1 },
+  container: {flex: 1},
+  flex: {flex: 1},
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -183,25 +206,25 @@ const styles = StyleSheet.create({
     height: 56,
     borderBottomWidth: 1,
   },
-  headerTitle: { ...m3Typography.titleMedium, flex: 1, textAlign: 'center' },
+  headerTitle: {...m3Typography.titleMedium, flex: 1, textAlign: 'center'},
   messageList: {
     padding: m3Spacing.md,
     paddingBottom: m3Spacing.lg,
     flexGrow: 1,
   },
-  bubbleRow: { marginVertical: 3, flexDirection: 'row' },
-  bubbleRowMine: { justifyContent: 'flex-end' },
-  bubbleRowOther: { justifyContent: 'flex-start' },
+  bubbleRow: {marginVertical: 3, flexDirection: 'row'},
+  bubbleRowMine: {justifyContent: 'flex-end'},
+  bubbleRowOther: {justifyContent: 'flex-start'},
   bubble: {
     maxWidth: '78%',
     paddingHorizontal: m3Spacing.md,
     paddingVertical: m3Spacing.sm,
     borderRadius: m3Shape.medium,
   },
-  bubbleText: { ...m3Typography.bodyMedium },
-  bubbleTime: { ...m3Typography.labelSmall, marginTop: 2, textAlign: 'right' },
-  emptyChat: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  emptyText: { ...m3Typography.bodyLarge },
+  bubbleText: {...m3Typography.bodyMedium},
+  bubbleTime: {...m3Typography.labelSmall, marginTop: 2, textAlign: 'right'},
+  emptyChat: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  emptyText: {...m3Typography.bodyLarge},
   inputBar: {
     flexDirection: 'row',
     alignItems: 'flex-end',

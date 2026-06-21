@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,11 @@ import {
   FlatList,
   ViewStyle,
 } from 'react-native';
-import { useTheme } from '../../hooks/use-theme';
-import { Icon } from './icon';
-import { m3Typography } from '../../constants/m3-typography';
-import { m3Spacing } from '../../constants/m3-spacing';
-import { m3Shape } from '../../constants/m3-shape';
+import {useTheme} from '../../hooks/use-theme';
+import {Icon} from './icon';
+import {m3Typography} from '../../constants/m3-typography';
+import {m3Spacing} from '../../constants/m3-spacing';
+import {m3Shape} from '../../constants/m3-shape';
 
 export interface SelectOption {
   label: string;
@@ -38,15 +38,17 @@ export function Select({
   error,
   style,
 }: SelectProps) {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const [open, setOpen] = useState(false);
 
-  const selectedOption = options.find((o) => o.value === value);
+  const selectedOption = options.find(o => o.value === value);
 
   return (
     <View style={[styles.container, style]}>
       {label && (
-        <Text style={[styles.label, { color: colors.onBackground }]}>{label}</Text>
+        <Text style={[styles.label, {color: colors.onBackground}]}>
+          {label}
+        </Text>
       )}
 
       <TouchableOpacity
@@ -58,45 +60,44 @@ export function Select({
           },
         ]}
         onPress={() => setOpen(true)}
-        activeOpacity={0.7}
-      >
+        activeOpacity={0.7}>
         <Text
           style={[
             styles.triggerText,
-            { color: selectedOption ? colors.onBackground : colors.onSurfaceVariant },
+            {
+              color: selectedOption
+                ? colors.onBackground
+                : colors.onSurfaceVariant,
+            },
           ]}
-          numberOfLines={1}
-        >
+          numberOfLines={1}>
           {selectedOption ? selectedOption.label : placeholder}
         </Text>
         <Icon name="arrowDown" size="sm" color={colors.onSurfaceVariant} />
       </TouchableOpacity>
 
       {error && (
-        <Text style={[styles.error, { color: colors.error }]}>{error}</Text>
+        <Text style={[styles.error, {color: colors.error}]}>{error}</Text>
       )}
 
       <Modal
         visible={open}
         transparent
         animationType="fade"
-        onRequestClose={() => setOpen(false)}
-      >
+        onRequestClose={() => setOpen(false)}>
         <TouchableOpacity
           style={styles.overlay}
           activeOpacity={1}
-          onPress={() => setOpen(false)}
-        >
+          onPress={() => setOpen(false)}>
           <View
             style={[
               styles.dropdown,
-              { backgroundColor: colors.surface, borderColor: colors.outline },
-            ]}
-          >
+              {backgroundColor: colors.surface, borderColor: colors.outline},
+            ]}>
             <FlatList
               data={options}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => {
+              keyExtractor={item => item.value}
+              renderItem={({item}) => {
                 const isSelected = item.value === value;
                 return (
                   <TouchableOpacity
@@ -111,8 +112,7 @@ export function Select({
                     onPress={() => {
                       onChange(item.value);
                       setOpen(false);
-                    }}
-                  >
+                    }}>
                     <Text
                       style={[
                         styles.optionText,
@@ -122,8 +122,7 @@ export function Select({
                             : colors.onSurface,
                           fontWeight: isSelected ? '600' : '400',
                         },
-                      ]}
-                    >
+                      ]}>
                       {item.label}
                     </Text>
                     {isSelected && (

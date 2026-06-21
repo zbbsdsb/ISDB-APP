@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, {useState, useMemo} from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,9 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import { useTheme } from '../../hooks/use-theme';
-import { m3Shape } from '../../constants/m3-shape';
-import { m3Spacing } from '../../constants/m3-spacing';
-import type { Tag } from '../../types';
+import {useTheme} from '../../hooks/use-theme';
+import {m3Shape} from '../../constants/m3-shape';
+import type {Tag} from '../../types';
 
 interface TagSelectorProps {
   label: string;
@@ -34,13 +33,15 @@ export function TagSelector({
   placeholder = 'Search tags...',
   loading = false,
 }: TagSelectorProps) {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const [search, setSearch] = useState('');
 
   const filteredTags = useMemo(() => {
     return availableTags.filter(tag => {
       const isSelected = selectedTags.includes(tag.name);
-      const matchesSearch = tag.name.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch = tag.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
       return !isSelected && matchesSearch;
     });
   }, [availableTags, selectedTags, search]);
@@ -71,8 +72,10 @@ export function TagSelector({
   return (
     <View style={styles.container}>
       <View style={styles.labelContainer}>
-        <Text style={[styles.label, { color: colors.onBackground }]}>{label}</Text>
-        <Text style={[styles.requirement, { color: colors.onSurfaceVariant }]}>
+        <Text style={[styles.label, {color: colors.onBackground}]}>
+          {label}
+        </Text>
+        <Text style={[styles.requirement, {color: colors.onSurfaceVariant}]}>
           {minTags > 0 ? `${minTags}-${maxTags} required` : `Up to ${maxTags}`}
         </Text>
       </View>
@@ -80,14 +83,17 @@ export function TagSelector({
       {/* Selected Tags */}
       {selectedTags.length > 0 && (
         <View style={styles.selectedContainer}>
-          {selectedTags.map((tag) => (
+          {selectedTags.map(tag => (
             <TouchableOpacity
               key={tag}
-              style={[styles.selectedTag, { backgroundColor: colors.primary }]}
-              onPress={() => removeTag(tag)}
-            >
-              <Text style={[styles.selectedTagText, { color: colors.onPrimary }]}>{tag}</Text>
-              <Text style={[styles.removeIcon, { color: colors.onPrimary }]}>×</Text>
+              style={[styles.selectedTag, {backgroundColor: colors.primary}]}
+              onPress={() => removeTag(tag)}>
+              <Text style={[styles.selectedTagText, {color: colors.onPrimary}]}>
+                {tag}
+              </Text>
+              <Text style={[styles.removeIcon, {color: colors.onPrimary}]}>
+                ×
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -97,7 +103,14 @@ export function TagSelector({
       {selectedTags.length < maxTags && (
         <View style={styles.searchContainer}>
           <TextInput
-            style={[styles.searchInput, { backgroundColor: colors.surfaceVariant, borderColor: colors.outline, color: colors.onBackground }]}
+            style={[
+              styles.searchInput,
+              {
+                backgroundColor: colors.surfaceVariant,
+                borderColor: colors.outline,
+                color: colors.onBackground,
+              },
+            ]}
             value={search}
             onChangeText={setSearch}
             placeholder={placeholder}
@@ -118,19 +131,39 @@ export function TagSelector({
 
       {/* Tag List */}
       {search && !loading && (
-        <ScrollView style={[styles.tagList, { backgroundColor: colors.surface, borderColor: colors.outline }]}>
+        <ScrollView
+          style={[
+            styles.tagList,
+            {backgroundColor: colors.surface, borderColor: colors.outline},
+          ]}>
           {Object.entries(groupedTags).map(([category, tags]) => (
-            <View key={category} style={[styles.categoryGroup, { borderBottomColor: colors.outlineVariant }]}>
-              <Text style={[styles.categoryTitle, { color: colors.primary }]}>{category}</Text>
-              {tags.slice(0, 10).map((tag) => (
+            <View
+              key={category}
+              style={[
+                styles.categoryGroup,
+                {borderBottomColor: colors.outlineVariant},
+              ]}>
+              <Text style={[styles.categoryTitle, {color: colors.primary}]}>
+                {category}
+              </Text>
+              {tags.slice(0, 10).map(tag => (
                 <TouchableOpacity
                   key={tag.name}
-                  style={[styles.tagItem, { borderBottomColor: colors.outlineVariant }]}
-                  onPress={() => addTag(tag.name)}
-                >
-                  <Text style={[styles.tagName, { color: colors.onSurface }]}>{tag.name}</Text>
+                  style={[
+                    styles.tagItem,
+                    {borderBottomColor: colors.outlineVariant},
+                  ]}
+                  onPress={() => addTag(tag.name)}>
+                  <Text style={[styles.tagName, {color: colors.onSurface}]}>
+                    {tag.name}
+                  </Text>
                   {tag.description && (
-                    <Text style={[styles.tagDescription, { color: colors.onSurfaceVariant }]} numberOfLines={1}>
+                    <Text
+                      style={[
+                        styles.tagDescription,
+                        {color: colors.onSurfaceVariant},
+                      ]}
+                      numberOfLines={1}>
                       {tag.description}
                     </Text>
                   )}
@@ -140,7 +173,7 @@ export function TagSelector({
           ))}
 
           {filteredTags.length === 0 && (
-            <Text style={[styles.noResults, { color: colors.onSurfaceVariant }]}>
+            <Text style={[styles.noResults, {color: colors.onSurfaceVariant}]}>
               No tags found matching "{search}"
             </Text>
           )}
@@ -149,7 +182,7 @@ export function TagSelector({
 
       {/* Validation Message */}
       {selectedTags.length < minTags && (
-        <Text style={[styles.validationText, { color: colors.error }]}>
+        <Text style={[styles.validationText, {color: colors.error}]}>
           Please select at least {minTags} {label.toLowerCase()}
         </Text>
       )}

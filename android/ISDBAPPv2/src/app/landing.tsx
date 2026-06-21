@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -6,13 +6,12 @@ import {
   SafeAreaView,
   StatusBar,
   Animated,
-  Dimensions,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '../hooks/use-theme';
-import { Button, Card } from '../components/ui';
-import { m3Typography } from '../constants/m3-typography';
-import { m3Spacing } from '../constants/m3-spacing';
+import {useNavigation} from '@react-navigation/native';
+import {useTheme} from '../hooks/use-theme';
+import {Button, Card} from '../components/ui';
+import {m3Typography} from '../constants/m3-typography';
+import {m3Spacing} from '../constants/m3-spacing';
 
 const QUOTES = [
   {
@@ -42,15 +41,25 @@ const QUOTES = [
 ];
 
 const HOW_IT_WORKS = [
-  { step: '01', title: 'Create Profile', subtitle: 'Showcase your skills and passions' },
-  { step: '02', title: 'Discover Projects', subtitle: 'Swipe through insane ideas' },
-  { step: '03', title: 'Build Together', subtitle: 'Collaborate and ship products' },
+  {
+    step: '01',
+    title: 'Create Profile',
+    subtitle: 'Showcase your skills and passions',
+  },
+  {
+    step: '02',
+    title: 'Discover Projects',
+    subtitle: 'Swipe through insane ideas',
+  },
+  {
+    step: '03',
+    title: 'Build Together',
+    subtitle: 'Collaborate and ship products',
+  },
 ];
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
 export function LandingScreen() {
-  const { colors, isDark } = useTheme();
+  const {colors, isDark} = useTheme();
   const navigation = useNavigation();
 
   // ── Quote carousel state ──
@@ -77,7 +86,7 @@ export function LandingScreen() {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        setQuoteIndex((prev) => (prev + 1) % QUOTES.length);
+        setQuoteIndex(prev => (prev + 1) % QUOTES.length);
         slideAnim.setValue(20);
         Animated.parallel([
           Animated.timing(fadeAnim, {
@@ -100,8 +109,16 @@ export function LandingScreen() {
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(gradientAnim, { toValue: 1, duration: 8000, useNativeDriver: false }),
-        Animated.timing(gradientAnim, { toValue: 0, duration: 8000, useNativeDriver: false }),
+        Animated.timing(gradientAnim, {
+          toValue: 1,
+          duration: 8000,
+          useNativeDriver: false,
+        }),
+        Animated.timing(gradientAnim, {
+          toValue: 0,
+          duration: 8000,
+          useNativeDriver: false,
+        }),
       ]),
     ).start();
   }, [gradientAnim]);
@@ -116,7 +133,8 @@ export function LandingScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: colors.background}]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <Animated.View
         pointerEvents="none"
@@ -134,12 +152,12 @@ export function LandingScreen() {
 
         {/* Brand area */}
         <View style={styles.brandArea}>
-          <Text style={[styles.brandIcon, { color: colors.primary }]}>✦</Text>
-          <Text style={[styles.brandName, { color: colors.primary }]}>ISDB</Text>
-          <Text style={[styles.brandFull, { color: colors.onBackground }]}>
+          <Text style={[styles.brandIcon, {color: colors.primary}]}>✦</Text>
+          <Text style={[styles.brandName, {color: colors.primary}]}>ISDB</Text>
+          <Text style={[styles.brandFull, {color: colors.onBackground}]}>
             Insane Dream Builder
           </Text>
-          <Text style={[styles.brandTagline, { color: colors.onSurfaceVariant }]}>
+          <Text style={[styles.brandTagline, {color: colors.onSurfaceVariant}]}>
             Build Something Insane
           </Text>
         </View>
@@ -150,15 +168,15 @@ export function LandingScreen() {
             styles.quoteWrapper,
             {
               opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
+              transform: [{translateY: slideAnim}],
             },
-          ]}
-        >
+          ]}>
           <Card variant="elevated" padding={m3Spacing.lg}>
-            <Text style={[styles.quoteText, { color: colors.onSurface }]}>
+            <Text style={[styles.quoteText, {color: colors.onSurface}]}>
               "{currentQuote.text}"
             </Text>
-            <Text style={[styles.quoteAuthor, { color: colors.onSurfaceVariant }]}>
+            <Text
+              style={[styles.quoteAuthor, {color: colors.onSurfaceVariant}]}>
               — {currentQuote.author}
             </Text>
           </Card>
@@ -168,13 +186,28 @@ export function LandingScreen() {
         <View style={styles.howSection}>
           {HOW_IT_WORKS.map((item, idx) => (
             <View key={item.step} style={styles.howRow}>
-              <Text style={[styles.howStep, { color: colors.primary }]}>{item.step}</Text>
+              <Text style={[styles.howStep, {color: colors.primary}]}>
+                {item.step}
+              </Text>
               <View style={styles.howContent}>
-                <Text style={[styles.howTitle, { color: colors.onBackground }]}>{item.title}</Text>
-                <Text style={[styles.howSubtitle, { color: colors.onSurfaceVariant }]}>{item.subtitle}</Text>
+                <Text style={[styles.howTitle, {color: colors.onBackground}]}>
+                  {item.title}
+                </Text>
+                <Text
+                  style={[
+                    styles.howSubtitle,
+                    {color: colors.onSurfaceVariant},
+                  ]}>
+                  {item.subtitle}
+                </Text>
               </View>
               {idx < HOW_IT_WORKS.length - 1 && (
-                <View style={[styles.howLine, { backgroundColor: colors.outlineVariant }]} />
+                <View
+                  style={[
+                    styles.howLine,
+                    {backgroundColor: colors.outlineVariant},
+                  ]}
+                />
               )}
             </View>
           ))}
@@ -196,7 +229,7 @@ export function LandingScreen() {
             size="md"
             fullWidth
           />
-          <Text style={[styles.terms, { color: colors.onSurfaceVariant }]}>
+          <Text style={[styles.terms, {color: colors.onSurfaceVariant}]}>
             By continuing, you agree to our Terms of Service
           </Text>
         </View>

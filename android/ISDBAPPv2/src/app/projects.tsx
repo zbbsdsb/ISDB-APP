@@ -11,25 +11,23 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { useTheme } from '../hooks/use-theme';
-import { useAuthStore } from '../store/auth-store';
-import { supabase } from '../services/supabase';
-import { Button, Card, Skeleton } from '../components/ui';
-import { m3Typography } from '../constants/m3-typography';
-import { m3Spacing } from '../constants/m3-spacing';
-import { m3Shape } from '../constants/m3-shape';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../navigation';
+import { useNavigation } from '@react-navigation/native';
+import {useTheme} from '../hooks/use-theme';
+import {supabase} from '../services/supabase';
+import {Button, Card, Skeleton} from '../components/ui';
+import {m3Typography} from '../constants/m3-typography';
+import {m3Spacing} from '../constants/m3-spacing';
+import {m3Shape} from '../constants/m3-shape';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {RootStackParamList} from '../navigation';
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
 const PAGE_SIZE = 10;
 
 export function ProjectsScreen() {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const navigation = useNavigation<NavProp>();
-  const user = useAuthStore((s) => s.user);
 
   // Data
   const [projects, setProjects] = useState<any[]>([]);
@@ -51,8 +49,10 @@ export function ProjectsScreen() {
       try {
         let query = supabase
           .from('projects')
-          .select('id, title, description, hook_text, tags, created_at, owner:profiles!owner_id(username, display_name, avatar_url)')
-          .order('created_at', { ascending: false });
+          .select(
+            'id, title, description, hook_text, tags, created_at, owner:profiles!owner_id(username, display_name, avatar_url)',
+          )
+          .order('created_at', {ascending: false});
 
         // Tag filter
         if (selectedTag) {
@@ -69,14 +69,14 @@ export function ProjectsScreen() {
         const to = from + PAGE_SIZE - 1;
         query = query.range(from, to);
 
-        const { data, error } = await query;
+        const {data, error} = await query;
 
-        if (error) throw error;
+        if (error) {throw error;}
 
         if (isRefresh) {
           setProjects(data || []);
         } else {
-          setProjects((prev) => [...prev, ...(data || [])]);
+          setProjects(prev => [...prev, ...(data || [])]);
         }
 
         setHasMore((data?.length || 0) >= PAGE_SIZE);
@@ -89,9 +89,9 @@ export function ProjectsScreen() {
 
   const loadTags = useCallback(async () => {
     try {
-      const { data } = await supabase.from('tags').select('name').limit(30);
+      const {data} = await supabase.from('tags').select('name').limit(30);
       if (data) {
-        setAvailableTags(data.map((t) => t.name));
+        setAvailableTags(data.map(t => t.name));
       }
     } catch {
       // Silent fail — tags table might not exist
@@ -102,7 +102,9 @@ export function ProjectsScreen() {
   useEffect(() => {
     setLoading(true);
     setPage(0);
-    Promise.all([fetchProjects(0, true), loadTags()]).finally(() => setLoading(false));
+    Promise.all([fetchProjects(0, true), loadTags()]).finally(() =>
+      setLoading(false),
+    );
   }, [selectedTag, searchQuery, fetchProjects, loadTags]);
 
   // Refresh
@@ -115,7 +117,7 @@ export function ProjectsScreen() {
 
   // Load more
   const handleLoadMore = useCallback(async () => {
-    if (loadingMore || !hasMore) return;
+    if (loadingMore || !hasMore) {return;}
     setLoadingMore(true);
     const nextPage = page + 1;
     setPage(nextPage);
@@ -138,31 +140,52 @@ export function ProjectsScreen() {
     setLoading(true);
   };
 
-  const renderProject = ({ item }: { item: any }) => (
+  const renderProject = ({item}: {item: any}) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('ProjectDetail', { projectId: item.id })}
-    >
-      <Card variant="elevated" padding={m3Spacing.md} style={styles.projectCard}>
-        <Text style={[styles.projectTitle, { color: colors.onSurface }]}>{item.title}</Text>
+      onPress={() =>
+        navigation.navigate('ProjectDetail', {projectId: item.id})
+      }>
+      <Card
+        variant="elevated"
+        padding={m3Spacing.md}
+        style={styles.projectCard}>
+        <Text style={[styles.projectTitle, {color: colors.onSurface}]}>
+          {item.title}
+        </Text>
         {item.hook_text && (
-          <Text style={[styles.projectHook, { color: colors.primary }]}>{item.hook_text}</Text>
+          <Text style={[styles.projectHook, {color: colors.primary}]}>
+            {item.hook_text}
+          </Text>
         )}
         {item.description && (
-          <Text style={[styles.projectDesc, { color: colors.onSurfaceVariant }]} numberOfLines={2}>
+          <Text
+            style={[styles.projectDesc, {color: colors.onSurfaceVariant}]}
+            numberOfLines={2}>
             {item.description}
           </Text>
         )}
         {item.tags && item.tags.length > 0 && (
           <View style={styles.tagRow}>
             {item.tags.slice(0, 3).map((tag: string) => (
-              <View key={tag} style={[styles.tagChip, { backgroundColor: colors.secondaryContainer }]}>
-                <Text style={[styles.tagText, { color: colors.onSecondaryContainer }]}>{tag}</Text>
+              <View
+                key={tag}
+                style={[
+                  styles.tagChip,
+                  {backgroundColor: colors.secondaryContainer},
+                ]}>
+                <Text
+                  style={[
+                    styles.tagText,
+                    {color: colors.onSecondaryContainer},
+                  ]}>
+                  {tag}
+                </Text>
               </View>
             ))}
           </View>
         )}
         {item.owner && (
-          <Text style={[styles.ownerText, { color: colors.onSurfaceVariant }]}>
+          <Text style={[styles.ownerText, {color: colors.onSurfaceVariant}]}>
             by {item.owner.display_name || item.owner.username || 'Unknown'}
           </Text>
         )}
@@ -171,7 +194,7 @@ export function ProjectsScreen() {
   );
 
   const renderFooter = () => {
-    if (!loadingMore) return null;
+    if (!loadingMore) {return null;}
     return (
       <View style={styles.footer}>
         <ActivityIndicator size="small" color={colors.primary} />
@@ -180,10 +203,10 @@ export function ProjectsScreen() {
   };
 
   const renderEmpty = () => {
-    if (loading) return null;
+    if (loading) {return null;}
     return (
       <View style={styles.emptyContainer}>
-        <Text style={[styles.emptyText, { color: colors.onSurfaceVariant }]}>
+        <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
           {searchQuery || selectedTag
             ? 'No projects match your filters'
             : 'No projects yet. Be the first to create one!'}
@@ -196,20 +219,23 @@ export function ProjectsScreen() {
     <View>
       {/* Header */}
       <View style={styles.headerRow}>
-        <Text style={[styles.headerTitle, { color: colors.onBackground }]}>Projects</Text>
-        <Button
-          title="+ New"
-          onPress={() => {}}
-          variant="filled"
-          size="sm"
-        />
+        <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
+          Projects
+        </Text>
+        <Button title="+ New" onPress={() => {}} variant="filled" size="sm" />
       </View>
 
       {/* Search */}
-      <View style={[styles.searchBar, { backgroundColor: colors.surfaceVariant, borderColor: colors.outline }]}>
-        <Text style={[styles.searchIcon, { color: colors.onSurfaceVariant }]}>🔍</Text>
+      <View
+        style={[
+          styles.searchBar,
+          {backgroundColor: colors.surfaceVariant, borderColor: colors.outline},
+        ]}>
+        <Text style={[styles.searchIcon, {color: colors.onSurfaceVariant}]}>
+          🔍
+        </Text>
         <TextInput
-          style={[styles.searchInput, { color: colors.onBackground }]}
+          style={[styles.searchInput, {color: colors.onBackground}]}
           placeholder="Search projects..."
           placeholderTextColor={colors.onSurfaceVariant}
           value={searchQuery}
@@ -219,7 +245,10 @@ export function ProjectsScreen() {
         />
         {searchQuery.length > 0 && (
           <TouchableOpacity onPress={() => handleSearch('')}>
-            <Text style={[styles.clearSearch, { color: colors.onSurfaceVariant }]}>✕</Text>
+            <Text
+              style={[styles.clearSearch, {color: colors.onSurfaceVariant}]}>
+              ✕
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -230,43 +259,52 @@ export function ProjectsScreen() {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.tagScroll}
-          contentContainerStyle={styles.tagScrollContent}
-        >
+          contentContainerStyle={styles.tagScrollContent}>
           <TouchableOpacity
             style={[
               styles.filterChip,
               {
-                backgroundColor: !selectedTag ? colors.primary : colors.surfaceVariant,
+                backgroundColor: !selectedTag
+                  ? colors.primary
+                  : colors.surfaceVariant,
               },
             ]}
-            onPress={() => handleTagSelect(null)}
-          >
+            onPress={() => handleTagSelect(null)}>
             <Text
               style={[
                 styles.filterChipText,
-                { color: !selectedTag ? colors.onPrimary : colors.onSurfaceVariant },
-              ]}
-            >
+                {
+                  color: !selectedTag
+                    ? colors.onPrimary
+                    : colors.onSurfaceVariant,
+                },
+              ]}>
               All
             </Text>
           </TouchableOpacity>
-          {availableTags.map((tag) => (
+          {availableTags.map(tag => (
             <TouchableOpacity
               key={tag}
               style={[
                 styles.filterChip,
                 {
-                  backgroundColor: selectedTag === tag ? colors.primary : colors.surfaceVariant,
+                  backgroundColor:
+                    selectedTag === tag
+                      ? colors.primary
+                      : colors.surfaceVariant,
                 },
               ]}
-              onPress={() => handleTagSelect(tag)}
-            >
+              onPress={() => handleTagSelect(tag)}>
               <Text
                 style={[
                   styles.filterChipText,
-                  { color: selectedTag === tag ? colors.onPrimary : colors.onSurfaceVariant },
-                ]}
-              >
+                  {
+                    color:
+                      selectedTag === tag
+                        ? colors.onPrimary
+                        : colors.onSurfaceVariant,
+                  },
+                ]}>
                 {tag}
               </Text>
             </TouchableOpacity>
@@ -277,13 +315,22 @@ export function ProjectsScreen() {
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: colors.background}]}>
       {loading ? (
         <View style={styles.loadingContent}>
           {headerContent}
           <View style={styles.skeletonList}>
-            <Skeleton width="100%" height={120} style={{ marginBottom: m3Spacing.md }} />
-            <Skeleton width="100%" height={120} style={{ marginBottom: m3Spacing.md }} />
+            <Skeleton
+              width="100%"
+              height={120}
+              style={{marginBottom: m3Spacing.md}}
+            />
+            <Skeleton
+              width="100%"
+              height={120}
+              style={{marginBottom: m3Spacing.md}}
+            />
             <Skeleton width="100%" height={120} />
           </View>
         </View>
@@ -291,7 +338,7 @@ export function ProjectsScreen() {
         <FlatList
           data={projects}
           renderItem={renderProject}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           ListHeaderComponent={headerContent}
           ListFooterComponent={renderFooter}
           ListEmptyComponent={renderEmpty}
@@ -299,7 +346,11 @@ export function ProjectsScreen() {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.3}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.primary}
+            />
           }
         />
       )}
@@ -308,9 +359,9 @@ export function ProjectsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  loadingContent: { flex: 1, padding: m3Spacing.lg },
-  skeletonList: { marginTop: m3Spacing.md },
+  container: {flex: 1},
+  loadingContent: {flex: 1, padding: m3Spacing.lg},
+  skeletonList: {marginTop: m3Spacing.md},
 
   // Header
   headerRow: {
@@ -319,7 +370,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: m3Spacing.md,
   },
-  headerTitle: { ...m3Typography.headlineSmall, fontWeight: '700' },
+  headerTitle: {...m3Typography.headlineSmall, fontWeight: '700'},
 
   // Search
   searchBar: {
@@ -330,37 +381,46 @@ const styles = StyleSheet.create({
     paddingHorizontal: m3Spacing.sm,
     marginBottom: m3Spacing.sm,
   },
-  searchIcon: { fontSize: 16, marginRight: m3Spacing.xs },
-  searchInput: { flex: 1, fontSize: 16, paddingVertical: 10 },
-  clearSearch: { fontSize: 16, paddingLeft: m3Spacing.xs },
+  searchIcon: {fontSize: 16, marginRight: m3Spacing.xs},
+  searchInput: {flex: 1, fontSize: 16, paddingVertical: 10},
+  clearSearch: {fontSize: 16, paddingLeft: m3Spacing.xs},
 
   // Tag filter
-  tagScroll: { marginBottom: m3Spacing.md },
-  tagScrollContent: { gap: m3Spacing.xs },
+  tagScroll: {marginBottom: m3Spacing.md},
+  tagScrollContent: {gap: m3Spacing.xs},
   filterChip: {
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 16,
   },
-  filterChipText: { ...m3Typography.labelMedium },
+  filterChipText: {...m3Typography.labelMedium},
 
   // List
-  listContent: { padding: m3Spacing.lg },
+  listContent: {padding: m3Spacing.lg},
 
   // Project card
-  projectCard: { marginBottom: m3Spacing.sm },
-  projectTitle: { ...m3Typography.titleSmall, fontWeight: '600' },
-  projectHook: { ...m3Typography.labelSmall, fontStyle: 'italic', marginTop: 2 },
-  projectDesc: { ...m3Typography.bodySmall, marginTop: 4 },
-  tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: m3Spacing.sm },
-  tagChip: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: m3Shape.small },
-  tagText: { ...m3Typography.labelSmall },
-  ownerText: { ...m3Typography.bodySmall, marginTop: m3Spacing.xs },
+  projectCard: {marginBottom: m3Spacing.sm},
+  projectTitle: {...m3Typography.titleSmall, fontWeight: '600'},
+  projectHook: {...m3Typography.labelSmall, fontStyle: 'italic', marginTop: 2},
+  projectDesc: {...m3Typography.bodySmall, marginTop: 4},
+  tagRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4,
+    marginTop: m3Spacing.sm,
+  },
+  tagChip: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: m3Shape.small,
+  },
+  tagText: {...m3Typography.labelSmall},
+  ownerText: {...m3Typography.bodySmall, marginTop: m3Spacing.xs},
 
   // Pagination footer
-  footer: { paddingVertical: m3Spacing.md },
+  footer: {paddingVertical: m3Spacing.md},
 
   // Empty
-  emptyContainer: { paddingVertical: m3Spacing.xl, alignItems: 'center' },
-  emptyText: { ...m3Typography.bodyLarge, textAlign: 'center' },
+  emptyContainer: {paddingVertical: m3Spacing.xl, alignItems: 'center'},
+  emptyText: {...m3Typography.bodyLarge, textAlign: 'center'},
 });

@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Animated, StyleSheet, ViewStyle } from 'react-native';
-import { useTheme } from '../../hooks/use-theme';
-import { m3Shape } from '../../constants/m3-shape';
+import React, {useEffect, useRef} from 'react';
+import {View, Animated, StyleSheet, ViewStyle} from 'react-native';
+import {useTheme} from '../../hooks/use-theme';
 
 interface ProgressBarProps {
   value: number; // 0–100
@@ -18,7 +17,7 @@ export function ProgressBar({
   animated = true,
   style,
 }: ProgressBarProps) {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const animValue = useRef(new Animated.Value(0)).current;
   const fillColor = color || colors.primary;
 
@@ -50,8 +49,7 @@ export function ProgressBar({
           backgroundColor: colors.surfaceVariant,
         },
         style,
-      ]}
-    >
+      ]}>
       <Animated.View
         style={[
           styles.fill,

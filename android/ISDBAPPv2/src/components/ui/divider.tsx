@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '../../hooks/use-theme';
-import { m3Spacing } from '../../constants/m3-spacing';
+import {View, Text, StyleSheet} from 'react-native';
+import {useTheme} from '../../hooks/use-theme';
+import {m3Spacing} from '../../constants/m3-spacing';
 
 interface DividerProps {
   /** Optional text to show in the middle (── Text ──) */
@@ -17,17 +17,21 @@ interface DividerProps {
  * Plain: a thin line separating content.
  * With text: ─── text ─── style divider.
  */
-export function Divider({ text, insetLeft = 0, insetRight = 0 }: DividerProps) {
-  const { colors } = useTheme();
+export function Divider({text, insetLeft = 0, insetRight = 0}: DividerProps) {
+  const {colors} = useTheme();
 
   if (text) {
     return (
-      <View style={[styles.withText, { marginLeft: insetLeft, marginRight: insetRight }]}>
-        <View style={[styles.line, { backgroundColor: colors.outlineVariant }]} />
-        <Text style={[styles.label, { color: colors.onSurfaceVariant }]}>
+      <View
+        style={[
+          styles.withText,
+          {marginLeft: insetLeft, marginRight: insetRight},
+        ]}>
+        <View style={[styles.line, {backgroundColor: colors.outlineVariant}]} />
+        <Text style={[styles.label, {color: colors.onSurfaceVariant}]}>
           {text}
         </Text>
-        <View style={[styles.line, { backgroundColor: colors.outlineVariant }]} />
+        <View style={[styles.line, {backgroundColor: colors.outlineVariant}]} />
       </View>
     );
   }

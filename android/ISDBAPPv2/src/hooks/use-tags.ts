@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../services/supabase';
-import type { Tag } from '../types';
+import {useState, useEffect} from 'react';
+import {supabase} from '../services/supabase';
+import type {Tag} from '../types';
 
 /**
  * Hook for fetching and managing available tags
@@ -18,7 +18,7 @@ export function useTags() {
     setError(null);
 
     try {
-      const { data, error: fetchError } = await supabase
+      const {data, error: fetchError} = await supabase
         .from('tags')
         .select('*')
         .order('name');
@@ -42,12 +42,10 @@ export function useTags() {
    * Search tags by name
    */
   const searchTags = (query: string): Tag[] => {
-    if (!query.trim()) return tags;
-    
+    if (!query.trim()) {return tags;}
+
     const lowerQuery = query.toLowerCase();
-    return tags.filter(tag => 
-      tag.name.toLowerCase().includes(lowerQuery)
-    );
+    return tags.filter(tag => tag.name.toLowerCase().includes(lowerQuery));
   };
 
   /**
@@ -55,7 +53,7 @@ export function useTags() {
    */
   const getTagsByCategory = (): Record<string, Tag[]> => {
     const grouped: Record<string, Tag[]> = {};
-    
+
     tags.forEach(tag => {
       const category = tag.category || 'Other';
       if (!grouped[category]) {
@@ -63,7 +61,7 @@ export function useTags() {
       }
       grouped[category].push(tag);
     });
-    
+
     return grouped;
   };
 

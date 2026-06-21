@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, {useRef} from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -8,8 +8,8 @@ import {
   TextStyle,
   Animated,
 } from 'react-native';
-import { useTheme } from '../../hooks/use-theme';
-import { m3Shape } from '../../constants/m3-shape';
+import {useTheme} from '../../hooks/use-theme';
+import {m3Shape} from '../../constants/m3-shape';
 
 /**
  * M3 Button variants:
@@ -31,7 +31,13 @@ export type M3ButtonSize = 'sm' | 'md' | 'lg';
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: M3ButtonVariant | 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?:
+    | M3ButtonVariant
+    | 'primary'
+    | 'secondary'
+    | 'outline'
+    | 'ghost'
+    | 'danger';
   size?: M3ButtonSize;
   disabled?: boolean;
   loading?: boolean;
@@ -75,7 +81,7 @@ export function Button({
   textStyle,
   fullWidth = false,
 }: ButtonProps) {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const m3Variant = resolveVariant(variant);
   const danger = isDangerVariant(variant);
   const pressAnim = useRef(new Animated.Value(0)).current;
@@ -139,11 +145,11 @@ export function Button({
   const getSize = () => {
     switch (size) {
       case 'sm':
-        return { py: 6, px: 12, fontSize: 14, minHeight: 32 };
+        return {py: 6, px: 12, fontSize: 14, minHeight: 32};
       case 'md':
-        return { py: 10, px: 20, fontSize: 14, minHeight: 40 };
+        return {py: 10, px: 20, fontSize: 14, minHeight: 40};
       case 'lg':
-        return { py: 14, px: 28, fontSize: 16, minHeight: 48 };
+        return {py: 14, px: 28, fontSize: 16, minHeight: 48};
     }
   };
 
@@ -182,15 +188,14 @@ export function Button({
         },
         fullWidth && styles.fullWidth,
         style,
-      ]}
-    >
-      <Animated.View style={[styles.inner, { transform: [{ scale }] }]}>
+      ]}>
+      <Animated.View style={[styles.inner, {transform: [{scale}]}]}>
         {/* State layer overlay */}
         <Animated.View
           style={[
             StyleSheet.absoluteFill,
             styles.stateLayer,
-            { backgroundColor: c.text, opacity: stateLayer },
+            {backgroundColor: c.text, opacity: stateLayer},
           ]}
         />
 
@@ -206,11 +211,10 @@ export function Button({
             <Text
               style={[
                 styles.label,
-                { color: c.text, fontSize: s.fontSize },
-                icon ? { marginLeft: 8 } : null,
+                {color: c.text, fontSize: s.fontSize},
+                icon ? {marginLeft: 8} : null,
                 textStyle,
-              ]}
-            >
+              ]}>
               {title}
             </Text>
           </>

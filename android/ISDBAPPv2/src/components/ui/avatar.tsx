@@ -1,16 +1,21 @@
 import React from 'react';
-import { View, Image, StyleSheet, ViewStyle } from 'react-native';
-import { useTheme } from '../../hooks/use-theme';
+import {View, Image, StyleSheet, ViewStyle} from 'react-native';
+import {useTheme} from '../../hooks/use-theme';
 
 interface AvatarProps {
-  source?: { uri: string } | null;
+  source?: {uri: string} | null;
   fallback?: string;
   size?: number;
   style?: ViewStyle;
 }
 
-export function Avatar({ source, fallback = 'U', size = 40, style }: AvatarProps) {
-  const { colors } = useTheme();
+export function Avatar({
+  source,
+  fallback = 'U',
+  size = 40,
+  style,
+}: AvatarProps) {
+  const {colors} = useTheme();
 
   return (
     <View
@@ -23,8 +28,7 @@ export function Avatar({ source, fallback = 'U', size = 40, style }: AvatarProps
           backgroundColor: colors.primary,
         },
         style,
-      ]}
-    >
+      ]}>
       {source?.uri ? (
         <Image source={source} style={styles.image} />
       ) : (
@@ -36,14 +40,13 @@ export function Avatar({ source, fallback = 'U', size = 40, style }: AvatarProps
   );
 }
 
-function AvatarFallbackText({ text, size }: { text: string; size: number }) {
-  const { colors } = useTheme();
-  const fontSize = size * 0.4;
+function AvatarFallbackText({size}: {size: number}) {
+  const {colors} = useTheme();
 
   return (
     <View style={styles.fallbackContainer}>
-      <View style={[styles.fallbackText, { width: size, height: size }]}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={[styles.fallbackText, {width: size, height: size}]}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <View
             style={[
               styles.initials,
@@ -53,9 +56,9 @@ function AvatarFallbackText({ text, size }: { text: string; size: number }) {
                 height: size * 0.7,
                 borderRadius: (size * 0.7) / 2,
               },
-            ]}
-          >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            ]}>
+            <View
+              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
               <View
                 style={{
                   width: size * 0.5,
@@ -64,8 +67,7 @@ function AvatarFallbackText({ text, size }: { text: string; size: number }) {
                   backgroundColor: colors.secondary,
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}
-              >
+                }}>
                 <View
                   style={{
                     width: size * 0.3,
