@@ -222,13 +222,6 @@ export function LandingScreen() {
             size="lg"
             fullWidth
           />
-          <Button
-            title="Continue as Guest"
-            onPress={() => {}}
-            variant="text"
-            size="md"
-            fullWidth
-          />
           <Text style={[styles.terms, {color: colors.onSurfaceVariant}]}>
             By continuing, you agree to our Terms of Service
           </Text>

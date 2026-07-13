@@ -84,3 +84,13 @@ supabase-config.ts
 api-keys.ts
 *.env.*
 src/config/supabase.ts
+
+# Embedded Metro bundle assets (generated via react-native bundle)
+android/app/src/main/assets/index.android.bundle
+android/app/src/main/res/drawable-mdpi/
+android/app/src/main/res/drawable-xhdpi/
+android/app/src/main/res/drawable-xxhdpi/
+android/app/src/main/res/drawable-xxxhdpi/
+
+# Temporary screenshots from testing
+screen*.png
