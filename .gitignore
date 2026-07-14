@@ -74,7 +74,3 @@ android_screenshot*.png
 
 # Cleanup scripts
 cleanup_*.py
-
-# Standalone sub-project repos (have own .git)
-android/ISDBAPP-new/
-android/ISDBAPP/
