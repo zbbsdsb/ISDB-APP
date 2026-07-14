@@ -4,6 +4,8 @@ import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {useAuthStore} from '../store/auth-store';
 import {supabase} from '../services/supabase';
+import {useToast} from '../hooks/use-toast';
+import logger from '../utils/logger';
 import {Button, Card, Text} from '../components/ui';
 import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
@@ -25,24 +27,35 @@ export function MatchesScreen() {
   const {colors} = useTheme();
   const navigation = useNavigation<any>();
   const user = useAuthStore(s => s.user);
+  const {show: showToast} = useToast();
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchMatches = useCallback(async () => {
     if (!user) {
       return;
     }
     setLoading(true);
-    const {data} = await supabase
+    setError(null);
+    const {data, error: fetchError} = await supabase
       .from('matches')
       .select('*, project:projects!project_id(title)')
       .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
       .order('created_at', {ascending: false});
-    if (data) {
+    if (fetchError) {
+      logger.error('[Matches] fetch failed:', fetchError);
+      setError(prev => {
+        if (prev !== fetchError.message) {
+          showToast('Failed to load matches', 'error');
+        }
+        return fetchError.message;
+      });
+    } else if (data) {
       setMatches(data as MatchItem[]);
     }
     setLoading(false);
-  }, [user]);
+  }, [user, showToast]);
 
   // Fetch on mount (initial load)
   useEffect(() => {
@@ -79,6 +92,13 @@ export function MatchesScreen() {
         <Text variant="heading" style={[styles.title, {color: colors.onBackground}]}>
           Matches
         </Text>
+        {error ? (
+          <Text
+            variant="caption"
+            style={[styles.errorText, {color: colors.error}]}>
+            {error}
+          </Text>
+        ) : null}
       </View>
       <FlatList
         data={matches}
@@ -118,6 +138,7 @@ const styles = StyleSheet.create({
   container: {flex: 1},
   header: {padding: m3Spacing.lg},
   title: {...m3Typography.headlineSmall},
+  errorText: {...m3Typography.bodySmall, marginTop: 4},
   list: {padding: m3Spacing.lg, paddingTop: 0},
   emptyList: {flex: 1},
   matchCard: {marginBottom: m3Spacing.sm},

@@ -3,6 +3,7 @@ import {supabase} from '../services/supabase';
 import {useAuthStore} from '../store/auth-store';
 import {useGroupStore} from '../store/group-store';
 import type {Group, GroupMember, GroupWithDetails} from '@isdb/shared';
+import logger from '../utils/logger';
 
 interface UseGroupsResult {
   loading: boolean;
@@ -69,7 +70,7 @@ export function useGroups(): UseGroupsResult {
         setJoinedGroupIds(data.map(m => m.group_id));
       }
     } catch (err: any) {
-      console.error('Error fetching my groups:', err);
+      logger.error('Error fetching my groups:', err);
     }
   }, [user, setJoinedGroupIds]);
 
@@ -136,7 +137,7 @@ export function useGroups(): UseGroupsResult {
           user_role: userRole,
         } as GroupWithDetails;
       } catch (err: any) {
-        console.error('Error fetching group detail:', err);
+        logger.error('Error fetching group detail:', err);
         return null;
       }
     },
@@ -156,7 +157,7 @@ export function useGroups(): UseGroupsResult {
         }
         return data || [];
       } catch (err: any) {
-        console.error('Error fetching members:', err);
+        logger.error('Error fetching members:', err);
         return [];
       }
     },

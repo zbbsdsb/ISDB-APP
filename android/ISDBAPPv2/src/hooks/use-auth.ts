@@ -3,6 +3,7 @@ import {APP_SCHEME} from '@isdb/shared';
 import {supabase} from '../services/supabase';
 import {useAuthStore} from '../store/auth-store';
 import type {User as SupabaseUser} from '@supabase/supabase-js';
+import logger from '../utils/logger';
 
 type Provider = 'github' | 'discord' | 'google';
 
@@ -35,7 +36,7 @@ export function useAuth() {
         setSession(null);
       }
     } catch (err) {
-      console.error('Error initializing session:', err);
+      logger.error('Error initializing session:', err);
       setError('Failed to initialize session');
     } finally {
       setLoading(false);

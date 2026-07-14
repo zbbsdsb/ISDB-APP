@@ -84,6 +84,7 @@ supabase-config.ts
 api-keys.ts
 *.env.*
 src/config/supabase.ts
+src/config/env.ts
 
 # Embedded Metro bundle assets (generated via react-native bundle)
 android/app/src/main/assets/index.android.bundle

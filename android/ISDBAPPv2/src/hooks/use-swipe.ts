@@ -1,6 +1,7 @@
 import {useState, useCallback, useRef, useEffect} from 'react';
 import {supabase} from '../services/supabase';
 import {useAuthStore} from '../store/auth-store';
+import logger from '../utils/logger';
 
 export interface SwipeProject {
   id: string;
@@ -105,7 +106,7 @@ export function useSwipe(): UseSwipeResult {
           setCurrentIndex(0);
         }
       } catch (err: any) {
-        console.error('Error loading projects:', err);
+        logger.error('Error loading projects:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -161,7 +162,7 @@ export function useSwipe(): UseSwipeResult {
 
         return {isMatch: false};
       } catch (err: any) {
-        console.error('Error submitting swipe:', err);
+        logger.error('Error submitting swipe:', err);
         // Re-throw so the caller (submitAndAnimate) can handle the error
         throw err;
       }
@@ -190,7 +191,7 @@ export function useSwipe(): UseSwipeResult {
       setCanUndo(false);
       setCurrentIndex(prev => Math.max(0, prev - 1));
     } catch (err) {
-      console.error('Error undoing swipe:', err);
+      logger.error('Error undoing swipe:', err);
     }
   }, [user]);
 

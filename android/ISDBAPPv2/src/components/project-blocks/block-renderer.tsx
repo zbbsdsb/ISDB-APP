@@ -12,7 +12,7 @@ import type {BlockType} from '@isdb/shared';
 
 interface BlockRendererProps {
   blockType: BlockType;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   projectId: string;
 }
 

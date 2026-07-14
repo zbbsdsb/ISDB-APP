@@ -1,6 +1,7 @@
 import {useState, useEffect, useCallback} from 'react';
 import {supabase} from '../services/supabase';
 import type {Project} from '@isdb/shared';
+import logger from '../utils/logger';
 
 interface UseProjectResult {
   project: Project | null;
@@ -33,7 +34,7 @@ export function useProject(projectId: string): UseProjectResult {
       setProject(data as unknown as Project);
     } catch (err: any) {
       setError(err.message || 'Failed to load project');
-      console.error('Error fetching project:', err);
+      logger.error('Error fetching project:', err);
     } finally {
       setLoading(false);
     }

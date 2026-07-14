@@ -17,6 +17,7 @@ import {m3Spacing} from '../constants/m3-spacing';
 import {m3Shape} from '../constants/m3-shape';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../navigation';
+import logger from '../utils/logger';
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -113,7 +114,7 @@ export function GatheringScreen() {
         setActiveProjects(recentProjects.slice(0, 6));
       }
     } catch (err) {
-      console.error('Error fetching gathering data:', err);
+      logger.error('Error fetching gathering data:', err);
     }
   }, []);
 

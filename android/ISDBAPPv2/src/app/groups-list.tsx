@@ -41,7 +41,7 @@ export function GroupsListScreen() {
         <Text variant="heading" style={[styles.title, {color: colors.onBackground}]}>Groups</Text>
         <Button
           title="Create"
-          onPress={() => (navigation.navigate as any)('GroupCreate')}
+          onPress={() => navigation.navigate('GroupCreate')}
           variant="filled"
           size="sm"
           icon={<Icon name="plus" size="sm" color={colors.onPrimary} />}
@@ -70,7 +70,7 @@ export function GroupsListScreen() {
               variant="elevated"
               padding={m3Spacing.md}
               onPress={() =>
-                (navigation.navigate as any)('GroupDetail', {groupId: item.id})
+                navigation.navigate('GroupDetail', {groupId: item.id})
               }
               style={styles.groupCard}>
               <Text variant="title" style={[styles.groupName, {color: colors.onSurface}]}>

@@ -18,6 +18,7 @@ import {Button} from '../components/ui';
 import {Text} from '../components/ui/text';
 import {m3Typography} from '../constants/m3-typography';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import logger from '../utils/logger';
 
 type OnboardingScreenProps = {
   navigation: NativeStackNavigationProp<any>;
@@ -133,7 +134,7 @@ export default function OnboardingScreen({navigation}: OnboardingScreenProps) {
         Alert.alert('Error', 'Failed to create profile. Please try again.');
       }
     } catch (error) {
-      console.error('Error submitting profile:', error);
+      logger.error('Error submitting profile:', error);
       Alert.alert('Error', 'An error occurred. Please try again.');
     } finally {
       setSubmitting(false);

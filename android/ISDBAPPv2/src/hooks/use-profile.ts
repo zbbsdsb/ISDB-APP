@@ -1,6 +1,7 @@
 import {useState, useCallback} from 'react';
 import {supabase} from '../services/supabase';
 import type {Profile} from '../types';
+import logger from '../utils/logger';
 
 /**
  * Hook for managing user profile operations
@@ -26,7 +27,7 @@ export function useProfile() {
         }
         return data;
       } catch (err: any) {
-        console.error('Error fetching profile:', err);
+        logger.error('Error fetching profile:', err);
         return null;
       }
     },
@@ -68,7 +69,7 @@ export function useProfile() {
 
         return true;
       } catch (err: any) {
-        console.error('Error creating profile:', err);
+        logger.error('Error creating profile:', err);
         setError(err.message || 'Failed to create profile');
         return false;
       } finally {
@@ -111,7 +112,7 @@ export function useProfile() {
 
         return true;
       } catch (err: any) {
-        console.error('Error updating profile:', err);
+        logger.error('Error updating profile:', err);
         setError(err.message || 'Failed to update profile');
         return false;
       } finally {
@@ -139,7 +140,7 @@ export function useProfile() {
 
         return !data;
       } catch (err) {
-        console.error('Error checking username:', err);
+        logger.error('Error checking username:', err);
         return false;
       }
     },

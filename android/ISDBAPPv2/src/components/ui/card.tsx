@@ -32,11 +32,11 @@ export function Card({
   const pressAnim = useRef(new Animated.Value(0)).current;
 
   const handlePressIn = () => {
-    if (!onPress) return;
+    if (!onPress) {return;}
     Animated.spring(pressAnim, {toValue: 1, useNativeDriver: true, speed: 50, bounciness: 4}).start();
   };
   const handlePressOut = () => {
-    if (!onPress) return;
+    if (!onPress) {return;}
     Animated.spring(pressAnim, {toValue: 0, useNativeDriver: true, speed: 50, bounciness: 4}).start();
   };
 

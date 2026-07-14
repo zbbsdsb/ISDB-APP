@@ -100,7 +100,7 @@ export function Button({
   const scale = pressAnim.interpolate({inputRange: [0, 1], outputRange: [1, 0.97]});
 
   const getTextColor = () => {
-    if (disabled) return colors.onSurfaceVariant;
+    if (disabled) {return colors.onSurfaceVariant;}
     switch (v) {
       case 'filled':
         return '#FFFFFF';

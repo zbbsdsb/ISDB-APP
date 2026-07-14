@@ -22,6 +22,8 @@ import {m3Spacing} from '../constants/m3-spacing';
 import {m3Shape} from '../constants/m3-shape';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../navigation';
+import type {Project} from '@isdb/shared';
+import logger from '../utils/logger';
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -32,7 +34,7 @@ export function ProjectsScreen() {
   const navigation = useNavigation<NavProp>();
 
   // Data
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -78,14 +80,17 @@ export function ProjectsScreen() {
         }
 
         if (isRefresh) {
-          setProjects(data || []);
+          setProjects((data as unknown as Project[]) || []);
         } else {
-          setProjects(prev => [...prev, ...(data || [])]);
+          setProjects(prev => [
+            ...prev,
+            ...((data as unknown as Project[]) || []),
+          ]);
         }
 
         setHasMore((data?.length || 0) >= PAGE_SIZE);
       } catch (err) {
-        console.error('Error fetching projects:', err);
+        logger.error('Error fetching projects:', err);
       }
     },
     [selectedTag, searchQuery],
@@ -205,7 +210,7 @@ export function ProjectsScreen() {
     }
   };
 
-  const renderProject = ({item}: {item: any}) => (
+  const renderProject = ({item}: {item: Project}) => (
     <TouchableOpacity
       onPress={() =>
         navigation.navigate('ProjectDetail', {projectId: item.id})

@@ -75,7 +75,7 @@ export function ProfileScreen() {
   // Detect social logins from user metadata
   const identities = user?.identities || [];
   const connectedProviders: string[] = identities
-    .map((id: any) => id.provider)
+    .map((id: {provider: string}) => id.provider)
     .filter(Boolean);
 
   const getProviderLabel = (provider: string) => {

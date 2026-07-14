@@ -6,6 +6,7 @@ import {
 } from 'react-native-keychain';
 import type {SupabaseConfig} from '@isdb/shared';
 import {SUPABASE_URL, SUPABASE_ANON_KEY} from '../config/supabase';
+import logger from '../utils/logger';
 
 class SecureStorage {
   async getItem(key: string): Promise<string | null> {
@@ -24,7 +25,7 @@ class SecureStorage {
     try {
       await setGenericPassword(key, value, {service: key});
     } catch (error) {
-      console.error('Error storing credential:', error);
+      logger.error('Error storing credential:', error);
     }
   }
 
@@ -32,7 +33,7 @@ class SecureStorage {
     try {
       await resetGenericPassword({service: key});
     } catch (error) {
-      console.error('Error removing credential:', error);
+      logger.error('Error removing credential:', error);
     }
   }
 }

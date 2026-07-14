@@ -18,6 +18,7 @@ import {Text} from '../components/ui/text';
 import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
 import {m3Shape} from '../constants/m3-shape';
+import logger from '../utils/logger';
 
 interface ActivityItem {
   id: string;
@@ -25,6 +26,25 @@ interface ActivityItem {
   text: string;
   timestamp: string;
 }
+
+// Minimal shape returned by the home-screen project queries (partial selects).
+type ProjectSummary = {
+  id: string;
+  title: string;
+  hook_text?: string;
+  description?: string;
+  created_at?: string;
+  project_number?: number;
+  cover_image_url?: string;
+  tags?: string[];
+  owner?: {username?: string; display_name?: string; avatar_url?: string} | null;
+};
+
+type MatchActivity = {
+  id: string;
+  created_at: string;
+  project?: {title?: string};
+};
 
 export function HomeScreen() {
   const {colors} = useTheme();
@@ -42,8 +62,9 @@ export function HomeScreen() {
   const [profileLoading, setProfileLoading] = useState(true);
 
   // Data
-  const [recentProjects, setRecentProjects] = useState<any[]>([]);
-  const [recommendedProjects, setRecommendedProjects] = useState<any[]>([]);
+  const [recentProjects, setRecentProjects] = useState<ProjectSummary[]>([]);
+  const [recommendedProjects, setRecommendedProjects] =
+    useState<ProjectSummary[]>([]);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
@@ -134,12 +155,12 @@ export function HomeScreen() {
       const activitiesList: ActivityItem[] = [];
 
       if (recent) {
-        recent.slice(0, 3).forEach((p: any) => {
+        recent.slice(0, 3).forEach((p: ProjectSummary) => {
           activitiesList.push({
             id: `p-${p.id}`,
             type: 'project_created',
             text: `Created project "${p.title}"`,
-            timestamp: p.created_at,
+            timestamp: p.created_at ?? '',
           });
         });
       }
@@ -152,7 +173,7 @@ export function HomeScreen() {
         .limit(3);
 
       if (recentMatches) {
-        recentMatches.forEach((m: any) => {
+        (recentMatches as MatchActivity[]).forEach((m: MatchActivity) => {
           if (m.project?.title) {
             activitiesList.push({
               id: `m-${m.id}`,
@@ -171,7 +192,7 @@ export function HomeScreen() {
       );
       setActivities(activitiesList.slice(0, 5));
     } catch (err) {
-      console.error('Error fetching home data:', err);
+      logger.error('Error fetching home data:', err);
     } finally {
       setDataLoading(false);
     }
@@ -216,7 +237,7 @@ export function HomeScreen() {
             </Text>
           </View>
           {onlineCount !== null && (
-            <View style={styles.onlineBadge}>
+            <View style={[styles.onlineBadge, {backgroundColor: colors.successContainer}]}>
               <View
                 style={[styles.onlineDot, {backgroundColor: colors.success}]}
               />
@@ -548,7 +569,9 @@ export function HomeScreen() {
               <Text
                 style={[styles.recentDate, {color: colors.onSurfaceVariant}]}
                 variant="label">
-                {new Date(p.created_at).toLocaleDateString()}
+                {p.created_at
+                  ? new Date(p.created_at).toLocaleDateString()
+                  : ''}
               </Text>
             </Card>
           ))
@@ -577,7 +600,6 @@ const styles = StyleSheet.create({
   onlineBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(22, 163, 74, 0.1)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,

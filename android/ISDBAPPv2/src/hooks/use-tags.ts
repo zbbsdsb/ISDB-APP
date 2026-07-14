@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {supabase} from '../services/supabase';
 import type {Tag} from '../types';
+import logger from '../utils/logger';
 
 /**
  * Hook for fetching and managing available tags
@@ -30,7 +31,7 @@ export function useTags() {
       setTags(data || []);
       return data || [];
     } catch (err: any) {
-      console.error('Error fetching tags:', err);
+      logger.error('Error fetching tags:', err);
       setError(err.message || 'Failed to fetch tags');
       return [];
     } finally {

@@ -19,6 +19,13 @@ export interface ThemeColors extends M3Colors {
   brandTo: string; // coral
   brandGradient: [string, string];
 
+  // Semantic
+  success: string;
+  onSuccess: string;
+  successContainer: string;
+  warning: string;
+  onWarning: string;
+
   // Radius
   radius: number; // 12 (lg)
   radiusMd: number; // 10
@@ -97,6 +104,7 @@ export const darkColors: ThemeColors = {
   // Custom brand
   success: '#4ADE80',
   onSuccess: '#052E16',
+  successContainer: 'rgba(74, 222, 128, 0.12)',
   warning: '#FBBF24',
   onWarning: '#451A03',
 
@@ -164,6 +172,7 @@ export const lightColors: ThemeColors = {
   // Custom brand
   success: '#16A34A',
   onSuccess: '#FFFFFF',
+  successContainer: 'rgba(22, 163, 74, 0.1)',
   warning: '#D97706',
   onWarning: '#FFFFFF',
 

@@ -9,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider } from './src/hooks/use-theme';
 import { Navigation } from './src/navigation';
+import { ErrorBoundary } from './src/components/ui/error-boundary';
 
 function App(): React.JSX.Element {
   return (
@@ -16,7 +17,9 @@ function App(): React.JSX.Element {
       <SafeAreaProvider>
         <ThemeProvider>
           <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
-          <Navigation />
+          <ErrorBoundary>
+            <Navigation />
+          </ErrorBoundary>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

@@ -4,6 +4,7 @@ import {useMessageStore} from '../store/message-store';
 import {useAuthStore} from '../store/auth-store';
 import type {Message, Conversation} from '@isdb/shared';
 import type {RealtimePostgresChangesPayload} from '@supabase/supabase-js';
+import logger from '../utils/logger';
 
 interface UseMessagesResult {
   loading: boolean;
@@ -54,7 +55,7 @@ export function useMessages(): UseMessagesResult {
         setConversations(data as unknown as Conversation[]);
       }
     } catch (err: any) {
-      console.error('Error fetching conversations:', err);
+      logger.error('Error fetching conversations:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -77,7 +78,7 @@ export function useMessages(): UseMessagesResult {
         }
         return (data as unknown as Message[]) || [];
       } catch (err: any) {
-        console.error('Error fetching messages:', err);
+        logger.error('Error fetching messages:', err);
         return [];
       }
     },
@@ -111,7 +112,7 @@ export function useMessages(): UseMessagesResult {
 
         return true;
       } catch (err: any) {
-        console.error('Error sending message:', err);
+        logger.error('Error sending message:', err);
         return false;
       }
     },
