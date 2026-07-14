@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   ScrollView,
   ActivityIndicator,
+  Share,
 } from 'react-native';
 import {
   useRoute,
@@ -24,6 +25,7 @@ import type {RootStackParamList} from '../navigation';
 import {useProjectBlocks} from '../hooks/use-project-blocks';
 import {useProjectPosts} from '../hooks/use-project-posts';
 import {useBadges} from '../hooks/use-badges';
+import {DEEP_LINK_SCHEME} from '../constants';
 import BlockRenderer from '../components/project-blocks/block-renderer';
 import PostList from '../components/project-posts/post-list';
 import PostCreate from '../components/project-posts/post-create';
@@ -63,6 +65,19 @@ export function ProjectDetailScreen() {
       setTimeout(() => navigation.goBack(), 1500);
     } catch (err: any) {
       showToast(err.message || 'Failed to send request', 'error');
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      const url = `${DEEP_LINK_SCHEME}://project/${projectId}`;
+      const message = project?.title ? `${project.title}\n${url}` : url;
+      await Share.share({
+        message,
+        title: project?.title || 'Insane Dream Builder Project',
+      });
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to share', 'error');
     }
   };
 
@@ -312,7 +327,7 @@ export function ProjectDetailScreen() {
           />
           <Button
             title="Share"
-            onPress={() => showToast('Sharing coming soon', 'info')}
+            onPress={handleShare}
             variant="outlined"
             size="md"
             fullWidth

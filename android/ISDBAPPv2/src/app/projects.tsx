@@ -13,6 +13,8 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {supabase} from '../services/supabase';
+import {useAuthStore} from '../store/auth-store';
+import {useToast} from '../hooks/use-toast';
 import {Button, Card, Skeleton} from '../components/ui';
 import {Text} from '../components/ui/text';
 import {m3Typography} from '../constants/m3-typography';
@@ -144,6 +146,65 @@ export function ProjectsScreen() {
     setLoading(true);
   };
 
+  // ── Create project (wired to the "+ New" button) ──
+  const user = useAuthStore(s => s.user);
+  const {show: showToast, ToastComponent} = useToast();
+  const [showCreate, setShowCreate] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newHook, setNewHook] = useState('');
+  const [newDesc, setNewDesc] = useState('');
+  const [newTags, setNewTags] = useState('');
+  const [creating, setCreating] = useState(false);
+
+  const resetCreateForm = () => {
+    setNewTitle('');
+    setNewHook('');
+    setNewDesc('');
+    setNewTags('');
+  };
+
+  const handleCreateProject = async () => {
+    if (!user) {
+      showToast('Please log in first', 'error');
+      return;
+    }
+    if (!newTitle.trim()) {
+      showToast('Project title is required', 'error');
+      return;
+    }
+    setCreating(true);
+    try {
+      const tags = newTags
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean);
+      const {data, error} = await supabase
+        .from('projects')
+        .insert({
+          title: newTitle.trim(),
+          hook_text: newHook.trim() || null,
+          description: newDesc.trim() || null,
+          tags: tags.length ? tags : null,
+          owner_id: user.id,
+        })
+        .select('id')
+        .single();
+      if (error) {
+        throw error;
+      }
+      showToast('Project created!', 'success');
+      setShowCreate(false);
+      resetCreateForm();
+      if (data?.id) {
+        navigation.navigate('ProjectDetail', {projectId: data.id});
+      }
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to create project', 'error');
+    } finally {
+      setCreating(false);
+    }
+  };
+
   const renderProject = ({item}: {item: any}) => (
     <TouchableOpacity
       onPress={() =>
@@ -232,7 +293,12 @@ export function ProjectsScreen() {
         <Text variant="heading" style={[styles.headerTitle, {color: colors.onBackground}]}>
           Projects
         </Text>
-        <Button title="+ New" onPress={() => {}} variant="filled" size="sm" />
+        <Button
+          title="+ New"
+          onPress={() => setShowCreate(true)}
+          variant="filled"
+          size="sm"
+        />
       </View>
 
       {/* Search */}
@@ -367,6 +433,129 @@ export function ProjectsScreen() {
           }
         />
       )}
+
+      {/* Create Project modal */}
+      {showCreate && (
+        <View style={[styles.modalBackdrop]}>
+          <View
+            style={[
+              styles.modalCard,
+              {backgroundColor: colors.surface, borderColor: colors.outline},
+            ]}>
+            <Text
+              variant="title"
+              style={[styles.modalTitle, {color: colors.onSurface}]}>
+              New Project
+            </Text>
+
+            <Text
+              variant="label"
+              style={[styles.modalLabel, {color: colors.onSurfaceVariant}]}>
+              Title *
+            </Text>
+            <TextInput
+              style={[
+                styles.modalInput,
+                {
+                  backgroundColor: colors.surfaceVariant,
+                  color: colors.onSurface,
+                  borderColor: colors.outline,
+                },
+              ]}
+              value={newTitle}
+              onChangeText={setNewTitle}
+              placeholder="My Awesome Project"
+              placeholderTextColor={colors.onSurfaceVariant}
+              maxLength={120}
+            />
+
+            <Text
+              variant="label"
+              style={[styles.modalLabel, {color: colors.onSurfaceVariant}]}>
+              Hook (one-liner)
+            </Text>
+            <TextInput
+              style={[
+                styles.modalInput,
+                {
+                  backgroundColor: colors.surfaceVariant,
+                  color: colors.onSurface,
+                  borderColor: colors.outline,
+                },
+              ]}
+              value={newHook}
+              onChangeText={setNewHook}
+              placeholder="Why this, why now?"
+              placeholderTextColor={colors.onSurfaceVariant}
+              maxLength={160}
+            />
+
+            <Text
+              variant="label"
+              style={[styles.modalLabel, {color: colors.onSurfaceVariant}]}>
+              Description
+            </Text>
+            <TextInput
+              style={[
+                styles.modalInput,
+                styles.modalTextArea,
+                {
+                  backgroundColor: colors.surfaceVariant,
+                  color: colors.onSurface,
+                  borderColor: colors.outline,
+                },
+              ]}
+              value={newDesc}
+              onChangeText={setNewDesc}
+              placeholder="Tell people what you're building"
+              placeholderTextColor={colors.onSurfaceVariant}
+              multiline
+              numberOfLines={3}
+              textAlignVertical="top"
+            />
+
+            <Text
+              variant="label"
+              style={[styles.modalLabel, {color: colors.onSurfaceVariant}]}>
+              Tags (comma separated)
+            </Text>
+            <TextInput
+              style={[
+                styles.modalInput,
+                {
+                  backgroundColor: colors.surfaceVariant,
+                  color: colors.onSurface,
+                  borderColor: colors.outline,
+                },
+              ]}
+              value={newTags}
+              onChangeText={setNewTags}
+              placeholder="AI, Mobile, Web"
+              placeholderTextColor={colors.onSurfaceVariant}
+            />
+
+            <View style={styles.modalActions}>
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setShowCreate(false);
+                  resetCreateForm();
+                }}
+                variant="text"
+              />
+              <Button
+                title="Create"
+                onPress={handleCreateProject}
+                variant="filled"
+                loading={creating}
+                disabled={creating || !newTitle.trim()}
+              />
+            </View>
+          </View>
+        </View>
+      )}
+
+      {ToastComponent}
     </SafeAreaView>
   );
 }
@@ -436,4 +625,41 @@ const styles = StyleSheet.create({
   // Empty
   emptyContainer: {paddingVertical: m3Spacing.xl, alignItems: 'center'},
   emptyText: {...m3Typography.bodyLarge, textAlign: 'center'},
+
+  // Create modal
+  modalBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: m3Spacing.lg,
+    zIndex: 100,
+  },
+  modalCard: {
+    width: '100%',
+    maxWidth: 420,
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: m3Spacing.lg,
+    gap: m3Spacing.xs,
+  },
+  modalTitle: {...m3Typography.titleMedium, fontWeight: '700', marginBottom: m3Spacing.sm},
+  modalLabel: {marginTop: m3Spacing.sm},
+  modalInput: {
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingHorizontal: m3Spacing.md,
+    paddingVertical: m3Spacing.sm,
+  },
+  modalTextArea: {minHeight: 72, paddingTop: m3Spacing.sm},
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: m3Spacing.sm,
+    marginTop: m3Spacing.md,
+  },
 });
