@@ -1,30 +1,30 @@
 import React, {useRef} from 'react';
-import {StyleSheet, ViewStyle, TouchableOpacity, Animated} from 'react-native';
+import {StyleSheet, ViewStyle, View, TouchableOpacity, Animated} from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
-import {m3Shape} from '../../constants/m3-shape';
-import {m3Elevation} from '../../constants/m3-elevation';
+import {BrandGradient} from './gradient';
 
 /**
- * M3 Card variants:
- *   elevated → surface bg, shadow level 1, press → level 2
- *   filled   → surfaceVariant bg, no shadow, no elevation
- *   outlined → transparent bg, outline border, no elevation
+ * Web-aligned Card.
+ *   glass    → translucent surface + amber-tinted border + soft shadow  [.glass-card]
+ *   elevated → glass + subtle amber→coral gradient wash                [.elevated-card]
+ *   outlined → transparent + border
  */
-
-export type M3CardVariant = 'elevated' | 'filled' | 'outlined';
+export type CardVariant = 'glass' | 'elevated' | 'outlined' | 'filled';
 
 interface CardProps {
   children: React.ReactNode;
-  variant?: M3CardVariant;
+  variant?: CardVariant;
   padding?: number;
+  marginBottom?: number;
   onPress?: () => void;
   style?: ViewStyle;
 }
 
 export function Card({
   children,
-  variant = 'elevated',
+  variant = 'glass',
   padding = 16,
+  marginBottom,
   onPress,
   style,
 }: CardProps) {
@@ -32,95 +32,66 @@ export function Card({
   const pressAnim = useRef(new Animated.Value(0)).current;
 
   const handlePressIn = () => {
-    if (!onPress) {
-      return;
-    }
-    Animated.spring(pressAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 50,
-      bounciness: 4,
-    }).start();
+    if (!onPress) return;
+    Animated.spring(pressAnim, {toValue: 1, useNativeDriver: true, speed: 50, bounciness: 4}).start();
   };
-
   const handlePressOut = () => {
-    if (!onPress) {
-      return;
-    }
-    Animated.spring(pressAnim, {
-      toValue: 0,
-      useNativeDriver: true,
-      speed: 50,
-      bounciness: 4,
-    }).start();
+    if (!onPress) return;
+    Animated.spring(pressAnim, {toValue: 0, useNativeDriver: true, speed: 50, bounciness: 4}).start();
   };
 
-  const getStyle = () => {
-    const base: ViewStyle = {
-      borderRadius: m3Shape.medium,
-      padding,
-    };
+  const radius = 16;
 
-    switch (variant) {
-      case 'elevated':
-        return {
-          ...base,
-          backgroundColor: colors.surface,
-          borderWidth: 0,
-          ...m3Elevation[1],
-        };
-      case 'filled':
-        return {
-          ...base,
-          backgroundColor: colors.surfaceVariant,
-          borderWidth: 0,
-          elevation: 0,
-        };
-      case 'outlined':
-        return {
-          ...base,
-          backgroundColor: 'transparent',
-          borderWidth: 1,
-          borderColor: colors.outline,
-          elevation: 0,
-        };
-    }
+  const base: ViewStyle = {
+    borderRadius: radius,
+    padding,
+    backgroundColor: variant === 'outlined' ? 'transparent' : colors.glassBg,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+    ...(variant !== 'outlined'
+      ? {
+          shadowColor: colors.brandFrom,
+          shadowOffset: {width: 0, height: 4},
+          shadowOpacity: 0.1,
+          shadowRadius: 16,
+          elevation: 3,
+        }
+      : {}),
   };
 
-  const pressScale = pressAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0.98],
-  });
+  const pressScale = pressAnim.interpolate({inputRange: [0, 1], outputRange: [1, 0.98]});
 
   const content = (
     <Animated.View
       style={[
         styles.card,
-        getStyle(),
+        base,
         onPress ? {transform: [{scale: pressScale}]} : null,
+        marginBottom !== undefined ? {marginBottom} : null,
         style,
       ]}>
-      {children}
+      {variant === 'elevated' && (
+        <BrandGradient
+          from={colors.brandFrom}
+          to={colors.brandTo}
+          style={[{position: 'absolute' as const, left: 0, top: 0, right: 0, bottom: 0}, {opacity: 0.06}]}
+        />
+      )}
+      <View style={styles.content}>{children}</View>
     </Animated.View>
   );
 
   if (onPress) {
     return (
-      <TouchableOpacity
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        activeOpacity={1}>
+      <TouchableOpacity onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} activeOpacity={1}>
         {content}
       </TouchableOpacity>
     );
   }
-
   return content;
 }
 
 const styles = StyleSheet.create({
-  card: {
-    // Base shape handled by getStyle()
-  },
+  card: {overflow: 'hidden'},
+  content: {zIndex: 1},
 });

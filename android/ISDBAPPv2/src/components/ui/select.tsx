@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Modal,
@@ -13,6 +12,7 @@ import {Icon} from './icon';
 import {m3Typography} from '../../constants/m3-typography';
 import {m3Spacing} from '../../constants/m3-spacing';
 import {m3Shape} from '../../constants/m3-shape';
+import {Text} from './text';
 
 export interface SelectOption {
   label: string;
@@ -46,7 +46,7 @@ export function Select({
   return (
     <View style={[styles.container, style]}>
       {label && (
-        <Text style={[styles.label, {color: colors.onBackground}]}>
+        <Text variant="label" style={[styles.label, {color: colors.onBackground}]}>
           {label}
         </Text>
       )}
@@ -55,13 +55,15 @@ export function Select({
         style={[
           styles.trigger,
           {
-            backgroundColor: colors.surface,
+            backgroundColor: colors.surfaceVariant,
             borderColor: error ? colors.error : colors.outline,
+            borderRadius: colors.radius,
           },
         ]}
         onPress={() => setOpen(true)}
         activeOpacity={0.7}>
         <Text
+          variant="body"
           style={[
             styles.triggerText,
             {
@@ -77,7 +79,7 @@ export function Select({
       </TouchableOpacity>
 
       {error && (
-        <Text style={[styles.error, {color: colors.error}]}>{error}</Text>
+        <Text variant="caption" style={[styles.error, {color: colors.error}]}>{error}</Text>
       )}
 
       <Modal
@@ -92,7 +94,7 @@ export function Select({
           <View
             style={[
               styles.dropdown,
-              {backgroundColor: colors.surface, borderColor: colors.outline},
+              {backgroundColor: colors.surfaceVariant, borderColor: colors.outline},
             ]}>
             <FlatList
               data={options}
@@ -115,7 +117,7 @@ export function Select({
                       onChange(item.value);
                       setOpen(false);
                     }}>
-                    <Text style={[styles.optionText, optionTextStyle]}>
+                    <Text variant="body" style={[styles.optionText, optionTextStyle]}>
                       {item.label}
                     </Text>
                     {isSelected && (

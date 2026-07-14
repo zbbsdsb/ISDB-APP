@@ -1,7 +1,6 @@
 import React, {useState, useMemo} from 'react';
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   ScrollView,
@@ -9,6 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
+import {Text} from '../../components/ui/text';
 import {m3Shape} from '../../constants/m3-shape';
 import type {Tag} from '../../types';
 
@@ -72,10 +72,10 @@ export function TagSelector({
   return (
     <View style={styles.container}>
       <View style={styles.labelContainer}>
-        <Text style={[styles.label, {color: colors.onBackground}]}>
+        <Text style={[styles.label, {color: colors.onBackground}]} variant="label">
           {label}
         </Text>
-        <Text style={[styles.requirement, {color: colors.onSurfaceVariant}]}>
+        <Text style={[styles.requirement, {color: colors.onSurfaceVariant}]} variant="caption">
           {minTags > 0 ? `${minTags}-${maxTags} required` : `Up to ${maxTags}`}
         </Text>
       </View>
@@ -88,10 +88,10 @@ export function TagSelector({
               key={tag}
               style={[styles.selectedTag, {backgroundColor: colors.primary}]}
               onPress={() => removeTag(tag)}>
-              <Text style={[styles.selectedTagText, {color: colors.onPrimary}]}>
+              <Text style={[styles.selectedTagText, {color: colors.onPrimary}]} variant="label">
                 {tag}
               </Text>
-              <Text style={[styles.removeIcon, {color: colors.onPrimary}]}>
+              <Text style={[styles.removeIcon, {color: colors.onPrimary}]} variant="label">
                 ×
               </Text>
             </TouchableOpacity>
@@ -143,7 +143,7 @@ export function TagSelector({
                 styles.categoryGroup,
                 {borderBottomColor: colors.outlineVariant},
               ]}>
-              <Text style={[styles.categoryTitle, {color: colors.primary}]}>
+              <Text style={[styles.categoryTitle, {color: colors.primary}]} variant="label">
                 {category}
               </Text>
               {tags.slice(0, 10).map(tag => (
@@ -154,7 +154,7 @@ export function TagSelector({
                     {borderBottomColor: colors.outlineVariant},
                   ]}
                   onPress={() => addTag(tag.name)}>
-                  <Text style={[styles.tagName, {color: colors.onSurface}]}>
+                  <Text style={[styles.tagName, {color: colors.onSurface}]} variant="body">
                     {tag.name}
                   </Text>
                   {tag.description && (
@@ -163,7 +163,8 @@ export function TagSelector({
                         styles.tagDescription,
                         {color: colors.onSurfaceVariant},
                       ]}
-                      numberOfLines={1}>
+                      numberOfLines={1}
+                      variant="caption">
                       {tag.description}
                     </Text>
                   )}
@@ -173,7 +174,7 @@ export function TagSelector({
           ))}
 
           {filteredTags.length === 0 && (
-            <Text style={[styles.noResults, {color: colors.onSurfaceVariant}]}>
+            <Text style={[styles.noResults, {color: colors.onSurfaceVariant}]} variant="body">
               No tags found matching "{search}"
             </Text>
           )}
@@ -182,7 +183,7 @@ export function TagSelector({
 
       {/* Validation Message */}
       {selectedTags.length < minTags && (
-        <Text style={[styles.validationText, {color: colors.error}]}>
+        <Text style={[styles.validationText, {color: colors.error}]} variant="caption">
           Please select at least {minTags} {label.toLowerCase()}
         </Text>
       )}

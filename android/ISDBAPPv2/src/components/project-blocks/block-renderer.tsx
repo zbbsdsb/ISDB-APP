@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {Text} from '../ui/text';
 import {useTheme} from '../../hooks/use-theme';
 import ReadmeBlock from './readme-block';
 import RoadmapBlock from './roadmap-block';
@@ -39,7 +40,7 @@ export default function BlockRenderer({
       return (
         <View
           style={[styles.fallback, {backgroundColor: colors.surfaceVariant}]}>
-          <Text style={[styles.fallbackText, {color: colors.onSurfaceVariant}]}>
+          <Text variant="body" style={[styles.fallbackText, {color: colors.onSurfaceVariant}]}>
             Unknown block: {blockType}
           </Text>
         </View>

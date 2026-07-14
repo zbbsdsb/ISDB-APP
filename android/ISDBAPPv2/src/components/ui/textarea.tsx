@@ -2,13 +2,13 @@ import React, {useState} from 'react';
 import {
   TextInput as RNTextInput,
   View,
-  Text,
   StyleSheet,
   TextInputProps as RNTextInputProps,
   ViewStyle,
 } from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
 import {m3Shape} from '../../constants/m3-shape';
+import {Text} from './text';
 
 interface TextareaProps extends RNTextInputProps {
   label?: string;
@@ -39,7 +39,7 @@ export function Textarea({
   return (
     <View style={[styles.container, containerStyle]}>
       {label && (
-        <Text style={[styles.label, {color: colors.onBackground}]}>
+        <Text variant="label" style={[styles.label, {color: colors.onBackground}]}>
           {label}
         </Text>
       )}
@@ -47,9 +47,10 @@ export function Textarea({
         style={[
           styles.input,
           {
-            backgroundColor: colors.surface,
+            backgroundColor: colors.surfaceVariant,
             borderColor: getBorderColor(),
             color: colors.onBackground,
+            borderRadius: colors.radius,
           },
           style,
         ]}
@@ -62,7 +63,7 @@ export function Textarea({
         {...props}
       />
       {error && (
-        <Text style={[styles.error, {color: colors.error}]}>{error}</Text>
+        <Text variant="caption" style={[styles.error, {color: colors.error}]}>{error}</Text>
       )}
     </View>
   );

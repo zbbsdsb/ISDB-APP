@@ -1,6 +1,7 @@
 import React from 'react';
-import {Text, StyleSheet, TextStyle} from 'react-native';
+import {StyleSheet, TextStyle} from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
+import {Text} from './text';
 
 interface LabelProps {
   children: React.ReactNode;
@@ -11,7 +12,7 @@ export function Label({children, style}: LabelProps) {
   const {colors} = useTheme();
 
   return (
-    <Text style={[styles.label, {color: colors.onBackground}, style]}>
+    <Text variant="label" style={[styles.label, {color: colors.onBackground}, style]}>
       {children}
     </Text>
   );

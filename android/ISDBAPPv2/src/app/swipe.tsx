@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState, useCallback} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   Animated,
@@ -18,7 +17,7 @@ import {useTheme} from '../hooks/use-theme';
 import {useToast} from '../hooks/use-toast';
 import {useSwipe} from '../hooks/use-swipe';
 import type {SwipeActionType} from '../hooks/use-swipe';
-import {Button, Card, Icon} from '../components/ui';
+import {Button, Card, Icon, Text} from '../components/ui';
 import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
 import {m3Shape} from '../constants/m3-shape';
@@ -217,7 +216,7 @@ export function SwipeScreen() {
       return (
         <View style={styles.centerContent}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, {color: colors.onSurfaceVariant}]}>
+          <Text variant="body" style={[styles.loadingText, {color: colors.onSurfaceVariant}]}>
             Loading projects...
           </Text>
         </View>
@@ -266,15 +265,16 @@ export function SwipeScreen() {
               variant="elevated"
               padding={m3Spacing.lg}
               style={styles.cardContent}>
-              <Text style={[styles.projectTitle, {color: colors.onBackground}]}>
+              <Text variant="heading" style={[styles.projectTitle, {color: colors.onBackground}]}>
                 {nextProject.title}
               </Text>
               {nextProject.hook_text && (
-                <Text style={[styles.hookText, {color: colors.primary}]}>
+                <Text variant="title" style={[styles.hookText, {color: colors.primary}]}>
                   {nextProject.hook_text}
                 </Text>
               )}
               <Text
+                variant="body"
                 style={[styles.description, {color: colors.onSurfaceVariant}]}
                 numberOfLines={4}>
                 {nextProject.description}
@@ -298,7 +298,7 @@ export function SwipeScreen() {
               styles.likeBadge,
               {opacity: likeOpacity},
             ]}>
-            <Text style={[styles.overlayText, styles.likeText]}>LIKE</Text>
+            <Text variant="heading" style={[styles.overlayText, styles.likeText]}>LIKE</Text>
           </Animated.View>
           <Animated.View
             style={[
@@ -306,7 +306,7 @@ export function SwipeScreen() {
               styles.nopeBadge,
               {opacity: nopeOpacity},
             ]}>
-            <Text style={[styles.overlayText, styles.nopeText]}>NOPE</Text>
+            <Text variant="heading" style={[styles.overlayText, styles.nopeText]}>NOPE</Text>
           </Animated.View>
 
           {/* Card content */}
@@ -314,17 +314,18 @@ export function SwipeScreen() {
             variant="elevated"
             padding={m3Spacing.lg}
             style={styles.cardContent}>
-            <Text style={[styles.projectTitle, {color: colors.onBackground}]}>
-              {currentProject.title}
+              <Text variant="heading" style={[styles.projectTitle, {color: colors.onBackground}]}>
+                {currentProject.title}
             </Text>
             {currentProject.hook_text && (
-              <Text style={[styles.hookText, {color: colors.primary}]}>
+              <Text variant="title" style={[styles.hookText, {color: colors.primary}]}>
                 {currentProject.hook_text}
               </Text>
             )}
             <Text
-              style={[styles.description, {color: colors.onSurfaceVariant}]}
-              numberOfLines={6}>
+            variant="body"
+            style={[styles.description, {color: colors.onSurfaceVariant}]}
+            numberOfLines={6}>
               {currentProject.description}
             </Text>
 
@@ -339,6 +340,7 @@ export function SwipeScreen() {
                       {backgroundColor: colors.secondaryContainer},
                     ]}>
                     <Text
+                      variant="label"
                       style={[
                         styles.tagText,
                         {color: colors.onSecondaryContainer},
@@ -356,6 +358,7 @@ export function SwipeScreen() {
                 <View
                   style={[styles.ownerDot, {backgroundColor: colors.primary}]}>
                   <Text
+                    variant="label"
                     style={[styles.ownerDotText, {color: colors.onPrimary}]}>
                     {(
                       currentProject.owner.display_name ||
@@ -367,6 +370,7 @@ export function SwipeScreen() {
                   </Text>
                 </View>
                 <Text
+                  variant="label"
                   style={[styles.ownerName, {color: colors.onSurfaceVariant}]}>
                   {currentProject.owner.display_name ||
                     currentProject.owner.username}
@@ -382,7 +386,7 @@ export function SwipeScreen() {
                   projectId: currentProject.id,
                 })
               }>
-              <Text style={[styles.learnMoreText, {color: colors.primary}]}>
+              <Text variant="label" style={[styles.learnMoreText, {color: colors.primary}]}>
                 View Details →
               </Text>
             </TouchableOpacity>
@@ -396,7 +400,7 @@ export function SwipeScreen() {
     <SafeAreaView
       style={[styles.container, {backgroundColor: colors.background}]}>
       <View style={styles.header}>
-        <Text style={[styles.title, {color: colors.onBackground}]}>
+        <Text variant="heading" style={[styles.title, {color: colors.onBackground}]}>
           Discover
         </Text>
         {canUndo && (
@@ -421,7 +425,7 @@ export function SwipeScreen() {
             ]}
             onPress={handlePass}
             disabled={submitting}>
-            <Icon name="close" size="md" color="#ef4444" />
+            <Icon name="close" size="md" color={colors.error} />
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -431,7 +435,7 @@ export function SwipeScreen() {
             ]}
             onPress={handleSave}
             disabled={submitting}>
-            <Icon name="check" size="md" color="#3b82f6" />
+            <Icon name="check" size="md" color={colors.primary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -440,7 +444,7 @@ export function SwipeScreen() {
             ]}
             onPress={handleMatch}
             disabled={submitting}>
-            <Text style={[styles.matchActionText, {color: colors.onPrimary}]}>
+            <Text variant="heading" style={[styles.matchActionText, {color: colors.onPrimary}]}>
               ⚡
             </Text>
           </TouchableOpacity>
@@ -458,11 +462,12 @@ export function SwipeScreen() {
         onRequestClose={() => setShowMatchModal(false)}>
         <View style={styles.matchOverlay}>
           <View style={[styles.matchCard, {backgroundColor: colors.surface}]}>
-            <Text style={styles.matchEmoji}>🎉</Text>
-            <Text style={[styles.matchTitle, {color: colors.onBackground}]}>
+            <Text variant="body" style={styles.matchEmoji}>🎉</Text>
+            <Text variant="heading" style={[styles.matchTitle, {color: colors.onBackground}]}>
               It's a Match!
             </Text>
             <Text
+              variant="body"
               style={[styles.matchSubtitle, {color: colors.onSurfaceVariant}]}>
               You matched with "{matchProjectTitle}"
             </Text>
@@ -591,7 +596,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   passActionBtn: {borderColor: '#ef4444'},
-  saveActionBtn: {borderColor: '#3b82f6'},
+  saveActionBtn: {borderColor: '#E8A838'},
   matchActionText: {fontSize: 24},
   // Match modal
   matchOverlay: {

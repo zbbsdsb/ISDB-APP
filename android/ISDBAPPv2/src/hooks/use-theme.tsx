@@ -1,15 +1,15 @@
 import React, {createContext, useContext, useMemo, type ReactNode} from 'react';
 import {useThemeStore} from '../store/theme-store';
-import {getM3Colors, type M3Colors} from '../constants/m3-colors';
+import {getColors, type ThemeColors} from '../constants/theme';
 
 interface ThemeContextValue {
   isDark: boolean;
-  colors: M3Colors;
+  colors: ThemeColors;
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
   isDark: true,
-  colors: getM3Colors(true),
+  colors: getColors(true),
 });
 
 export function ThemeProvider({children}: {children: ReactNode}) {
@@ -18,7 +18,7 @@ export function ThemeProvider({children}: {children: ReactNode}) {
   const value = useMemo(
     () => ({
       isDark,
-      colors: getM3Colors(isDark),
+      colors: getColors(isDark),
     }),
     [isDark],
   );

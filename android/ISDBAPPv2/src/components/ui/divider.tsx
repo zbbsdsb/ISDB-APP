@@ -1,7 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
 import {m3Spacing} from '../../constants/m3-spacing';
+import {Text} from './text';
 
 interface DividerProps {
   /** Optional text to show in the middle (── Text ──) */
@@ -28,7 +29,7 @@ export function Divider({text, insetLeft = 0, insetRight = 0}: DividerProps) {
           {marginLeft: insetLeft, marginRight: insetRight},
         ]}>
         <View style={[styles.line, {backgroundColor: colors.outlineVariant}]} />
-        <Text style={[styles.label, {color: colors.onSurfaceVariant}]}>
+        <Text variant="caption" style={[styles.label, {color: colors.onSurfaceVariant}]}>
           {text}
         </Text>
         <View style={[styles.line, {backgroundColor: colors.outlineVariant}]} />

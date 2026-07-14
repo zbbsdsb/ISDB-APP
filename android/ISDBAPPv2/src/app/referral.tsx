@@ -1,12 +1,12 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   Share,
   ActivityIndicator,
 } from 'react-native';
+import {Text} from '../components/ui/text';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {useToast} from '../hooks/use-toast';
@@ -45,7 +45,7 @@ export function ReferralScreen() {
           variant="text"
           icon={<Icon name="back" size="sm" color={colors.onBackground} />}
         />
-        <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
+        <Text variant="title" style={[styles.headerTitle, {color: colors.onBackground}]}>
           Invite Friends
         </Text>
         <View style={styles.headerSpacer} />
@@ -62,14 +62,14 @@ export function ReferralScreen() {
             variant="elevated"
             padding={m3Spacing.xl}
             style={styles.codeCard}>
-            <Text style={styles.emoji}>🎉</Text>
-            <Text style={[styles.codeLabel, {color: colors.onSurfaceVariant}]}>
+            <Text variant="body" style={styles.emoji}>🎉</Text>
+            <Text variant="label" style={[styles.codeLabel, {color: colors.onSurfaceVariant}]}>
               Your Referral Code
             </Text>
-            <Text style={[styles.codeValue, {color: colors.primary}]}>
+            <Text variant="heading" style={[styles.codeValue, {color: colors.primary}]}>
               {code || 'ISDB-XXXXXX'}
             </Text>
-            <Text style={[styles.codeHint, {color: colors.onSurfaceVariant}]}>
+            <Text variant="body" style={[styles.codeHint, {color: colors.onSurfaceVariant}]}>
               Share this code with friends to invite them!
             </Text>
           </Card>
@@ -80,11 +80,11 @@ export function ReferralScreen() {
             padding={m3Spacing.md}
             style={styles.statsCard}>
             <View style={styles.statRow}>
-              <Text style={[styles.statValue, {color: colors.primary}]}>
+              <Text variant="heading" style={[styles.statValue, {color: colors.primary}]}>
                 {totalReferrals}
               </Text>
-              <Text
-                style={[styles.statLabel, {color: colors.onSurfaceVariant}]}>
+                <Text variant="label"
+                  style={[styles.statLabel, {color: colors.onSurfaceVariant}]}>
                 Friends Joined
               </Text>
             </View>

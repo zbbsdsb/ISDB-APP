@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {
   View,
-  Text,
   TextInput,
   StyleSheet,
   SafeAreaView,
@@ -10,8 +9,8 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {useGroups} from '../hooks/use-groups';
+import {Text} from '../components/ui/text';
 import {Button, Icon} from '../components/ui';
-import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
 
 export function GroupCreateScreen() {
@@ -47,13 +46,13 @@ export function GroupCreateScreen() {
           variant="text"
           icon={<Icon name="close" size="sm" color={colors.onBackground} />}
         />
-        <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
+        <Text variant="title" style={[styles.headerTitle, {color: colors.onBackground}]}>
           New Group
         </Text>
         <Button
           title="Create"
           onPress={handleCreate}
-          variant="text"
+          variant="filled"
           disabled={!name.trim() || loading}
           loading={loading}
         />
@@ -61,7 +60,7 @@ export function GroupCreateScreen() {
 
       <View style={styles.form}>
         <View style={styles.field}>
-          <Text style={[styles.label, {color: colors.onSurfaceVariant}]}>
+          <Text variant="label" style={[styles.label, {color: colors.onSurfaceVariant}]}>
             Group Name *
           </Text>
           <TextInput
@@ -81,7 +80,7 @@ export function GroupCreateScreen() {
           />
         </View>
         <View style={styles.field}>
-          <Text style={[styles.label, {color: colors.onSurfaceVariant}]}>
+          <Text variant="label" style={[styles.label, {color: colors.onSurfaceVariant}]}>
             Description
           </Text>
           <TextInput
@@ -118,16 +117,15 @@ const styles = StyleSheet.create({
     height: 56,
     borderBottomWidth: 1,
   },
-  headerTitle: {...m3Typography.titleMedium},
+  headerTitle: {},
   form: {padding: m3Spacing.lg, gap: m3Spacing.lg},
   field: {gap: m3Spacing.xs},
-  label: {...m3Typography.labelLarge},
+  label: {},
   input: {
     borderRadius: 8,
     borderWidth: 1,
     paddingHorizontal: m3Spacing.md,
     paddingVertical: m3Spacing.sm,
-    ...m3Typography.bodyLarge,
   },
   textArea: {minHeight: 100, paddingTop: m3Spacing.sm},
 });

@@ -1,12 +1,12 @@
 import React, {useState, useCallback} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   ScrollView,
   Alert,
 } from 'react-native';
+import {Text} from '../components/ui/text';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {useAuth} from '../hooks/use-auth';
@@ -110,11 +110,11 @@ export function ProfileScreen() {
             </View>
           ) : (
             <>
-              <Text style={[styles.name, {color: colors.onBackground}]}>
+              <Text variant="heading" style={[styles.name, {color: colors.onBackground}]}>
                 {userDisplayName}
               </Text>
               {profile?.username && (
-                <Text
+                <Text variant="body"
                   style={[styles.username, {color: colors.onSurfaceVariant}]}>
                   @{profile.username}
                 </Text>
@@ -136,31 +136,31 @@ export function ProfileScreen() {
             </View>
           ) : (
             <>
-              <Text style={[styles.cardLabel, {color: colors.primary}]}>
+              <Text variant="label" style={[styles.cardLabel, {color: colors.primary}]}>
                 INSANE DREAM BUILDER
               </Text>
               <View style={styles.identityRow}>
-                <Text
+                <Text variant="label"
                   style={[
                     styles.identityKey,
                     {color: colors.onSurfaceVariant},
                   ]}>
                   Builder ID
                 </Text>
-                <Text style={[styles.identityValue, {color: colors.onSurface}]}>
+                <Text variant="body" style={[styles.identityValue, {color: colors.onSurface}]}>
                   #{builderId}
                 </Text>
               </View>
               {joinDate && (
                 <View style={styles.identityRow}>
-                  <Text
+                  <Text variant="label"
                     style={[
                       styles.identityKey,
                       {color: colors.onSurfaceVariant},
                     ]}>
                     Joined
                   </Text>
-                  <Text
+                  <Text variant="body"
                     style={[styles.identityValue, {color: colors.onSurface}]}>
                     {joinDate}
                   </Text>
@@ -168,14 +168,14 @@ export function ProfileScreen() {
               )}
               {country && (
                 <View style={styles.identityRow}>
-                  <Text
+                  <Text variant="label"
                     style={[
                       styles.identityKey,
                       {color: colors.onSurfaceVariant},
                     ]}>
                     Country
                   </Text>
-                  <Text
+                  <Text variant="body"
                     style={[styles.identityValue, {color: colors.onSurface}]}>
                     {country}
                   </Text>
@@ -183,14 +183,14 @@ export function ProfileScreen() {
               )}
               {!badgesLoading && (
                 <View style={styles.identityRow}>
-                  <Text
+                  <Text variant="label"
                     style={[
                       styles.identityKey,
                       {color: colors.onSurfaceVariant},
                     ]}>
                     Badges
                   </Text>
-                  <Text
+                  <Text variant="body"
                     style={[styles.identityValue, {color: colors.onSurface}]}>
                     {unlockedBadges.length}
                   </Text>
@@ -202,13 +202,13 @@ export function ProfileScreen() {
 
         {/* ── Bio ── */}
         <Card variant="filled" padding={m3Spacing.md} style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+          <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
             Bio
           </Text>
           {profileLoading ? (
             <Skeleton width="100%" height={40} />
           ) : (
-            <Text style={[styles.bioText, {color: colors.onSurfaceVariant}]}>
+            <Text variant="body" style={[styles.bioText, {color: colors.onSurfaceVariant}]}>
               {bio || 'No bio yet'}
             </Text>
           )}
@@ -216,7 +216,7 @@ export function ProfileScreen() {
 
         {/* ── Skills ── */}
         <Card variant="filled" padding={m3Spacing.md} style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+          <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
             Skills
           </Text>
           {skills.length > 0 ? (
@@ -228,7 +228,7 @@ export function ProfileScreen() {
                     styles.chip,
                     {backgroundColor: colors.secondaryContainer},
                   ]}>
-                  <Text
+                  <Text variant="label"
                     style={[
                       styles.chipText,
                       {color: colors.onSecondaryContainer},
@@ -239,7 +239,7 @@ export function ProfileScreen() {
               ))}
             </View>
           ) : (
-            <Text
+            <Text variant="body"
               style={[
                 styles.placeholderText,
                 {color: colors.onSurfaceVariant},
@@ -251,7 +251,7 @@ export function ProfileScreen() {
 
         {/* ── Interests ── */}
         <Card variant="filled" padding={m3Spacing.md} style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+          <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
             Interests
           </Text>
           {interests.length > 0 ? (
@@ -263,7 +263,7 @@ export function ProfileScreen() {
                     styles.chip,
                     {backgroundColor: colors.tertiaryContainer},
                   ]}>
-                  <Text
+                  <Text variant="label"
                     style={[
                       styles.chipText,
                       {color: colors.onTertiaryContainer},
@@ -274,7 +274,7 @@ export function ProfileScreen() {
               ))}
             </View>
           ) : (
-            <Text
+            <Text variant="body"
               style={[
                 styles.placeholderText,
                 {color: colors.onSurfaceVariant},
@@ -287,7 +287,7 @@ export function ProfileScreen() {
         {/* ── Social Connections ── */}
         {connectedProviders.length > 0 && (
           <Card variant="filled" padding={m3Spacing.md} style={styles.section}>
-            <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+            <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
               Connected Accounts
             </Text>
             {connectedProviders.map((provider: string) => (
@@ -297,7 +297,7 @@ export function ProfileScreen() {
                   styles.socialRow,
                   {borderBottomColor: colors.outlineVariant},
                 ]}>
-                <Text style={[styles.socialLabel, {color: colors.onSurface}]}>
+                <Text variant="body" style={[styles.socialLabel, {color: colors.onSurface}]}>
                   {getProviderLabel(provider)}
                 </Text>
                 <View
@@ -314,7 +314,7 @@ export function ProfileScreen() {
         {/* ── Badges Preview ── */}
         <Card variant="elevated" padding={m3Spacing.md} style={styles.section}>
           <View style={styles.badgesHeader}>
-            <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+            <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
               Badges
             </Text>
             <Button
@@ -350,7 +350,7 @@ export function ProfileScreen() {
               })}
             </View>
           ) : (
-            <Text
+            <Text variant="body"
               style={[
                 styles.placeholderText,
                 {color: colors.onSurfaceVariant},
@@ -365,7 +365,7 @@ export function ProfileScreen() {
           <Button
             title="Edit Profile"
             onPress={() => navigation.navigate('Settings')}
-            variant="outlined"
+            variant="filled"
             fullWidth
           />
           <Button

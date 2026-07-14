@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   FlatList,
@@ -15,6 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {supabase} from '../services/supabase';
 import {Button, Card, Skeleton} from '../components/ui';
+import {Text} from '../components/ui/text';
 import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
 import {m3Shape} from '../constants/m3-shape';
@@ -153,16 +153,17 @@ export function ProjectsScreen() {
         variant="elevated"
         padding={m3Spacing.md}
         style={styles.projectCard}>
-        <Text style={[styles.projectTitle, {color: colors.onSurface}]}>
+        <Text variant="title" style={[styles.projectTitle, {color: colors.onSurface}]}>
           {item.title}
         </Text>
         {item.hook_text && (
-          <Text style={[styles.projectHook, {color: colors.primary}]}>
+          <Text variant="label" style={[styles.projectHook, {color: colors.primary}]}>
             {item.hook_text}
           </Text>
         )}
         {item.description && (
           <Text
+            variant="body"
             style={[styles.projectDesc, {color: colors.onSurfaceVariant}]}
             numberOfLines={2}>
             {item.description}
@@ -178,6 +179,7 @@ export function ProjectsScreen() {
                   {backgroundColor: colors.secondaryContainer},
                 ]}>
                 <Text
+                  variant="label"
                   style={[
                     styles.tagText,
                     {color: colors.onSecondaryContainer},
@@ -189,7 +191,7 @@ export function ProjectsScreen() {
           </View>
         )}
         {item.owner && (
-          <Text style={[styles.ownerText, {color: colors.onSurfaceVariant}]}>
+          <Text variant="body" style={[styles.ownerText, {color: colors.onSurfaceVariant}]}>
             by {item.owner.display_name || item.owner.username || 'Unknown'}
           </Text>
         )}
@@ -214,7 +216,7 @@ export function ProjectsScreen() {
     }
     return (
       <View style={styles.emptyContainer}>
-        <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
+        <Text variant="body" style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
           {searchQuery || selectedTag
             ? 'No projects match your filters'
             : 'No projects yet. Be the first to create one!'}
@@ -227,7 +229,7 @@ export function ProjectsScreen() {
     <View>
       {/* Header */}
       <View style={styles.headerRow}>
-        <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
+        <Text variant="heading" style={[styles.headerTitle, {color: colors.onBackground}]}>
           Projects
         </Text>
         <Button title="+ New" onPress={() => {}} variant="filled" size="sm" />
@@ -239,7 +241,7 @@ export function ProjectsScreen() {
           styles.searchBar,
           {backgroundColor: colors.surfaceVariant, borderColor: colors.outline},
         ]}>
-        <Text style={[styles.searchIcon, {color: colors.onSurfaceVariant}]}>
+        <Text variant="body" style={[styles.searchIcon, {color: colors.onSurfaceVariant}]}>
           🔍
         </Text>
         <TextInput
@@ -253,7 +255,8 @@ export function ProjectsScreen() {
         />
         {searchQuery.length > 0 && (
           <TouchableOpacity onPress={() => handleSearch('')}>
-            <Text
+              <Text
+              variant="body"
               style={[styles.clearSearch, {color: colors.onSurfaceVariant}]}>
               ✕
             </Text>
@@ -279,6 +282,7 @@ export function ProjectsScreen() {
             ]}
             onPress={() => handleTagSelect(null)}>
             <Text
+              variant="label"
               style={[
                 styles.filterChipText,
                 {
@@ -304,6 +308,7 @@ export function ProjectsScreen() {
               ]}
               onPress={() => handleTagSelect(tag)}>
               <Text
+                variant="label"
                 style={[
                   styles.filterChipText,
                   {

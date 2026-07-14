@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   ScrollView,
@@ -15,8 +14,8 @@ import {
 import {useTheme} from '../hooks/use-theme';
 import {useGroups} from '../hooks/use-groups';
 import {useGroupStore} from '../store/group-store';
+import {Text} from '../components/ui/text';
 import {Button, Card, Icon} from '../components/ui';
-import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
 import type {GroupWithDetails, GroupMember} from '@isdb/shared';
 import type {RootStackParamList} from '../navigation';
@@ -90,7 +89,7 @@ export function GroupDetailScreen() {
           variant="text"
           icon={<Icon name="back" size="sm" color={colors.onBackground} />}
         />
-        <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
+        <Text variant="title" style={[styles.headerTitle, {color: colors.onBackground}]}>
           Group
         </Text>
         <View style={styles.headerSpacer} />
@@ -98,30 +97,30 @@ export function GroupDetailScreen() {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* Name + Description */}
-        <Text style={[styles.groupName, {color: colors.onBackground}]}>
+        <Text variant="heading" style={[styles.groupName, {color: colors.onBackground}]}>
           {group.name}
         </Text>
         {group.description && (
-          <Text style={[styles.desc, {color: colors.onSurfaceVariant}]}>
+          <Text variant="body" style={[styles.desc, {color: colors.onSurfaceVariant}]}>
             {group.description}
           </Text>
         )}
 
         {/* Stats */}
         <View style={styles.statsRow}>
-          <Card variant="filled" padding={m3Spacing.md} style={styles.statCard}>
-            <Text style={[styles.statNumber, {color: colors.primary}]}>
+          <Card variant="elevated" padding={m3Spacing.md} style={styles.statCard}>
+            <Text variant="heading" style={[styles.statNumber, {color: colors.primary}]}>
               {group.member_count}
             </Text>
-            <Text style={[styles.statLabel, {color: colors.onSurfaceVariant}]}>
+            <Text variant="caption" style={[styles.statLabel, {color: colors.onSurfaceVariant}]}>
               Members
             </Text>
           </Card>
-          <Card variant="filled" padding={m3Spacing.md} style={styles.statCard}>
-            <Text style={[styles.statNumber, {color: colors.primary}]}>
+          <Card variant="elevated" padding={m3Spacing.md} style={styles.statCard}>
+            <Text variant="heading" style={[styles.statNumber, {color: colors.primary}]}>
               {group.is_public ? 'Public' : 'Private'}
             </Text>
-            <Text style={[styles.statLabel, {color: colors.onSurfaceVariant}]}>
+            <Text variant="caption" style={[styles.statLabel, {color: colors.onSurfaceVariant}]}>
               Type
             </Text>
           </Card>
@@ -156,22 +155,24 @@ export function GroupDetailScreen() {
           <View style={styles.tabContent}>
             <Card variant="outlined" padding={m3Spacing.md}>
               <Text
+                variant="label"
                 style={[styles.infoLabel, {color: colors.onSurfaceVariant}]}>
                 Created
               </Text>
-              <Text style={[styles.infoValue, {color: colors.onSurface}]}>
+              <Text variant="body" style={[styles.infoValue, {color: colors.onSurface}]}>
                 {new Date(group.created_at).toLocaleDateString()}
               </Text>
               {group.owner && (
                 <>
                   <Text
+                    variant="label"
                     style={[
                       styles.infoLabel,
                       {color: colors.onSurfaceVariant, marginTop: m3Spacing.sm},
                     ]}>
                     Owner
                   </Text>
-                  <Text style={[styles.infoValue, {color: colors.onSurface}]}>
+                  <Text variant="body" style={[styles.infoValue, {color: colors.onSurface}]}>
                     {group.owner.display_name || group.owner.username}
                   </Text>
                 </>
@@ -195,6 +196,7 @@ export function GroupDetailScreen() {
                       {backgroundColor: colors.secondaryContainer},
                     ]}>
                     <Text
+                      variant="label"
                       style={[
                         styles.memberAvatarText,
                         {color: colors.onSecondaryContainer},
@@ -204,10 +206,12 @@ export function GroupDetailScreen() {
                   </View>
                   <View>
                     <Text
+                      variant="label"
                       style={[styles.memberRole, {color: colors.onSurface}]}>
                       {member.role}
                     </Text>
                     <Text
+                      variant="caption"
                       style={[
                         styles.memberId,
                         {color: colors.onSurfaceVariant},
@@ -236,27 +240,27 @@ const styles = StyleSheet.create({
     height: 56,
     borderBottomWidth: 1,
   },
-  headerTitle: {...m3Typography.titleMedium},
+  headerTitle: {},
   headerSpacer: {width: 48},
   scroll: {padding: m3Spacing.lg, paddingBottom: m3Spacing.xxl},
-  groupName: {...m3Typography.headlineSmall, marginBottom: m3Spacing.xs},
-  desc: {...m3Typography.bodyLarge, marginBottom: m3Spacing.lg},
+  groupName: {marginBottom: m3Spacing.xs},
+  desc: {marginBottom: m3Spacing.lg},
   statsRow: {
     flexDirection: 'row',
     gap: m3Spacing.sm,
     marginBottom: m3Spacing.lg,
   },
   statCard: {flex: 1, alignItems: 'center'},
-  statNumber: {...m3Typography.headlineSmall, fontWeight: '700'},
-  statLabel: {...m3Typography.bodySmall},
+  statNumber: {},
+  statLabel: {},
   tabRow: {
     flexDirection: 'row',
     gap: m3Spacing.xs,
     marginVertical: m3Spacing.lg,
   },
   tabContent: {gap: m3Spacing.sm},
-  infoLabel: {...m3Typography.labelMedium, marginBottom: 2},
-  infoValue: {...m3Typography.bodyMedium},
+  infoLabel: {marginBottom: 2},
+  infoValue: {},
   memberCard: {},
   memberRow: {flexDirection: 'row', alignItems: 'center'},
   memberAvatar: {
@@ -267,7 +271,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: m3Spacing.sm,
   },
-  memberAvatarText: {...m3Typography.labelLarge, fontWeight: '700'},
-  memberRole: {...m3Typography.labelLarge, textTransform: 'capitalize'},
-  memberId: {...m3Typography.bodySmall},
+  memberAvatarText: {},
+  memberRole: {textTransform: 'capitalize'},
+  memberId: {},
 });

@@ -9,36 +9,30 @@ import {
   Animated,
 } from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
-import {m3Shape} from '../../constants/m3-shape';
+import {BrandGradient} from './gradient';
 
 /**
- * M3 Button variants:
- *   filled  → Primary action, filled bg
- *   tonal   → Secondary action, container color
- *   outlined → Tertiary action, border only
- *   text    → Lowest emphasis, no bg/border
+ * Web-aligned Button.
+ *   filled   → premium gradient (amber → coral), white text, glow  [.btn-premium]
+ *   tonal    → glass surface + amber tint                            [.glass-pill]
+ *   outlined → transparent + amber border
+ *   text     → transparent, amber text
  *
- * Legacy aliases (kept for backward compat):
- *   primary  → filled
- *   secondary → tonal
- *   ghost    → text
- *   danger   → filled (error color)
+ * Legacy aliases kept: primary→filled, secondary→tonal, outline→outlined,
+ * ghost→text, danger→filled(error gradient).
  */
-
-export type M3ButtonVariant = 'filled' | 'tonal' | 'outlined' | 'text';
-export type M3ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonVariant =
+  | 'filled'
+  | 'tonal'
+  | 'outlined'
+  | 'text';
+export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?:
-    | M3ButtonVariant
-    | 'primary'
-    | 'secondary'
-    | 'outline'
-    | 'ghost'
-    | 'danger';
-  size?: M3ButtonSize;
+  variant?: ButtonVariant | 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  size?: ButtonSize;
   disabled?: boolean;
   loading?: boolean;
   icon?: React.ReactNode;
@@ -47,7 +41,7 @@ interface ButtonProps {
   fullWidth?: boolean;
 }
 
-const resolveVariant = (v: string): M3ButtonVariant => {
+const resolveVariant = (v: string): ButtonVariant => {
   switch (v) {
     case 'primary':
     case 'danger':
@@ -67,7 +61,7 @@ const resolveVariant = (v: string): M3ButtonVariant => {
   }
 };
 
-const isDangerVariant = (v: string): boolean => v === 'danger';
+const isDanger = (v: string) => v === 'danger';
 
 export function Button({
   title,
@@ -82,101 +76,68 @@ export function Button({
   fullWidth = false,
 }: ButtonProps) {
   const {colors} = useTheme();
-  const m3Variant = resolveVariant(variant);
-  const danger = isDangerVariant(variant);
+  const v = resolveVariant(variant);
+  const danger = isDanger(variant);
   const pressAnim = useRef(new Animated.Value(0)).current;
 
-  const handlePressIn = () => {
-    Animated.spring(pressAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 50,
-      bounciness: 4,
-    }).start();
-  };
+  const handlePressIn = () =>
+    Animated.spring(pressAnim, {toValue: 1, useNativeDriver: true, speed: 50, bounciness: 4}).start();
+  const handlePressOut = () =>
+    Animated.spring(pressAnim, {toValue: 0, useNativeDriver: true, speed: 50, bounciness: 4}).start();
 
-  const handlePressOut = () => {
-    Animated.spring(pressAnim, {
-      toValue: 0,
-      useNativeDriver: true,
-      speed: 50,
-      bounciness: 4,
-    }).start();
-  };
-
-  // ── Color resolution ──
-  const getColors = () => {
-    if (disabled) {
-      return {
-        bg: 'transparent',
-        text: colors.onSurfaceVariant,
-        border: colors.outline,
-      };
-    }
-    switch (m3Variant) {
-      case 'filled':
-        return {
-          bg: danger ? colors.error : colors.primary,
-          text: danger ? colors.onError : colors.onPrimary,
-          border: 'transparent',
-        };
-      case 'tonal':
-        return {
-          bg: colors.secondaryContainer,
-          text: colors.onSecondaryContainer,
-          border: 'transparent',
-        };
-      case 'outlined':
-        return {
-          bg: 'transparent',
-          text: danger ? colors.error : colors.primary,
-          border: danger ? colors.error : colors.outline,
-        };
-      case 'text':
-        return {
-          bg: 'transparent',
-          text: danger ? colors.error : colors.primary,
-          border: 'transparent',
-        };
-    }
-  };
-
-  // ── Size resolution ──
   const getSize = () => {
     switch (size) {
       case 'sm':
-        return {py: 6, px: 12, fontSize: 14, minHeight: 32};
+        return {py: 8, px: 14, fontSize: 13, minHeight: 36};
       case 'md':
-        return {py: 10, px: 20, fontSize: 14, minHeight: 40};
+        return {py: 12, px: 20, fontSize: 15, minHeight: 44};
       case 'lg':
-        return {py: 14, px: 28, fontSize: 16, minHeight: 48};
+        return {py: 15, px: 28, fontSize: 16, minHeight: 52};
     }
   };
 
-  const c = getColors();
   const s = getSize();
+  const scale = pressAnim.interpolate({inputRange: [0, 1], outputRange: [1, 0.97]});
 
-  // ── Press animation ──
-  const scale = pressAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0.97],
-  });
+  const getTextColor = () => {
+    if (disabled) return colors.onSurfaceVariant;
+    switch (v) {
+      case 'filled':
+        return '#FFFFFF';
+      case 'tonal':
+        return colors.onSecondaryContainer;
+      case 'outlined':
+      case 'text':
+        return danger ? colors.error : colors.primary;
+    }
+  };
+  const textColor = getTextColor();
 
-  // State layer opacity (M3: press = 0.12)
-  const stateLayer = pressAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 0.12],
-  });
-
-  // Computed style object (avoids inline object literal in style prop)
-  const computedButtonStyle = {
-    backgroundColor: c.bg,
-    borderColor: c.border,
-    borderWidth: m3Variant === 'outlined' ? 1 : 0,
+  const outer: ViewStyle = {
+    borderRadius: colors.radius,
+    minHeight: s.minHeight,
     paddingVertical: s.py,
     paddingHorizontal: s.px,
-    minHeight: s.minHeight,
-    borderRadius: m3Shape.small,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    ...(disabled && {opacity: 0.5}),
+    ...(v === 'filled' && !disabled
+      ? {
+          shadowColor: danger ? colors.error : colors.brandFrom,
+          shadowOffset: {width: 0, height: 4},
+          shadowOpacity: 0.35,
+          shadowRadius: 10,
+          elevation: 6,
+        }
+      : {}),
+    ...(v === 'tonal'
+      ? {backgroundColor: colors.glassBg, borderWidth: 1, borderColor: colors.glassBorder}
+      : {}),
+    ...(v === 'outlined'
+      ? {backgroundColor: 'transparent', borderWidth: 1, borderColor: danger ? colors.error : colors.outline}
+      : {}),
+    ...(v === 'text' ? {backgroundColor: 'transparent'} : {}),
   };
 
   return (
@@ -186,35 +147,24 @@ export function Button({
       onPressOut={handlePressOut}
       disabled={disabled || loading}
       activeOpacity={1}
-      style={[
-        styles.base,
-        computedButtonStyle,
-        fullWidth && styles.fullWidth,
-        style,
-      ]}>
-      <Animated.View style={[styles.inner, {transform: [{scale}]}]}>
-        {/* State layer overlay */}
-        <Animated.View
-          style={[
-            StyleSheet.absoluteFill,
-            styles.stateLayer,
-            {backgroundColor: c.text, opacity: stateLayer},
-          ]}
+      style={[styles.base, outer, fullWidth && styles.fullWidth, style]}>
+      {v === 'filled' && (
+        <BrandGradient
+          from={danger ? '#EF4444' : colors.brandFrom}
+          to={danger ? '#DC2626' : colors.brandTo}
+          style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}
         />
-
-        {/* Loading spinner */}
+      )}
+      <Animated.View style={[styles.inner, {transform: [{scale}]}]}>
         {loading ? (
-          <ActivityIndicator color={c.text} size="small" />
+          <ActivityIndicator color={textColor} size="small" />
         ) : (
           <>
-            {/* Left icon */}
-            {icon && <>{icon}</>}
-
-            {/* Text */}
+            {icon}
             <Text
               style={[
                 styles.label,
-                {color: c.text, fontSize: s.fontSize},
+                {color: textColor, fontSize: s.fontSize, fontFamily: colors.font.bodyMedium},
                 icon ? styles.labelWithIcon : null,
                 textStyle,
               ]}>
@@ -228,28 +178,9 @@ export function Button({
 }
 
 const styles = StyleSheet.create({
-  base: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  inner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  label: {
-    fontWeight: '500',
-    letterSpacing: 0.1,
-    textAlign: 'center',
-  },
-  labelWithIcon: {
-    marginLeft: 8,
-  },
-  stateLayer: {
-    borderRadius: m3Shape.small,
-  },
+  base: {alignItems: 'center', justifyContent: 'center'},
+  inner: {flexDirection: 'row', alignItems: 'center', justifyContent: 'center'},
+  fullWidth: {width: '100%'},
+  label: {fontWeight: '600', letterSpacing: 0.1, textAlign: 'center'},
+  labelWithIcon: {marginLeft: 8},
 });

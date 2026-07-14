@@ -1,18 +1,17 @@
 import React, {useEffect, useRef} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
   SafeAreaView,
-  TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useTheme} from '../hooks/use-theme';
 import {useMessages} from '../hooks/use-messages';
 import {useMessageStore} from '../store/message-store';
-import {m3Typography} from '../constants/m3-typography';
+import {Text} from '../components/ui/text';
+import {Card} from '../components/ui';
 import {m3Spacing} from '../constants/m3-spacing';
 import {m3Shape} from '../constants/m3-shape';
 import type {RootStackParamList} from '../navigation';
@@ -55,7 +54,7 @@ export function MessagesListScreen() {
     <SafeAreaView
       style={[styles.container, {backgroundColor: colors.background}]}>
       <View style={styles.header}>
-        <Text style={[styles.title, {color: colors.onBackground}]}>
+        <Text variant="heading" style={[styles.title, {color: colors.onBackground}]}>
           Messages
         </Text>
       </View>
@@ -67,18 +66,18 @@ export function MessagesListScreen() {
         }
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Text style={[styles.emptyTitle, {color: colors.onSurfaceVariant}]}>
+            <Text variant="title" style={[styles.emptyTitle, {color: colors.onSurfaceVariant}]}>
               No messages yet
             </Text>
-            <Text
-              style={[styles.emptySubtitle, {color: colors.onSurfaceVariant}]}>
+            <Text variant="body" style={[styles.emptySubtitle, {color: colors.onSurfaceVariant}]}>
               Match with a project to start chatting
             </Text>
           </View>
         }
         renderItem={({item}) => (
-          <TouchableOpacity
-            style={[styles.conversationCard, {backgroundColor: colors.surface}]}
+          <Card
+            variant="elevated"
+            padding={m3Spacing.md}
             onPress={() =>
               navigation.navigate('MessageChat', {
                 matchId: item.match_id,
@@ -86,13 +85,15 @@ export function MessagesListScreen() {
                   item.other_user.display_name ||
                   `#${item.other_user.identity_number}`,
               })
-            }>
+            }
+            style={styles.conversationCard}>
             <View
               style={[
                 styles.avatar,
                 {backgroundColor: colors.secondaryContainer},
               ]}>
               <Text
+                variant="title"
                 style={[
                   styles.avatarText,
                   {color: colors.onSecondaryContainer},
@@ -103,17 +104,20 @@ export function MessagesListScreen() {
             <View style={styles.conversationInfo}>
               <View style={styles.conversationTop}>
                 <Text
+                  variant="title"
                   style={[styles.conversationName, {color: colors.onSurface}]}
                   numberOfLines={1}>
                   {item.other_user.display_name ||
                     `Builder #${item.other_user.identity_number}`}
                 </Text>
                 <Text
+                  variant="caption"
                   style={[styles.timeText, {color: colors.onSurfaceVariant}]}>
                   {formatTime(item.last_message_at)}
                 </Text>
               </View>
               <Text
+                variant="body"
                 style={[styles.lastMessage, {color: colors.onSurfaceVariant}]}
                 numberOfLines={1}>
                 {item.last_message}
@@ -124,13 +128,13 @@ export function MessagesListScreen() {
                     styles.unreadBadge,
                     {backgroundColor: colors.primary},
                   ]}>
-                  <Text style={[styles.unreadText, {color: colors.onPrimary}]}>
+                  <Text variant="caption" style={[styles.unreadText, {color: colors.onPrimary}]}>
                     {item.unread_count > 99 ? '99+' : item.unread_count}
                   </Text>
                 </View>
               )}
             </View>
-          </TouchableOpacity>
+          </Card>
         )}
       />
     </SafeAreaView>
@@ -143,15 +147,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: m3Spacing.lg,
     paddingVertical: m3Spacing.md,
   },
-  title: {...m3Typography.headlineSmall},
+  title: {},
   list: {paddingHorizontal: m3Spacing.lg},
   emptyContainer: {flex: 1, justifyContent: 'center'},
   emptyState: {alignItems: 'center', paddingHorizontal: m3Spacing.xl},
-  emptyTitle: {...m3Typography.titleMedium, marginBottom: m3Spacing.xs},
-  emptySubtitle: {...m3Typography.bodyMedium, textAlign: 'center'},
+  emptyTitle: {marginBottom: m3Spacing.xs},
+  emptySubtitle: {textAlign: 'center'},
   conversationCard: {
     flexDirection: 'row',
-    padding: m3Spacing.md,
     borderRadius: m3Shape.medium,
     marginBottom: m3Spacing.xs,
   },
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: m3Spacing.md,
   },
-  avatarText: {...m3Typography.titleMedium, fontWeight: '700'},
+  avatarText: {},
   conversationInfo: {flex: 1, justifyContent: 'center'},
   conversationTop: {
     flexDirection: 'row',
@@ -171,12 +174,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   conversationName: {
-    ...m3Typography.labelLarge,
     flex: 1,
     marginRight: m3Spacing.xs,
   },
-  timeText: {...m3Typography.bodySmall},
-  lastMessage: {...m3Typography.bodyMedium, marginTop: 2},
+  timeText: {},
+  lastMessage: {marginTop: 2},
   unreadBadge: {
     position: 'absolute',
     right: 0,
@@ -188,5 +190,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 6,
   },
-  unreadText: {fontSize: 11, fontWeight: '700'},
+  unreadText: {fontWeight: '700'},
 });

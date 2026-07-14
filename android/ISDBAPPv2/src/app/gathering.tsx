@@ -1,13 +1,13 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
   RefreshControl,
 } from 'react-native';
+import {Text} from '../components/ui/text';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {supabase} from '../services/supabase';
@@ -142,11 +142,11 @@ export function GatheringScreen() {
         }>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, {color: colors.onBackground}]}>
+          <Text variant="heading" style={[styles.title, {color: colors.onBackground}]}>
             Gathering
           </Text>
           <TouchableOpacity onPress={handleRefresh}>
-            <Text style={[styles.refreshBtn, {color: colors.primary}]}>
+            <Text variant="label" style={[styles.refreshBtn, {color: colors.primary}]}>
               Refresh
             </Text>
           </TouchableOpacity>
@@ -181,10 +181,10 @@ export function GatheringScreen() {
                   ),
                 )}
               </View>
-              <Text style={[styles.onlineCount, {color: colors.onBackground}]}>
+              <Text variant="heading" style={[styles.onlineCount, {color: colors.onBackground}]}>
                 {onlineCount ?? '—'}
               </Text>
-              <Text
+              <Text variant="body"
                 style={[styles.onlineLabel, {color: colors.onSurfaceVariant}]}>
                 Builders Online Now
               </Text>
@@ -193,7 +193,7 @@ export function GatheringScreen() {
         </Card>
 
         {/* ── Recent Activity ── */}
-        <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+        <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
           Recent Activity
         </Text>
         {loading ? (
@@ -226,14 +226,14 @@ export function GatheringScreen() {
                   }
                 }}>
                 <View style={styles.activityRow}>
-                  <Text style={styles.activityIcon}>
+                  <Text variant="body" style={styles.activityIcon}>
                     {item.type === 'project_updated'
                       ? '📋'
                       : item.type === 'match'
                       ? '🤝'
                       : '👤'}
                   </Text>
-                  <Text
+                  <Text variant="body"
                     style={[styles.activityText, {color: colors.onSurface}]}>
                     {item.text}
                   </Text>
@@ -250,13 +250,13 @@ export function GatheringScreen() {
             ))}
           </Card>
         ) : (
-          <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
+          <Text variant="body" style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
             No recent activity
           </Text>
         )}
 
         {/* ── Active Projects ── */}
-        <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+        <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
           Active Projects
         </Text>
         {loading ? (
@@ -279,12 +279,12 @@ export function GatheringScreen() {
                   variant="elevated"
                   padding={m3Spacing.md}
                   style={styles.projectCard}>
-                  <Text
+                  <Text variant="label"
                     style={[styles.projectTitle, {color: colors.onSurface}]}
                     numberOfLines={2}>
                     {p.title}
                   </Text>
-                  <Text
+                  <Text variant="caption"
                     style={[
                       styles.projectTime,
                       {color: colors.onSurfaceVariant},
@@ -296,7 +296,7 @@ export function GatheringScreen() {
             ))}
           </ScrollView>
         ) : (
-          <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
+          <Text variant="body" style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
             No active projects
           </Text>
         )}

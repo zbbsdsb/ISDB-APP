@@ -1,5 +1,6 @@
 import React from 'react';
-import {Text, StyleSheet, Linking} from 'react-native';
+import {StyleSheet, Linking} from 'react-native';
+import {Text} from '../ui/text';
 import {useTheme} from '../../hooks/use-theme';
 import {Card} from '../ui';
 import {m3Typography} from '../../constants/m3-typography';
@@ -15,15 +16,16 @@ export default function GithubStatsBlock({config}: GithubStatsBlockProps) {
 
   return (
     <Card variant="elevated" padding={m3Spacing.md} style={styles.card}>
-      <Text style={[styles.title, {color: colors.onBackground}]}>GitHub</Text>
+      <Text variant="title" style={[styles.title, {color: colors.onBackground}]}>GitHub</Text>
       {repoUrl ? (
         <Text
+          variant="body"
           style={[styles.link, {color: colors.primary}]}
           onPress={() => Linking.openURL(repoUrl)}>
           {repoUrl}
         </Text>
       ) : (
-        <Text style={[styles.hint, {color: colors.onSurfaceVariant}]}>
+        <Text variant="body" style={[styles.hint, {color: colors.onSurfaceVariant}]}>
           No GitHub repo linked
         </Text>
       )}

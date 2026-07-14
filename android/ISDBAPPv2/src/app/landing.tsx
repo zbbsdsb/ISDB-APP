@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   StatusBar,
   Animated,
 } from 'react-native';
+import {Text} from '../components/ui/text';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {Button, Card} from '../components/ui';

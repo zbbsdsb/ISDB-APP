@@ -1,5 +1,6 @@
 import React from 'react';
-import {Text, StyleSheet, ScrollView} from 'react-native';
+import {StyleSheet, ScrollView} from 'react-native';
+import {Text} from '../ui/text';
 import {useTheme} from '../../hooks/use-theme';
 import {Card} from '../ui';
 import {m3Typography} from '../../constants/m3-typography';
@@ -15,9 +16,10 @@ export default function ReadmeBlock({config}: ReadmeBlockProps) {
 
   return (
     <Card variant="elevated" padding={m3Spacing.md} style={styles.card}>
-      <Text style={[styles.title, {color: colors.onBackground}]}>README</Text>
+      <Text variant="title" style={[styles.title, {color: colors.onBackground}]}>README</Text>
       <ScrollView style={styles.contentScroll} nestedScrollEnabled>
         <Text
+          variant="body"
           style={[styles.content, {color: colors.onSurfaceVariant}]}
           selectable>
           {content || 'No README content yet'}

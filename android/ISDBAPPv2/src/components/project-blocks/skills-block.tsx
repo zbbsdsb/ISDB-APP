@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {Text} from '../ui/text';
 import {useTheme} from '../../hooks/use-theme';
 import {Card} from '../ui';
 import {m3Typography} from '../../constants/m3-typography';
@@ -17,11 +18,11 @@ export default function SkillsBlock({config}: SkillsBlockProps) {
 
   return (
     <Card variant="elevated" padding={m3Spacing.md} style={styles.card}>
-      <Text style={[styles.title, {color: colors.onBackground}]}>Skills</Text>
+      <Text variant="title" style={[styles.title, {color: colors.onBackground}]}>Skills</Text>
 
       {required.length > 0 && (
         <View style={styles.subSection}>
-          <Text style={[styles.subTitle, {color: colors.onSurfaceVariant}]}>
+          <Text variant="label" style={[styles.subTitle, {color: colors.onSurfaceVariant}]}>
             Required
           </Text>
           <View style={styles.chipRow}>
@@ -33,6 +34,7 @@ export default function SkillsBlock({config}: SkillsBlockProps) {
                   {backgroundColor: colors.secondaryContainer},
                 ]}>
                 <Text
+                  variant="label"
                   style={[
                     styles.chipText,
                     {color: colors.onSecondaryContainer},
@@ -47,7 +49,7 @@ export default function SkillsBlock({config}: SkillsBlockProps) {
 
       {preferred.length > 0 && (
         <View style={styles.subSection}>
-          <Text style={[styles.subTitle, {color: colors.onSurfaceVariant}]}>
+          <Text variant="label" style={[styles.subTitle, {color: colors.onSurfaceVariant}]}>
             Preferred
           </Text>
           <View style={styles.chipRow}>
@@ -59,6 +61,7 @@ export default function SkillsBlock({config}: SkillsBlockProps) {
                   {backgroundColor: colors.tertiaryContainer},
                 ]}>
                 <Text
+                  variant="label"
                   style={[
                     styles.chipText,
                     {color: colors.onTertiaryContainer},
@@ -72,7 +75,7 @@ export default function SkillsBlock({config}: SkillsBlockProps) {
       )}
 
       {required.length === 0 && preferred.length === 0 && (
-        <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
+        <Text variant="body" style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
           No skills specified
         </Text>
       )}

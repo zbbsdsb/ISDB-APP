@@ -1,19 +1,17 @@
 import React, {useEffect, useRef} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
   SafeAreaView,
-  TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useTheme} from '../hooks/use-theme';
 import {useGroups} from '../hooks/use-groups';
 import {useGroupStore} from '../store/group-store';
-import {Button, Icon} from '../components/ui';
-import {m3Typography} from '../constants/m3-typography';
+import {Text} from '../components/ui/text';
+import {Button, Card, Icon} from '../components/ui';
 import {m3Spacing} from '../constants/m3-spacing';
 import {m3Shape} from '../constants/m3-shape';
 import type {RootStackParamList} from '../navigation';
@@ -40,10 +38,11 @@ export function GroupsListScreen() {
     <SafeAreaView
       style={[styles.container, {backgroundColor: colors.background}]}>
       <View style={styles.header}>
-        <Text style={[styles.title, {color: colors.onBackground}]}>Groups</Text>
+        <Text variant="heading" style={[styles.title, {color: colors.onBackground}]}>Groups</Text>
         <Button
           title="Create"
           onPress={() => (navigation.navigate as any)('GroupCreate')}
+          variant="filled"
           size="sm"
           icon={<Icon name="plus" size="sm" color={colors.onPrimary} />}
         />
@@ -56,11 +55,10 @@ export function GroupsListScreen() {
         }
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Text style={[styles.emptyTitle, {color: colors.onSurfaceVariant}]}>
+            <Text variant="title" style={[styles.emptyTitle, {color: colors.onSurfaceVariant}]}>
               No groups yet
             </Text>
-            <Text
-              style={[styles.emptySubtitle, {color: colors.onSurfaceVariant}]}>
+            <Text variant="body" style={[styles.emptySubtitle, {color: colors.onSurfaceVariant}]}>
               Create or join a group to connect with builders
             </Text>
           </View>
@@ -68,16 +66,19 @@ export function GroupsListScreen() {
         renderItem={({item}) => {
           const isJoined = joinedIds.has(item.id);
           return (
-            <TouchableOpacity
-              style={[styles.groupCard, {backgroundColor: colors.surface}]}
+            <Card
+              variant="elevated"
+              padding={m3Spacing.md}
               onPress={() =>
                 (navigation.navigate as any)('GroupDetail', {groupId: item.id})
-              }>
-              <Text style={[styles.groupName, {color: colors.onSurface}]}>
+              }
+              style={styles.groupCard}>
+              <Text variant="title" style={[styles.groupName, {color: colors.onSurface}]}>
                 {item.name}
               </Text>
               {item.description && (
                 <Text
+                  variant="body"
                   style={[styles.groupDesc, {color: colors.onSurfaceVariant}]}
                   numberOfLines={2}>
                   {item.description}
@@ -90,6 +91,7 @@ export function GroupsListScreen() {
                     {backgroundColor: colors.primaryContainer},
                   ]}>
                   <Text
+                    variant="caption"
                     style={[
                       styles.joinedText,
                       {color: colors.onPrimaryContainer},
@@ -98,7 +100,7 @@ export function GroupsListScreen() {
                   </Text>
                 </View>
               )}
-            </TouchableOpacity>
+            </Card>
           );
         }}
       />
@@ -115,19 +117,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: m3Spacing.lg,
     paddingVertical: m3Spacing.md,
   },
-  title: {...m3Typography.headlineSmall},
+  title: {},
   list: {paddingHorizontal: m3Spacing.lg},
   emptyContainer: {flex: 1, justifyContent: 'center'},
   emptyState: {alignItems: 'center', paddingHorizontal: m3Spacing.xl},
-  emptyTitle: {...m3Typography.titleMedium, marginBottom: m3Spacing.xs},
-  emptySubtitle: {...m3Typography.bodyMedium, textAlign: 'center'},
+  emptyTitle: {marginBottom: m3Spacing.xs},
+  emptySubtitle: {textAlign: 'center'},
   groupCard: {
-    padding: m3Spacing.md,
     borderRadius: m3Shape.medium,
     marginBottom: m3Spacing.sm,
   },
-  groupName: {...m3Typography.titleSmall, marginBottom: 4},
-  groupDesc: {...m3Typography.bodyMedium},
+  groupName: {marginBottom: 4},
+  groupDesc: {},
   joinedBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
@@ -135,5 +136,5 @@ const styles = StyleSheet.create({
     borderRadius: m3Shape.small,
     marginTop: m3Spacing.sm,
   },
-  joinedText: {...m3Typography.labelSmall},
+  joinedText: {},
 });

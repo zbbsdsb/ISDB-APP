@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 import {
   TextInput as RNTextInput,
   View,
-  Text,
   StyleSheet,
   TextInputProps as RNTextInputProps,
   ViewStyle,
 } from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
+import {Text} from './text';
 
 interface TextInputProps extends RNTextInputProps {
   label?: string;
@@ -38,7 +38,7 @@ export function TextInput({
   return (
     <View style={[styles.container, containerStyle]}>
       {label && (
-        <Text style={[styles.label, {color: colors.onBackground}]}>
+        <Text variant="label" style={[styles.label, {color: colors.onBackground}]}>
           {label}
         </Text>
       )}
@@ -46,9 +46,10 @@ export function TextInput({
         style={[
           styles.input,
           {
-            backgroundColor: colors.surface,
+            backgroundColor: colors.surfaceVariant,
             borderColor: getBorderColor(),
             color: colors.onBackground,
+            borderRadius: colors.radius,
           },
           style,
         ]}
@@ -58,7 +59,7 @@ export function TextInput({
         {...props}
       />
       {error && (
-        <Text style={[styles.error, {color: colors.error}]}>{error}</Text>
+        <Text variant="caption" style={[styles.error, {color: colors.error}]}>{error}</Text>
       )}
     </View>
   );

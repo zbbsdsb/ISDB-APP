@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, FlatList} from 'react-native';
+import {View, StyleSheet, SafeAreaView, FlatList} from 'react-native';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {useAuthStore} from '../store/auth-store';
 import {supabase} from '../services/supabase';
-import {Button, Card} from '../components/ui';
+import {Button, Card, Text} from '../components/ui';
 import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
 
@@ -58,10 +58,10 @@ export function MatchesScreen() {
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Text style={[styles.emptyTitle, {color: colors.onBackground}]}>
+      <Text variant="title" style={[styles.emptyTitle, {color: colors.onBackground}]}>
         No Matches Yet
       </Text>
-      <Text style={[styles.emptySubtitle, {color: colors.onSurfaceVariant}]}>
+      <Text variant="body" style={[styles.emptySubtitle, {color: colors.onSurfaceVariant}]}>
         Swipe right on projects you're interested in!
       </Text>
       <Button
@@ -76,7 +76,7 @@ export function MatchesScreen() {
     <SafeAreaView
       style={[styles.container, {backgroundColor: colors.background}]}>
       <View style={styles.header}>
-        <Text style={[styles.title, {color: colors.onBackground}]}>
+        <Text variant="heading" style={[styles.title, {color: colors.onBackground}]}>
           Matches
         </Text>
       </View>
@@ -93,10 +93,11 @@ export function MatchesScreen() {
                 .getParent()
                 ?.navigate('ProjectDetail', {projectId: item.project_id})
             }>
-            <Text style={[styles.matchTitle, {color: colors.onSurface}]}>
+            <Text variant="title" style={[styles.matchTitle, {color: colors.onSurface}]}>
               {item.project?.title || 'Project'}
             </Text>
             <Text
+              variant="body"
               style={[styles.matchStatus, {color: colors.onSurfaceVariant}]}>
               {item.status === 'pending' ? 'Pending Approval' : item.status}
             </Text>

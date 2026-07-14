@@ -1,5 +1,6 @@
 import React from 'react';
-import {Text, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
+import {Text} from '../ui/text';
 import {useTheme} from '../../hooks/use-theme';
 import {Card} from '../ui';
 import {m3Typography} from '../../constants/m3-typography';
@@ -16,8 +17,8 @@ export default function TeamBlock(_props: TeamBlockProps) {
   // Team data would come from a join on project_members; for now show placeholder
   return (
     <Card variant="elevated" padding={m3Spacing.md} style={styles.card}>
-      <Text style={[styles.title, {color: colors.onBackground}]}>Team</Text>
-      <Text style={[styles.hint, {color: colors.onSurfaceVariant}]}>
+      <Text variant="title" style={[styles.title, {color: colors.onBackground}]}>Team</Text>
+      <Text variant="body" style={[styles.hint, {color: colors.onSurfaceVariant}]}>
         Team members will appear here
       </Text>
     </Card>

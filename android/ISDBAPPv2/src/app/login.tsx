@@ -1,9 +1,10 @@
 import React from 'react';
-import {View, Text, StyleSheet, SafeAreaView, Alert} from 'react-native';
+import {View, StyleSheet, SafeAreaView, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {useAuth} from '../hooks/use-auth';
 import {Button, Icon} from '../components/ui';
+import {Text} from '../components/ui/text';
 import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
 
@@ -51,11 +52,13 @@ export function LoginScreen() {
         />
 
         <View style={styles.header}>
-          <Text style={[styles.logoEmoji, {color: colors.primary}]}>🏗️</Text>
-          <Text style={[styles.title, {color: colors.onBackground}]}>
+          <Text style={[styles.logoEmoji, {color: colors.primary}]} variant="heading">
+            🏗️
+          </Text>
+          <Text style={[styles.title, {color: colors.onBackground}]} variant="heading">
             Insane Dream Builder
           </Text>
-          <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]}>
+          <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]} variant="body">
             Sign in to continue
           </Text>
         </View>
@@ -92,7 +95,7 @@ export function LoginScreen() {
           />
         </View>
 
-        <Text style={[styles.terms, {color: colors.onSurfaceVariant}]}>
+        <Text style={[styles.terms, {color: colors.onSurfaceVariant}]} variant="caption">
           By continuing, you agree to our Terms of Service and Privacy Policy
         </Text>
       </View>

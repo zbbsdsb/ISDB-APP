@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   ScrollView,
@@ -18,6 +17,7 @@ import {useProject} from '../hooks/use-project';
 import {supabase} from '../services/supabase';
 import {useAuthStore} from '../store/auth-store';
 import {Button, Card, Icon, Badge, ProgressBar} from '../components/ui';
+import {Text} from '../components/ui/text';
 import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
 import type {RootStackParamList} from '../navigation';
@@ -83,7 +83,7 @@ export function ProjectDetailScreen() {
         style={[styles.container, {backgroundColor: colors.background}]}>
         <View style={styles.centerContent}>
           <Icon name="close" size="lg" color={colors.error} />
-          <Text style={[styles.errorText, {color: colors.error}]}>
+            <Text variant="body" style={[styles.errorText, {color: colors.error}]}>
             {error || 'Project not found'}
           </Text>
           <Button
@@ -113,7 +113,7 @@ export function ProjectDetailScreen() {
           variant="text"
           icon={<Icon name="back" size="sm" color={colors.onBackground} />}
         />
-        <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
+        <Text variant="title" style={[styles.headerTitle, {color: colors.onBackground}]}>
           Project
         </Text>
         <View style={styles.headerSpacer} />
@@ -121,11 +121,11 @@ export function ProjectDetailScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Title + Status */}
-        <Text style={[styles.projectTitle, {color: colors.onBackground}]}>
+        <Text variant="heading" style={[styles.projectTitle, {color: colors.onBackground}]}>
           {project.title}
         </Text>
         {project.description && (
-          <Text style={[styles.description, {color: colors.onSurfaceVariant}]}>
+          <Text variant="body" style={[styles.description, {color: colors.onSurfaceVariant}]}>
             {project.description}
           </Text>
         )}
@@ -135,16 +135,17 @@ export function ProjectDetailScreen() {
           <View style={styles.ownerRow}>
             <View
               style={[styles.ownerAvatar, {backgroundColor: colors.primary}]}>
-              <Text style={[styles.ownerAvatarText, {color: colors.onPrimary}]}>
+              <Text variant="label" style={[styles.ownerAvatarText, {color: colors.onPrimary}]}>
                 {ownerName.charAt(0).toUpperCase()}
               </Text>
             </View>
             <View style={styles.ownerInfo}>
-              <Text style={[styles.ownerName, {color: colors.onSurface}]}>
+                <Text variant="label" style={[styles.ownerName, {color: colors.onSurface}]}>
                 {ownerName}
               </Text>
               {project.owner?.username && (
                 <Text
+                  variant="body"
                   style={[
                     styles.ownerUsername,
                     {color: colors.onSurfaceVariant},
@@ -159,7 +160,7 @@ export function ProjectDetailScreen() {
         {/* Owner Badges */}
         {!badgesLoading && ownerBadges.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+            <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
               Achievements
             </Text>
             <View style={styles.chipRow}>
@@ -181,7 +182,8 @@ export function ProjectDetailScreen() {
                 );
               })}
               {ownerBadges.length > 6 && (
-                <Text
+                  <Text
+                  variant="label"
                   style={[styles.moreBadges, {color: colors.onSurfaceVariant}]}>
                   +{ownerBadges.length - 6}
                 </Text>
@@ -193,7 +195,7 @@ export function ProjectDetailScreen() {
         {/* Tags */}
         {project.tags.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+            <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
               Tags
             </Text>
             <View style={styles.chipRow}>
@@ -205,6 +207,7 @@ export function ProjectDetailScreen() {
                     {backgroundColor: colors.secondaryContainer},
                   ]}>
                   <Text
+                    variant="label"
                     style={[
                       styles.chipText,
                       {color: colors.onSecondaryContainer},
@@ -220,7 +223,7 @@ export function ProjectDetailScreen() {
         {/* Required Skills */}
         {project.required_skills.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+            <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
               Required Skills
             </Text>
             <View style={styles.chipRow}>
@@ -232,6 +235,7 @@ export function ProjectDetailScreen() {
                     {backgroundColor: colors.tertiaryContainer},
                   ]}>
                   <Text
+                    variant="label"
                     style={[
                       styles.chipText,
                       {color: colors.onTertiaryContainer},
@@ -250,10 +254,10 @@ export function ProjectDetailScreen() {
             variant="elevated"
             padding={m3Spacing.md}
             style={styles.section}>
-            <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+            <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
               Looking For
             </Text>
-            <Text style={[styles.bodyText, {color: colors.onSurfaceVariant}]}>
+            <Text variant="body" style={[styles.bodyText, {color: colors.onSurfaceVariant}]}>
               {project.looking_for}
             </Text>
           </Card>
@@ -265,7 +269,7 @@ export function ProjectDetailScreen() {
             variant="elevated"
             padding={m3Spacing.md}
             style={styles.section}>
-            <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+            <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
               Sponsorship
             </Text>
             <ProgressBar
@@ -274,6 +278,7 @@ export function ProjectDetailScreen() {
               style={{marginBottom: m3Spacing.xs}}
             />
             <Text
+              variant="body"
               style={[styles.progressText, {color: colors.onSurfaceVariant}]}>
               ${project.sponsorship_current} / ${project.sponsorship_goal}{' '}
               raised
@@ -289,7 +294,7 @@ export function ProjectDetailScreen() {
             style={styles.section}>
             <View style={styles.linkRow}>
               <Icon name="github" size="sm" color={colors.onSurfaceVariant} />
-              <Text style={[styles.linkText, {color: colors.primary}]}>
+              <Text variant="body" style={[styles.linkText, {color: colors.primary}]}>
                 {project.github_url}
               </Text>
             </View>
@@ -335,7 +340,7 @@ export function ProjectDetailScreen() {
 
         {/* ── Posts / Updates ── */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+          <Text variant="title" style={[styles.sectionTitle, {color: colors.onBackground}]}>
             Updates
           </Text>
           <PostCreate

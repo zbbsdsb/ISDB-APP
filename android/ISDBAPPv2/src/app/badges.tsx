@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   ScrollView,
@@ -10,6 +9,7 @@ import {
   Animated,
   TouchableOpacity,
 } from 'react-native';
+import {Text} from '../components/ui/text';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {useBadges, TIER_COLORS} from '../hooks/use-badges';
@@ -113,7 +113,7 @@ export function BadgesScreen() {
           variant="text"
           icon={<Icon name="back" size="sm" color={colors.onBackground} />}
         />
-        <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
+        <Text variant="title" style={[styles.headerTitle, {color: colors.onBackground}]}>
           Badges
         </Text>
         <View style={styles.headerSpacer} />
@@ -136,7 +136,7 @@ export function BadgesScreen() {
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <Text style={[styles.statsText, {color: colors.onSurfaceVariant}]}>
+          <Text variant="body" style={[styles.statsText, {color: colors.onSurfaceVariant}]}>
             Unlocked {unlockedCount} / {badges.length} badges
           </Text>
 
@@ -173,10 +173,10 @@ export function BadgesScreen() {
                             TIER_COLORS[badge.tier] || colors.primary,
                         },
                       ]}>
-                      <Text style={styles.badgePlaceholderText}>🏆</Text>
+                      <Text variant="body" style={styles.badgePlaceholderText}>🏆</Text>
                     </View>
                   )}
-                  <Text
+                  <Text variant="label"
                     style={[
                       styles.badgeName,
                       {
@@ -188,12 +188,12 @@ export function BadgesScreen() {
                     numberOfLines={2}>
                     {badge.name}
                   </Text>
-                  <Text
+                  <Text variant="caption"
                     style={[styles.badgeDesc, {color: colors.onSurfaceVariant}]}
                     numberOfLines={2}>
                     {badge.description}
                   </Text>
-                  <Text
+                  <Text variant="label"
                     style={[
                       styles.badgeTier,
                       {
@@ -209,7 +209,7 @@ export function BadgesScreen() {
           </View>
 
           {badges.length === 0 && (
-            <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
+            <Text variant="body" style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
               No badges available yet
             </Text>
           )}
@@ -235,8 +235,8 @@ export function BadgesScreen() {
                 transform: [{scale: scaleAnim}],
               },
             ]}>
-            <Text style={styles.celebrationEmoji}>🎉</Text>
-            <Text
+            <Text variant="body" style={styles.celebrationEmoji}>🎉</Text>
+            <Text variant="heading"
               style={[styles.celebrationTitle, {color: colors.onBackground}]}>
               New Badge Unlocked!
             </Text>
@@ -251,36 +251,28 @@ export function BadgesScreen() {
                         TIER_COLORS[celebratingBadge.tier] || colors.primary,
                     },
                   ]}>
-                  <Text style={styles.celebrationBadgeEmoji}>🏆</Text>
+                  <Text variant="body" style={styles.celebrationBadgeEmoji}>🏆</Text>
                 </View>
-                <Text
+                <Text variant="title"
                   style={[
                     styles.celebrationBadgeName,
                     {color: colors.onBackground},
                   ]}>
                   {celebratingBadge.name}
                 </Text>
-                <Text
+                <Text variant="body"
                   style={[
                     styles.celebrationBadgeDesc,
                     {color: colors.onSurfaceVariant},
                   ]}>
                   {celebratingBadge.description}
                 </Text>
-                <TouchableOpacity
-                  style={[
-                    styles.celebrationButton,
-                    {backgroundColor: colors.primary},
-                  ]}
-                  onPress={closeCelebration}>
-                  <Text
-                    style={[
-                      styles.celebrationButtonText,
-                      {color: colors.onPrimary},
-                    ]}>
-                    Awesome!
-                  </Text>
-                </TouchableOpacity>
+                <Button
+                  title="Awesome!"
+                  variant="filled"
+                  fullWidth
+                  onPress={closeCelebration}
+                />
               </>
             )}
           </Animated.View>

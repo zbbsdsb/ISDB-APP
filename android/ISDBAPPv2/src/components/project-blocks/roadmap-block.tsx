@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {Text} from '../ui/text';
 import {useTheme} from '../../hooks/use-theme';
 import {Card} from '../ui';
 import {m3Typography} from '../../constants/m3-typography';
@@ -11,12 +12,6 @@ interface RoadmapBlockProps {
   config: Record<string, any>;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  planned: '#94a3b8',
-  in_progress: '#3b82f6',
-  completed: '#22c55e',
-};
-
 const STATUS_LABELS: Record<string, string> = {
   planned: 'Planned',
   in_progress: 'In Progress',
@@ -25,13 +20,18 @@ const STATUS_LABELS: Record<string, string> = {
 
 export default function RoadmapBlock({config}: RoadmapBlockProps) {
   const {colors} = useTheme();
+  const STATUS_COLORS: Record<string, string> = {
+    planned: colors.onSurfaceVariant,
+    in_progress: colors.primary,
+    completed: colors.success,
+  };
   const milestones: Milestone[] = config?.milestones || [];
 
   return (
     <Card variant="elevated" padding={m3Spacing.md} style={styles.card}>
-      <Text style={[styles.title, {color: colors.onBackground}]}>Roadmap</Text>
+      <Text variant="title" style={[styles.title, {color: colors.onBackground}]}>Roadmap</Text>
       {milestones.length === 0 ? (
-        <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
+        <Text variant="body" style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
           No milestones yet
         </Text>
       ) : (
@@ -40,16 +40,18 @@ export default function RoadmapBlock({config}: RoadmapBlockProps) {
             <View
               style={[
                 styles.statusDot,
-                {backgroundColor: STATUS_COLORS[ms.status] || '#94a3b8'},
+                {backgroundColor: STATUS_COLORS[ms.status] || colors.onSurfaceVariant},
               ]}
             />
             <View style={styles.milestoneContent}>
               <Text
+                variant="label"
                 style={[styles.milestoneTitle, {color: colors.onBackground}]}>
                 {ms.title}
               </Text>
               {ms.description && (
                 <Text
+                  variant="body"
                   style={[
                     styles.milestoneDesc,
                     {color: colors.onSurfaceVariant},
@@ -63,19 +65,21 @@ export default function RoadmapBlock({config}: RoadmapBlockProps) {
                     styles.statusBadge,
                     {
                       backgroundColor:
-                        (STATUS_COLORS[ms.status] || '#94a3b8') + '20',
+                        (STATUS_COLORS[ms.status] || colors.onSurfaceVariant) + '20',
                     },
                   ]}>
                   <Text
+                    variant="label"
                     style={[
                       styles.statusText,
-                      {color: STATUS_COLORS[ms.status] || '#94a3b8'},
+                      {color: STATUS_COLORS[ms.status] || colors.onSurfaceVariant},
                     ]}>
                     {STATUS_LABELS[ms.status] || ms.status}
                   </Text>
                 </View>
                 {ms.target_date && (
                   <Text
+                    variant="body"
                     style={[styles.dateText, {color: colors.onSurfaceVariant}]}>
                     {new Date(ms.target_date).toLocaleDateString()}
                   </Text>

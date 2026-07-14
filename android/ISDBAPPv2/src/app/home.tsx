@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   ScrollView,
@@ -15,6 +14,7 @@ import {useProfile} from '../hooks/use-profile';
 import {useBadges} from '../hooks/use-badges';
 import {supabase} from '../services/supabase';
 import {Button, Card, Avatar, Skeleton, Badge} from '../components/ui';
+import {Text} from '../components/ui/text';
 import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
 import {m3Shape} from '../constants/m3-shape';
@@ -208,10 +208,10 @@ export function HomeScreen() {
         {/* ── Header ── */}
         <View style={styles.header}>
           <View>
-            <Text style={[styles.greeting, {color: colors.onBackground}]}>
+            <Text style={[styles.greeting, {color: colors.onBackground}]} variant="heading">
               Welcome, {userName}!
             </Text>
-            <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]}>
+            <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]} variant="body">
               Ready to build something insane?
             </Text>
           </View>
@@ -221,7 +221,8 @@ export function HomeScreen() {
                 style={[styles.onlineDot, {backgroundColor: colors.success}]}
               />
               <Text
-                style={[styles.onlineText, {color: colors.onSurfaceVariant}]}>
+                style={[styles.onlineText, {color: colors.onSurfaceVariant}]}
+                variant="label">
                 {onlineCount} online
               </Text>
             </View>
@@ -233,38 +234,41 @@ export function HomeScreen() {
           <Animated.View
             style={[styles.statsRow, {transform: [{scale: statsScale}]}]}>
             <Card
-              variant="filled"
+              variant="elevated"
               padding={m3Spacing.md}
               style={styles.statCard}>
-              <Text style={[styles.statNumber, {color: colors.primary}]}>
+              <Text style={[styles.statNumber, {color: colors.primary}]} variant="title">
                 {projectCount}
               </Text>
               <Text
-                style={[styles.statLabel, {color: colors.onSurfaceVariant}]}>
+                style={[styles.statLabel, {color: colors.onSurfaceVariant}]}
+                variant="label">
                 Projects
               </Text>
             </Card>
             <Card
-              variant="filled"
+              variant="elevated"
               padding={m3Spacing.md}
               style={styles.statCard}>
-              <Text style={[styles.statNumber, {color: colors.primary}]}>
+              <Text style={[styles.statNumber, {color: colors.primary}]} variant="title">
                 {matchCount}
               </Text>
               <Text
-                style={[styles.statLabel, {color: colors.onSurfaceVariant}]}>
+                style={[styles.statLabel, {color: colors.onSurfaceVariant}]}
+                variant="label">
                 Matches
               </Text>
             </Card>
             <Card
-              variant="filled"
+              variant="elevated"
               padding={m3Spacing.md}
               style={styles.statCard}>
-              <Text style={[styles.statNumber, {color: colors.primary}]}>
+              <Text style={[styles.statNumber, {color: colors.primary}]} variant="title">
                 #{builderId}
               </Text>
               <Text
-                style={[styles.statLabel, {color: colors.onSurfaceVariant}]}>
+                style={[styles.statLabel, {color: colors.onSurfaceVariant}]}
+                variant="label">
                 Builder ID
               </Text>
             </Card>
@@ -295,7 +299,7 @@ export function HomeScreen() {
                 size={60}
               />
               <View style={styles.identityInfo}>
-                <Text style={[styles.identityName, {color: colors.onSurface}]}>
+                <Text style={[styles.identityName, {color: colors.onSurface}]} variant="title">
                   {userName}
                 </Text>
                 {profile?.username && (
@@ -303,7 +307,8 @@ export function HomeScreen() {
                     style={[
                       styles.identityUsername,
                       {color: colors.onSurfaceVariant},
-                    ]}>
+                    ]}
+                    variant="label">
                     @{profile.username}
                   </Text>
                 )}
@@ -313,7 +318,8 @@ export function HomeScreen() {
                       styles.identityBio,
                       {color: colors.onSurfaceVariant},
                     ]}
-                    numberOfLines={2}>
+                    numberOfLines={2}
+                    variant="body">
                     {bio}
                   </Text>
                 )}
@@ -345,7 +351,8 @@ export function HomeScreen() {
                         style={[
                           styles.moreBadges,
                           {color: colors.onSurfaceVariant},
-                        ]}>
+                        ]}
+                        variant="caption">
                         +{unlockedBadges.length - 4}
                       </Text>
                     )}
@@ -357,7 +364,7 @@ export function HomeScreen() {
         </Card>
 
         {/* ── Today's Stack (Recommended) ── */}
-        <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+        <Text style={[styles.sectionTitle, {color: colors.onBackground}]} variant="title">
           Today's Stack
         </Text>
         {dataLoading ? (
@@ -384,19 +391,22 @@ export function HomeScreen() {
                   style={styles.recCard}>
                   <Text
                     style={[styles.recTitle, {color: colors.onSurface}]}
-                    numberOfLines={2}>
+                    numberOfLines={2}
+                    variant="title">
                     {p.title}
                   </Text>
                   {p.hook_text && (
                     <Text
                       style={[styles.recHook, {color: colors.primary}]}
-                      numberOfLines={1}>
+                      numberOfLines={1}
+                      variant="label">
                       {p.hook_text}
                     </Text>
                   )}
                   <Text
                     style={[styles.recDesc, {color: colors.onSurfaceVariant}]}
-                    numberOfLines={2}>
+                    numberOfLines={2}
+                    variant="body">
                     {p.description}
                   </Text>
                 </Card>
@@ -404,13 +414,13 @@ export function HomeScreen() {
             ))}
           </ScrollView>
         ) : (
-          <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
+          <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]} variant="body">
             No recommendations yet
           </Text>
         )}
 
         {/* ── Activity Feed ── */}
-        <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+        <Text style={[styles.sectionTitle, {color: colors.onBackground}]} variant="title">
           Recent Activity
         </Text>
         {dataLoading ? (
@@ -429,7 +439,7 @@ export function HomeScreen() {
           </View>
         ) : activities.length > 0 ? (
           <Card
-            variant="filled"
+            variant="elevated"
             padding={m3Spacing.md}
             style={styles.activityCard}>
             {activities.map((item, idx) => (
@@ -449,7 +459,8 @@ export function HomeScreen() {
                     ]}
                   />
                   <Text
-                    style={[styles.activityText, {color: colors.onSurface}]}>
+                    style={[styles.activityText, {color: colors.onSurface}]}
+                    variant="body">
                     {item.text}
                   </Text>
                 </View>
@@ -465,13 +476,13 @@ export function HomeScreen() {
             ))}
           </Card>
         ) : (
-          <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
+          <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]} variant="body">
             No recent activity
           </Text>
         )}
 
         {/* ── Quick Actions ── */}
-        <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+        <Text style={[styles.sectionTitle, {color: colors.onBackground}]} variant="title">
           Quick Actions
         </Text>
         <View style={styles.actionGrid}>
@@ -499,7 +510,7 @@ export function HomeScreen() {
         </View>
 
         {/* ── Recent Projects ── */}
-        <Text style={[styles.sectionTitle, {color: colors.onBackground}]}>
+        <Text style={[styles.sectionTitle, {color: colors.onBackground}]} variant="title">
           Recent Projects
         </Text>
         {dataLoading ? (
@@ -516,7 +527,7 @@ export function HomeScreen() {
             />
           </View>
         ) : recentProjects.length === 0 ? (
-          <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
+          <Text style={[styles.emptyText, {color: colors.onSurfaceVariant}]} variant="body">
             No projects yet. Be the first to create one!
           </Text>
         ) : (
@@ -531,11 +542,12 @@ export function HomeScreen() {
                   .getParent()
                   ?.navigate('ProjectDetail', {projectId: p.id})
               }>
-              <Text style={[styles.recentTitle, {color: colors.onSurface}]}>
+              <Text style={[styles.recentTitle, {color: colors.onSurface}]} variant="title">
                 {p.title}
               </Text>
               <Text
-                style={[styles.recentDate, {color: colors.onSurfaceVariant}]}>
+                style={[styles.recentDate, {color: colors.onSurfaceVariant}]}
+                variant="label">
                 {new Date(p.created_at).toLocaleDateString()}
               </Text>
             </Card>

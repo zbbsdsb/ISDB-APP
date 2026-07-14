@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -12,6 +11,8 @@ import {
 } from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
 import {useProfile} from '../../hooks/use-profile';
+import {Button} from '../../components/ui';
+import {Text} from '../../components/ui/text';
 import {m3Typography} from '../../constants/m3-typography';
 import {m3Spacing} from '../../constants/m3-spacing';
 import {m3Shape} from '../../constants/m3-shape';
@@ -113,17 +114,17 @@ export function BasicInfoForm({initialData, onNext}: BasicInfoFormProps) {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
-        <Text style={[styles.title, {color: colors.onBackground}]}>
+        <Text style={[styles.title, {color: colors.onBackground}]} variant="heading">
           Tell us about yourself
         </Text>
-        <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]}>
+        <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]} variant="body">
           This information will be displayed on your public profile
         </Text>
 
         <View style={styles.form}>
           {/* Username */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, {color: colors.onBackground}]}>
+            <Text style={[styles.label, {color: colors.onBackground}]} variant="label">
               Username <Text style={{color: colors.error}}>*</Text>
             </Text>
             <View style={styles.usernameContainer}>
@@ -153,18 +154,18 @@ export function BasicInfoForm({initialData, onNext}: BasicInfoFormProps) {
               )}
             </View>
             {usernameError && (
-              <Text style={[styles.errorText, {color: colors.error}]}>
+              <Text style={[styles.errorText, {color: colors.error}]} variant="caption">
                 {usernameError}
               </Text>
             )}
-            <Text style={[styles.hint, {color: colors.onSurfaceVariant}]}>
+            <Text style={[styles.hint, {color: colors.onSurfaceVariant}]} variant="caption">
               3-20 characters, letters, numbers, and underscore only
             </Text>
           </View>
 
           {/* Display Name */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, {color: colors.onBackground}]}>
+            <Text style={[styles.label, {color: colors.onBackground}]} variant="label">
               Display Name
             </Text>
             <TextInput
@@ -186,7 +187,7 @@ export function BasicInfoForm({initialData, onNext}: BasicInfoFormProps) {
 
           {/* Bio */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, {color: colors.onBackground}]}>
+            <Text style={[styles.label, {color: colors.onBackground}]} variant="label">
               Bio
             </Text>
             <TextInput
@@ -208,14 +209,14 @@ export function BasicInfoForm({initialData, onNext}: BasicInfoFormProps) {
               maxLength={280}
               textAlignVertical="top"
             />
-            <Text style={[styles.charCount, {color: colors.onSurfaceVariant}]}>
+            <Text style={[styles.charCount, {color: colors.onSurfaceVariant}]} variant="caption">
               {bio.length}/280
             </Text>
           </View>
 
           {/* Country */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, {color: colors.onBackground}]}>
+            <Text style={[styles.label, {color: colors.onBackground}]} variant="label">
               Country
             </Text>
             <TouchableOpacity
@@ -235,10 +236,13 @@ export function BasicInfoForm({initialData, onNext}: BasicInfoFormProps) {
                         styles.selectPlaceholder,
                         {color: colors.onSurfaceVariant},
                       ]
-                }>
+                }
+                variant="body">
                 {country || 'Select your country'}
               </Text>
-              <Text style={{color: colors.onSurfaceVariant}}>▼</Text>
+              <Text style={{color: colors.onSurfaceVariant}} variant="caption">
+                ▼
+              </Text>
             </TouchableOpacity>
 
             {showCountryPicker && (
@@ -265,7 +269,8 @@ export function BasicInfoForm({initialData, onNext}: BasicInfoFormProps) {
                       style={[
                         styles.countryText,
                         {color: colors.onBackground},
-                      ]}>
+                      ]}
+                      variant="body">
                       {c}
                     </Text>
                   </TouchableOpacity>
@@ -275,13 +280,13 @@ export function BasicInfoForm({initialData, onNext}: BasicInfoFormProps) {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={[styles.nextButton, {backgroundColor: colors.primary}]}
-          onPress={handleSubmit}>
-          <Text style={[styles.nextButtonText, {color: colors.onPrimary}]}>
-            Next
-          </Text>
-        </TouchableOpacity>
+        <Button
+          title="Next"
+          onPress={handleSubmit}
+          variant="filled"
+          fullWidth
+          style={styles.nextButton}
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -333,10 +338,6 @@ const styles = StyleSheet.create({
   },
   countryText: {fontSize: 16},
   nextButton: {
-    borderRadius: m3Shape.small,
-    padding: m3Spacing.md,
-    alignItems: 'center',
     marginTop: m3Spacing.xl,
   },
-  nextButtonText: {...m3Typography.labelLarge, fontWeight: '600'},
 });

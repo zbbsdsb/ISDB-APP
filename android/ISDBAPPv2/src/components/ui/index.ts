@@ -10,3 +10,5 @@ export {ProgressBar} from './progress-bar';
 export {Select, type SelectOption} from './select';
 export {Textarea} from './textarea';
 export {Label} from './label';
+export {Text} from './text';
+export {BrandGradient} from './gradient';

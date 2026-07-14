@@ -1,7 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet, ViewStyle} from 'react-native';
+import {View, StyleSheet, ViewStyle} from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
 import {m3Shape} from '../../constants/m3-shape';
+import {Text} from './text';
 
 type BadgeColor =
   | 'primary'
@@ -73,20 +74,20 @@ export function Badge({
     switch (variant) {
       case 'filled':
         return {
-          backgroundColor: colors[colorTokens.bg],
+          backgroundColor: colors[colorTokens.bg] as string,
           borderWidth: 0,
         };
       case 'outlined':
         return {
           backgroundColor: 'transparent',
           borderWidth: 1,
-          borderColor: colors[colorTokens.border],
+          borderColor: colors[colorTokens.border] as string,
         };
       case 'tint':
         return {
-          backgroundColor: colors[colorTokens.bg] + '60',
+          backgroundColor: (colors[colorTokens.bg] as string) + '60',
           borderWidth: 1,
-          borderColor: colors[colorTokens.border] + '30',
+          borderColor: (colors[colorTokens.border] as string) + '30',
         };
     }
   };
@@ -98,9 +99,10 @@ export function Badge({
       style={[styles.base, isSm ? styles.sm : styles.md, getStyle(), style]}>
       {icon && <View style={isSm ? styles.iconSm : styles.iconMd}>{icon}</View>}
       <Text
+        variant="caption"
         style={[
           isSm ? styles.labelSm : styles.labelMd,
-          {color: colors[colorTokens.text]},
+          {color: colors[colorTokens.text] as string},
         ]}
         numberOfLines={1}>
         {label}

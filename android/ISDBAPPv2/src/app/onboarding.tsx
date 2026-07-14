@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   Alert,
@@ -16,6 +15,7 @@ import {TagSelector} from '../components/onboarding/tag-selector';
 import {IdentityCeremony} from '../components/onboarding/identity-ceremony';
 import {StepIndicator} from '../components/onboarding/step-indicator';
 import {Button} from '../components/ui';
+import {Text} from '../components/ui/text';
 import {m3Typography} from '../constants/m3-typography';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
@@ -200,10 +200,10 @@ export default function OnboardingScreen({navigation}: OnboardingScreenProps) {
 
         {currentStep === 'skills' && (
           <View style={styles.tagForm}>
-            <Text style={[styles.title, {color: colors.onBackground}]}>
+            <Text style={[styles.title, {color: colors.onBackground}]} variant="heading">
               What are your skills?
             </Text>
-            <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]}>
+            <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]} variant="body">
               Select the technologies and skills you're experienced in
             </Text>
 
@@ -232,10 +232,10 @@ export default function OnboardingScreen({navigation}: OnboardingScreenProps) {
 
         {currentStep === 'interests' && (
           <View style={styles.tagForm}>
-            <Text style={[styles.title, {color: colors.onBackground}]}>
+            <Text style={[styles.title, {color: colors.onBackground}]} variant="heading">
               What are your interests?
             </Text>
-            <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]}>
+            <Text style={[styles.subtitle, {color: colors.onSurfaceVariant}]} variant="body">
               Select topics and areas you're interested in
             </Text>
 

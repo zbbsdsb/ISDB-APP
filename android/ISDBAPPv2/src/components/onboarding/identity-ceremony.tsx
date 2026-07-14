@@ -1,9 +1,10 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
+import {View, StyleSheet, Animated} from 'react-native';
 import {useTheme} from '../../hooks/use-theme';
+import {Button} from '../../components/ui';
+import {Text} from '../../components/ui/text';
 import {m3Typography} from '../../constants/m3-typography';
 import {m3Spacing} from '../../constants/m3-spacing';
-import {m3Shape} from '../../constants/m3-shape';
 
 interface IdentityCeremonyProps {
   builderId: number;
@@ -102,10 +103,10 @@ export function IdentityCeremony({
             transform: [{scale: scaleAnim}],
           },
         ]}>
-        <Text style={[styles.headerLabel, {color: accentColor + '80'}]}>
+        <Text style={[styles.headerLabel, {color: accentColor + '80'}]} variant="label">
           Insane Dream Builder
         </Text>
-        <Text style={[styles.memberLabel, {color: accentColor}]}>
+        <Text style={[styles.memberLabel, {color: accentColor}]} variant="label">
           🏅 OFFICIAL MEMBER CARD
         </Text>
 
@@ -114,54 +115,54 @@ export function IdentityCeremony({
         {showContent && (
           <Animated.View style={[styles.content, {opacity: contentFade}]}>
             <View style={styles.row}>
-              <Text style={[styles.rowLabel, {color: accentColor + '80'}]}>
-                Builder ID
-              </Text>
-              <Text style={[styles.builderId, {color: accentColor}]}>
-                {formatIdentityNumber(builderId)}
-              </Text>
+                <Text style={[styles.rowLabel, {color: accentColor + '80'}]} variant="label">
+                  Builder ID
+                </Text>
+                <Text style={[styles.builderId, {color: accentColor}]} variant="title">
+                  {formatIdentityNumber(builderId)}
+                </Text>
             </View>
             <View style={styles.row}>
-              <Text style={[styles.rowLabel, {color: accentColor + '80'}]}>
-                Username
-              </Text>
-              <Text style={[styles.rowValue, {color: colors.onSurface}]}>
-                @{username}
-              </Text>
+                <Text style={[styles.rowLabel, {color: accentColor + '80'}]} variant="label">
+                  Username
+                </Text>
+                <Text style={[styles.rowValue, {color: colors.onSurface}]} variant="body">
+                  @{username}
+                </Text>
             </View>
             <View style={styles.row}>
-              <Text style={[styles.rowLabel, {color: accentColor + '80'}]}>
-                Member Since
-              </Text>
-              <Text style={[styles.rowValue, {color: colors.onSurface}]}>
-                {new Date().toLocaleDateString('en-US', {
-                  month: 'long',
-                  year: 'numeric',
-                })}
-              </Text>
+                <Text style={[styles.rowLabel, {color: accentColor + '80'}]} variant="label">
+                  Member Since
+                </Text>
+                <Text style={[styles.rowValue, {color: colors.onSurface}]} variant="body">
+                  {new Date().toLocaleDateString('en-US', {
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </Text>
             </View>
             <View style={styles.row}>
-              <Text style={[styles.rowLabel, {color: accentColor + '80'}]}>
-                Skills
-              </Text>
-              <Text style={[styles.rowValue, {color: colors.onSurface}]}>
-                Registered
-              </Text>
+                <Text style={[styles.rowLabel, {color: accentColor + '80'}]} variant="label">
+                  Skills
+                </Text>
+                <Text style={[styles.rowValue, {color: colors.onSurface}]} variant="body">
+                  Registered
+                </Text>
             </View>
           </Animated.View>
         )}
 
         <View style={[styles.divider, {backgroundColor: accentColor + '33'}]} />
 
-        <Text style={[styles.quote, {color: accentColor + '66'}]}>
+        <Text style={[styles.quote, {color: accentColor + '66'}]} variant="body">
           "Build Something Insane"
         </Text>
 
         <View style={styles.verified}>
-          <Text style={[styles.verifiedIcon, {color: accentColor + '4D'}]}>
+          <Text style={[styles.verifiedIcon, {color: accentColor + '4D'}]} variant="caption">
             ✓
           </Text>
-          <Text style={[styles.verifiedText, {color: accentColor + '4D'}]}>
+          <Text style={[styles.verifiedText, {color: accentColor + '4D'}]} variant="label">
             Verified Member
           </Text>
         </View>
@@ -173,14 +174,12 @@ export function IdentityCeremony({
             styles.buttonContainer,
             {opacity: buttonFade, transform: [{translateY: buttonSlide}]},
           ]}>
-          <TouchableOpacity
-            style={[styles.enterButton, {backgroundColor: accentColor}]}
-            onPress={handleEnter}>
-            <Text style={[styles.enterButtonText, {color: colors.onPrimary}]}>
-              Enter Dream Builder
-            </Text>
-            <Text style={[styles.arrow, {color: colors.onPrimary}]}>→</Text>
-          </TouchableOpacity>
+          <Button
+            title="Enter Dream Builder"
+            onPress={handleEnter}
+            variant="filled"
+            fullWidth
+          />
         </Animated.View>
       )}
     </View>
@@ -248,18 +247,4 @@ const styles = StyleSheet.create({
   verifiedIcon: {fontSize: 12},
   verifiedText: {...m3Typography.labelSmall, letterSpacing: 1},
   buttonContainer: {marginTop: m3Spacing.xl, width: '100%', maxWidth: 340},
-  enterButton: {
-    borderRadius: m3Shape.medium,
-    padding: m3Spacing.md,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: m3Spacing.xs,
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  enterButtonText: {...m3Typography.labelLarge, fontWeight: 'bold'},
-  arrow: {fontSize: 18, fontWeight: 'bold'},
 });

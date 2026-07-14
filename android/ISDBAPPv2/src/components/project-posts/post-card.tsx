@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {Text} from '../ui/text';
 import {useTheme} from '../../hooks/use-theme';
 import {Card} from '../ui';
 import {m3Typography} from '../../constants/m3-typography';
@@ -39,16 +40,17 @@ export default function PostCard({post}: PostCardProps) {
               {backgroundColor: colors.secondaryContainer},
             ]}>
             <Text
+              variant="label"
               style={[styles.typeText, {color: colors.onSecondaryContainer}]}>
               {TYPE_LABELS[post.type] || post.type}
             </Text>
           </View>
         )}
-        <Text style={[styles.dateText, {color: colors.onSurfaceVariant}]}>
+        <Text variant="body" style={[styles.dateText, {color: colors.onSurfaceVariant}]}>
           {formattedDate}
         </Text>
       </View>
-      <Text style={[styles.content, {color: colors.onSurface}]}>
+      <Text variant="body" style={[styles.content, {color: colors.onSurface}]}>
         {post.content}
       </Text>
     </Card>

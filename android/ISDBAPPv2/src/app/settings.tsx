@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   ScrollView,
@@ -10,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import {Text} from '../components/ui/text';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {useToast} from '../hooks/use-toast';
@@ -109,13 +109,13 @@ export function SettingsScreen() {
             variant="text"
             icon={<Icon name="close" size="sm" color={colors.onBackground} />}
           />
-          <Text style={[styles.headerTitle, {color: colors.onBackground}]}>
+          <Text variant="title" style={[styles.headerTitle, {color: colors.onBackground}]}>
             Edit Profile
           </Text>
           <Button
             title="Save"
             onPress={handleSave}
-            variant="text"
+            variant="filled"
             loading={loading}
             disabled={loading}
           />
@@ -123,7 +123,7 @@ export function SettingsScreen() {
 
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Username */}
-          <Text style={[styles.label, {color: colors.onBackground}]}>
+          <Text variant="label" style={[styles.label, {color: colors.onBackground}]}>
             Username
           </Text>
           <RNTextInput
@@ -144,7 +144,7 @@ export function SettingsScreen() {
           />
 
           {/* Display Name */}
-          <Text style={[styles.label, {color: colors.onBackground}]}>
+          <Text variant="label" style={[styles.label, {color: colors.onBackground}]}>
             Display Name
           </Text>
           <RNTextInput
@@ -163,7 +163,7 @@ export function SettingsScreen() {
           />
 
           {/* Bio */}
-          <Text style={[styles.label, {color: colors.onBackground}]}>Bio</Text>
+          <Text variant="label" style={[styles.label, {color: colors.onBackground}]}>Bio</Text>
           <RNTextInput
             style={[
               styles.textArea,
@@ -182,7 +182,7 @@ export function SettingsScreen() {
           />
 
           {/* Country */}
-          <Text style={[styles.label, {color: colors.onBackground}]}>
+          <Text variant="label" style={[styles.label, {color: colors.onBackground}]}>
             Country
           </Text>
           <RNTextInput
@@ -201,7 +201,7 @@ export function SettingsScreen() {
           />
 
           {/* Skills (comma-separated) */}
-          <Text style={[styles.label, {color: colors.onBackground}]}>
+          <Text variant="label" style={[styles.label, {color: colors.onBackground}]}>
             Skills (comma separated)
           </Text>
           <RNTextInput
@@ -220,7 +220,7 @@ export function SettingsScreen() {
           />
 
           {/* Interests (comma-separated) */}
-          <Text style={[styles.label, {color: colors.onBackground}]}>
+          <Text variant="label" style={[styles.label, {color: colors.onBackground}]}>
             Interests (comma separated)
           </Text>
           <RNTextInput

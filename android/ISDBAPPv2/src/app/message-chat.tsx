@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
   SafeAreaView,
@@ -18,8 +17,8 @@ import {useTheme} from '../hooks/use-theme';
 import {useMessages} from '../hooks/use-messages';
 import {useMessageStore} from '../store/message-store';
 import {useAuthStore} from '../store/auth-store';
+import {Text} from '../components/ui/text';
 import {Button, Icon} from '../components/ui';
-import {m3Typography} from '../constants/m3-typography';
 import {m3Spacing} from '../constants/m3-spacing';
 import {m3Shape} from '../constants/m3-shape';
 import type {Message} from '@isdb/shared';
@@ -85,6 +84,7 @@ export function MessageChatScreen() {
                 ],
           ]}>
           <Text
+            variant="body"
             style={[
               styles.bubbleText,
               {color: isMine ? colors.onPrimary : colors.onSurface},
@@ -92,6 +92,7 @@ export function MessageChatScreen() {
             {item.content}
           </Text>
           <Text
+            variant="caption"
             style={[
               styles.bubbleTime,
               {color: isMine ? colors.onPrimary : colors.onSurfaceVariant},
@@ -126,6 +127,7 @@ export function MessageChatScreen() {
           icon={<Icon name="back" size="sm" color={colors.onBackground} />}
         />
         <Text
+          variant="title"
           style={[styles.headerTitle, {color: colors.onBackground}]}
           numberOfLines={1}>
           {title}
@@ -148,6 +150,7 @@ export function MessageChatScreen() {
           ListEmptyComponent={
             <View style={styles.emptyChat}>
               <Text
+                variant="body"
                 style={[styles.emptyText, {color: colors.onSurfaceVariant}]}>
                 No messages yet. Say hello!
               </Text>
@@ -206,7 +209,7 @@ const styles = StyleSheet.create({
     height: 56,
     borderBottomWidth: 1,
   },
-  headerTitle: {...m3Typography.titleMedium, flex: 1, textAlign: 'center'},
+  headerTitle: {flex: 1, textAlign: 'center'},
   headerSpacer: {width: 48},
   messageList: {
     padding: m3Spacing.md,
@@ -224,11 +227,11 @@ const styles = StyleSheet.create({
   },
   bubbleMineRadius: {borderBottomRightRadius: 4},
   bubbleOtherRadius: {borderBottomLeftRadius: 4},
-  bubbleText: {...m3Typography.bodyMedium},
-  bubbleTime: {...m3Typography.labelSmall, marginTop: 2, textAlign: 'right'},
+  bubbleText: {},
+  bubbleTime: {marginTop: 2, textAlign: 'right'},
   bubbleTimeOpacity: {opacity: 0.7},
   emptyChat: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-  emptyText: {...m3Typography.bodyLarge},
+  emptyText: {},
   inputBar: {
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -244,7 +247,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: m3Spacing.md,
     paddingVertical: m3Spacing.sm,
     maxHeight: 100,
-    ...m3Typography.bodyMedium,
   },
   sendButton: {
     marginBottom: 0,

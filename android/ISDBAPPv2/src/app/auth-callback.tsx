@@ -1,9 +1,10 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
+import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../hooks/use-theme';
 import {useAuth} from '../hooks/use-auth';
+import {Text} from '../components/ui/text';
 
 export function AuthCallbackScreen() {
   const {colors} = useTheme();
@@ -67,7 +68,7 @@ export function AuthCallbackScreen() {
           color={colors.primary}
           style={styles.loader}
         />
-        <Text style={[styles.statusText, {color: colors.onBackground}]}>
+        <Text style={[styles.statusText, {color: colors.onBackground}]} variant="body">
           {status}
         </Text>
       </View>

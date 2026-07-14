@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {Text} from '../ui/text';
 import {useTheme} from '../../hooks/use-theme';
 import PostCard from './post-card';
 import type {ProjectPost} from '@isdb/shared';
@@ -14,7 +15,7 @@ export default function PostList({posts, loading}: PostListProps) {
 
   if (loading) {
     return (
-      <Text style={[styles.statusText, {color: colors.onSurfaceVariant}]}>
+      <Text variant="body" style={[styles.statusText, {color: colors.onSurfaceVariant}]}>
         Loading posts...
       </Text>
     );
@@ -22,7 +23,7 @@ export default function PostList({posts, loading}: PostListProps) {
 
   if (posts.length === 0) {
     return (
-      <Text style={[styles.statusText, {color: colors.onSurfaceVariant}]}>
+      <Text variant="body" style={[styles.statusText, {color: colors.onSurfaceVariant}]}>
         No updates yet
       </Text>
     );

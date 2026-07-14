@@ -180,6 +180,7 @@ function MainNavigator() {
         fontWeight: '500' as const,
         letterSpacing: 0.5,
         marginTop: 2,
+        fontFamily: colors.font.bodyMedium,
       },
       tabBarStyle: {
         backgroundColor: colors.surface,
@@ -298,19 +299,19 @@ export function Navigation() {
         },
         fonts: {
           regular: {
-            fontFamily: 'System',
+            fontFamily: colors.font.body,
             fontWeight: '400',
           },
           medium: {
-            fontFamily: 'System',
+            fontFamily: colors.font.bodyMedium,
             fontWeight: '500',
           },
           bold: {
-            fontFamily: 'System',
+            fontFamily: colors.font.bodyBold,
             fontWeight: '700',
           },
           heavy: {
-            fontFamily: 'System',
+            fontFamily: colors.font.bodyBold,
             fontWeight: '900',
           },
         },
